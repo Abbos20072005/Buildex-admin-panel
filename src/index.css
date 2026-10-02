@@ -1,0 +1,106 @@
+/*
+ * Cascade layers: Ant Design styles live in the "antd" layer (see StyleProvider in app/providers.tsx),
+ * so Tailwind utilities always win and Tailwind's preflight never breaks antd components.
+ */
+@layer theme, base, antd, components, utilities;
+
+@import "tailwindcss";
+
+/* Brand colours and fonts — generated from src/theme/colors.ts + fonts.ts (single source of truth) */
+@import "./theme/tokens.css";
+
+@theme {
+  --animate-spin-y: spin-y 5s linear infinite;
+
+  /* the logo turns around the Y axis, then pauses — same as on the site */
+  @keyframes spin-y {
+    0% {
+      transform: rotateY(0deg);
+    }
+    50%,
+    100% {
+      transform: rotateY(360deg);
+    }
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-surface font-sans text-slate-900 antialiased;
+  }
+}
+
+/* scrollable, but without a visible scrollbar (sidebar menu) */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-y {
+    animation: none;
+  }
+}
+
+@layer components {
+  /* formatted HTML from the backend (descriptions): tables, lists, headings */
+  .rich-content {
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .rich-content p {
+    margin: 0 0 0.6em;
+  }
+  .rich-content ul,
+  .rich-content ol {
+    margin: 0 0 0.6em;
+    padding-left: 1.5em;
+  }
+  .rich-content ul {
+    list-style: disc;
+  }
+  .rich-content ol {
+    list-style: decimal;
+  }
+  .rich-content table {
+    border-collapse: collapse;
+    margin-bottom: 0.6em;
+    width: 100%;
+  }
+  .rich-content th,
+  .rich-content td {
+    border: 1px solid var(--color-slate-200);
+    padding: 4px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .rich-content th {
+    background: var(--color-slate-50);
+    font-weight: 600;
+  }
+  .rich-content a {
+    text-decoration: underline;
+  }
+
+  /* antd <Descriptions column={1}> as a "label … value" list with right-aligned values */
+  .info-list .ant-descriptions-item {
+    padding-bottom: 10px !important;
+  }
+  .info-list .ant-descriptions-item-label {
+    color: var(--color-slate-500);
+  }
+  .info-list .ant-descriptions-item-content {
+    justify-content: flex-end;
+    text-align: right;
+  }
+}

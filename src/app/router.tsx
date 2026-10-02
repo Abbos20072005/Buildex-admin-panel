@@ -1,0 +1,79 @@
+import { Spin } from "antd";
+import { lazy, Suspense, type ReactNode } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { RequireAuth } from "@/features/auth";
+import { AdminLayout } from "@/layouts/admin/AdminLayout";
+import { NAV_LEAVES } from "@/layouts/admin/navigation";
+
+// pages are code-split: each one is downloaded only when it is opened
+const LoginPage = lazy(() => import("@/pages/LoginPage").then((m) => ({ default: m.LoginPage })));
+const OrdersPage = lazy(() =>
+  import("@/pages/OrdersPage").then((m) => ({ default: m.OrdersPage })),
+);
+const ProductsPage = lazy(() =>
+  import("@/pages/ProductsPage").then((m) => ({ default: m.ProductsPage })),
+);
+const AttributesPage = lazy(() =>
+  import("@/pages/AttributesPage").then((m) => ({ default: m.AttributesPage })),
+);
+const TagsPage = lazy(() =>
+  import("@/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
+);
+const BrandsPage = lazy(() =>
+  import("@/pages/BrandsPage").then((m) => ({ default: m.BrandsPage })),
+);
+const CategoriesPage = lazy(() =>
+  import("@/pages/CategoriesPage").then((m) => ({ default: m.CategoriesPage })),
+);
+const ProductPage = lazy(() =>
+  import("@/pages/ProductPage").then((m) => ({ default: m.ProductPage })),
+);
+const ComingSoonPage = lazy(() =>
+  import("@/pages/ComingSoonPage").then((m) => ({ default: m.ComingSoonPage })),
+);
+
+/** Routes that already have a real page; every other sidebar item shows "coming soon". */
+const PAGES: Record<string, ReactNode> = {
+  "/orders": <OrdersPage />,
+  "/products": <ProductsPage />,
+  "/attributes/categories": <CategoriesPage />,
+  "/attributes/brands": <BrandsPage />,
+  "/attributes/tags": <TagsPage />,
+  "/attributes/characteristics": <AttributesPage />,
+};
+
+function PageLoader() {
+  return (
+    <div className="grid min-h-[50vh] place-items-center">
+      <Spin size="large" />
+    </div>
+  );
+}
+
+export function AppRouter() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          element={
+            <RequireAuth>
+              <AdminLayout />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Navigate to="/orders" replace />} />
+          {NAV_LEAVES.map((leaf) => (
+            <Route
+              key={leaf.path}
+              path={leaf.path}
+              element={PAGES[leaf.path] ?? <ComingSoonPage titleKey={leaf.label} />}
+            />
+          ))}
+          <Route path="/products/:id" element={<ProductPage />} />
+          <Route path="*" element={<Navigate to="/orders" replace />} />
+        </Route>
+      </Routes>
+    </Suspense>
+  );
+}
