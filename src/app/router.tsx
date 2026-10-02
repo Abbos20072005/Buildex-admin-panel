@@ -16,12 +16,13 @@ const ProductsPage = lazy(() =>
 const AttributesPage = lazy(() =>
   import("@/pages/AttributesPage").then((m) => ({ default: m.AttributesPage })),
 );
+const DashboardPage = lazy(() =>
+  import("@/pages/DashboardPage").then((m) => ({ default: m.DashboardPage })),
+);
 const ModelsPage = lazy(() =>
   import("@/pages/ModelsPage").then((m) => ({ default: m.ModelsPage })),
 );
-const TagsPage = lazy(() =>
-  import("@/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
-);
+const TagsPage = lazy(() => import("@/pages/TagsPage").then((m) => ({ default: m.TagsPage })));
 const BrandsPage = lazy(() =>
   import("@/pages/BrandsPage").then((m) => ({ default: m.BrandsPage })),
 );
@@ -37,6 +38,7 @@ const ComingSoonPage = lazy(() =>
 
 /** Routes that already have a real page; every other sidebar item shows "coming soon". */
 const PAGES: Record<string, ReactNode> = {
+  "/dashboard": <DashboardPage />,
   "/orders": <OrdersPage />,
   "/products": <ProductsPage />,
   "/attributes/categories": <CategoriesPage />,

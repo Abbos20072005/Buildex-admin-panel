@@ -1,3 +1,6 @@
+export { mapOrder } from "./api/orders.mappers";
+export type { OrderListDto } from "./api/orders.dto";
+export { OrderStatusTag } from "./components/OrderTags";
 export { BulkActionsBar } from "./components/list/BulkActionsBar";
 export { OrderStatusTabs } from "./components/list/OrderStatusTabs";
 export { OrdersFilterPanel } from "./components/list/OrdersFilterPanel";
