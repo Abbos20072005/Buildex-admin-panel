@@ -16,6 +16,9 @@ const ProductsPage = lazy(() =>
 const AttributesPage = lazy(() =>
   import("@/pages/AttributesPage").then((m) => ({ default: m.AttributesPage })),
 );
+const ModelsPage = lazy(() =>
+  import("@/pages/ModelsPage").then((m) => ({ default: m.ModelsPage })),
+);
 const TagsPage = lazy(() =>
   import("@/pages/TagsPage").then((m) => ({ default: m.TagsPage })),
 );
@@ -39,6 +42,7 @@ const PAGES: Record<string, ReactNode> = {
   "/attributes/categories": <CategoriesPage />,
   "/attributes/brands": <BrandsPage />,
   "/attributes/tags": <TagsPage />,
+  "/attributes/models": <ModelsPage />,
   "/attributes/characteristics": <AttributesPage />,
 };
 
