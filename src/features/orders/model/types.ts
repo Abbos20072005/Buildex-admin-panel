@@ -26,6 +26,7 @@ export interface Order {
   subtotal: number;
   saved: number;
   deliveryCost: number;
+  manager: { id: number; name: string } | null;
 }
 
 export interface OrderItem {

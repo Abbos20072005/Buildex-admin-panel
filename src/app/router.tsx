@@ -19,6 +19,16 @@ const AttributesPage = lazy(() =>
 const DashboardPage = lazy(() =>
   import("@/pages/DashboardPage").then((m) => ({ default: m.DashboardPage })),
 );
+const BannersPage = lazy(() =>
+  import("@/pages/BannersPage").then((m) => ({ default: m.BannersPage })),
+);
+const BannerPage = lazy(() =>
+  import("@/pages/BannerPage").then((m) => ({ default: m.BannerPage })),
+);
+const PartnerBrandsPage = lazy(() =>
+  import("@/pages/PartnerBrandsPage").then((m) => ({ default: m.PartnerBrandsPage })),
+);
+const TodayPage = lazy(() => import("@/pages/TodayPage").then((m) => ({ default: m.TodayPage })));
 const ModelsPage = lazy(() =>
   import("@/pages/ModelsPage").then((m) => ({ default: m.ModelsPage })),
 );
@@ -39,12 +49,15 @@ const ComingSoonPage = lazy(() =>
 /** Routes that already have a real page; every other sidebar item shows "coming soon". */
 const PAGES: Record<string, ReactNode> = {
   "/dashboard": <DashboardPage />,
+  "/content/banners": <BannersPage />,
+  "/today": <TodayPage />,
   "/orders": <OrdersPage />,
   "/products": <ProductsPage />,
   "/attributes/categories": <CategoriesPage />,
   "/attributes/brands": <BrandsPage />,
   "/attributes/tags": <TagsPage />,
   "/attributes/models": <ModelsPage />,
+  "/attributes/partner-brands": <PartnerBrandsPage />,
   "/attributes/characteristics": <AttributesPage />,
 };
 
@@ -77,6 +90,8 @@ export function AppRouter() {
             />
           ))}
           <Route path="/products/:id" element={<ProductPage />} />
+          <Route path="/content/banners/new" element={<BannerPage />} />
+          <Route path="/content/banners/:id" element={<BannerPage />} />
           <Route path="*" element={<Navigate to="/orders" replace />} />
         </Route>
       </Routes>

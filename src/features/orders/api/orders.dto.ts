@@ -21,6 +21,7 @@ export interface OrderListDto {
   receiver_name?: string | null;
   receiver_phone?: string | null;
   items_count?: number;
+  manager?: { id: number; full_name: string } | null;
   created_at: string;
   updated_at?: string;
 }

@@ -107,6 +107,7 @@ export function mapOrder(dto: OrderListDto): Order {
     subtotal: num(dto.products_total_price),
     saved: num(dto.saved_price),
     deliveryCost: num(dto.delivery_price),
+    manager: dto.manager ? { id: dto.manager.id, name: dto.manager.full_name } : null,
   };
 }
 
