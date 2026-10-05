@@ -3,14 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useOrderStatsQuery } from "@/features/orders";
 import { useProductsInReviewCount, useProductsTotalCount } from "@/features/products";
-import {
-  isNavGroup,
-  NAV_GROUP_KEYS,
-  NAV_LEAVES,
-  NAVIGATION,
-  type NavBadge,
-  type NavLeaf,
-} from "./navigation";
+import { isNavGroup, NAV_LEAVES, NAVIGATION, type NavBadge, type NavLeaf } from "./navigation";
 
 function Counter({ value }: { value: number }) {
   return (
@@ -64,7 +57,6 @@ export function SidebarMenu({ onNavigate }: { onNavigate?: () => void }) {
       inlineIndent={20}
       items={items}
       selectedKeys={[selectedKey]}
-      defaultOpenKeys={NAV_GROUP_KEYS}
       onClick={({ key }) => {
         navigate(key);
         onNavigate?.();

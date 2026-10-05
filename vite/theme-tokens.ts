@@ -7,7 +7,9 @@ import { fonts } from "../src/theme/fonts.ts";
 const OUTPUT = fileURLToPath(new URL("../src/theme/tokens.css", import.meta.url));
 
 function buildCss(): string {
-  const colors = Object.entries(tailwindColors).map(([name, value]) => `  --color-${name}: ${value};`);
+  const colors = Object.entries(tailwindColors).map(
+    ([name, value]) => `  --color-${name}: ${value};`,
+  );
   return [
     "/* GENERATED from src/theme/colors.ts and fonts.ts by vite/theme-tokens.ts — do not edit. */",
     "@theme {",

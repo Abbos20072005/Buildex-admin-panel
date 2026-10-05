@@ -28,7 +28,13 @@ export function extractErrorMessage(body: unknown, fallback: string): string {
     if (typeof record.message === "string") return record.message;
     for (const value of Object.values(record)) {
       if (typeof value === "string" && value) return value;
-      if (Array.isArray(value) && typeof value[0] === "string") return value[0];
+      // nested errors: { products: { non_field_errors: [...] } } or { products: [{ id: "..." }] }
+      const nested = Array.isArray(value) ? value[0] : value;
+      if (typeof nested === "string" && nested) return nested;
+      if (nested && typeof nested === "object") {
+        const message = extractErrorMessage(nested, "");
+        if (message) return message;
+      }
     }
   }
   return fallback;

@@ -42,6 +42,16 @@ const CategoriesPage = lazy(() =>
 const ProductPage = lazy(() =>
   import("@/pages/ProductPage").then((m) => ({ default: m.ProductPage })),
 );
+const PublicationsPage = lazy(() =>
+  import("@/pages/PublicationsPage").then((m) => ({ default: m.PublicationsPage })),
+);
+const AdBlocksPage = lazy(() =>
+  import("@/pages/AdBlocksPage").then((m) => ({ default: m.AdBlocksPage })),
+);
+const PushPage = lazy(() => import("@/pages/PushPage").then((m) => ({ default: m.PushPage })));
+const PushEditPage = lazy(() =>
+  import("@/pages/PushEditPage").then((m) => ({ default: m.PushEditPage })),
+);
 const ComingSoonPage = lazy(() =>
   import("@/pages/ComingSoonPage").then((m) => ({ default: m.ComingSoonPage })),
 );
@@ -50,6 +60,9 @@ const ComingSoonPage = lazy(() =>
 const PAGES: Record<string, ReactNode> = {
   "/dashboard": <DashboardPage />,
   "/content/banners": <BannersPage />,
+  "/content/news": <PublicationsPage />,
+  "/content/ad-blocks": <AdBlocksPage />,
+  "/content/push": <PushPage />,
   "/today": <TodayPage />,
   "/orders": <OrdersPage />,
   "/products": <ProductsPage />,
@@ -90,6 +103,8 @@ export function AppRouter() {
             />
           ))}
           <Route path="/products/:id" element={<ProductPage />} />
+          <Route path="/content/push/new" element={<PushEditPage />} />
+          <Route path="/content/push/:id" element={<PushEditPage />} />
           <Route path="/content/banners/new" element={<BannerPage />} />
           <Route path="/content/banners/:id" element={<BannerPage />} />
           <Route path="*" element={<Navigate to="/orders" replace />} />

@@ -64,6 +64,8 @@ export const NAVIGATION: NavItem[] = [
     icon: <PlayCircleOutlined />,
     children: [
       { path: "/content/banners", label: "nav.banners" },
+      { path: "/content/news", label: "nav.news" },
+      { path: "/content/ad-blocks", label: "nav.adBlocks" },
       { path: "/content/home", label: "nav.homePage" },
       { path: "/content/pages", label: "nav.pages" },
       { path: "/content/push", label: "nav.push" },
@@ -77,6 +79,3 @@ export const NAVIGATION: NavItem[] = [
 export const NAV_LEAVES: NavLeaf[] = NAVIGATION.flatMap((item) =>
   isNavGroup(item) ? item.children : [item],
 );
-
-/** keys of every group — they are all expanded by default, as in the design */
-export const NAV_GROUP_KEYS: string[] = NAVIGATION.filter(isNavGroup).map((group) => group.key);

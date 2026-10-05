@@ -43,9 +43,10 @@ src/
 ├─ shared/                   # hech bir feature'ga bog‘liq bo‘lmagan qayta ishlatiladigan kod
 │  ├─ api/                   # http client (JWT, token refresh, xatolar), session, umumiy tiplar
 │  ├─ config/env.ts
-│  ├─ i18n/                  # i18next + til ro‘yxati (antd/dayjs locale bilan), locales/uz|ru|en.ts
-│  ├─ lib/                   # format, csv, hotkey, debounce, clsx
-│  └─ ui/                    # Logo, LanguageSwitcher
+│  ├─ i18n/                  # i18next + til ro‘yxati (antd/dayjs locale bilan), locales/uz|ru.ts
+│  ├─ lib/                   # format, csv, hotkey, debounce, clsx, localized (uz/ru/en maydonlar)
+│  └─ ui/                    # Logo, LanguageSwitcher, RecordsTable, EditorDrawer, LangTabs, LocalizedField,
+│                            # RichTextEditor, ImageField, StatCard, WidgetCard
 │
 ├─ features/                 # biznes modullar — har biri o‘z api / model / hooks / components ga ega
 │  ├─ auth/
@@ -53,7 +54,9 @@ src/
 │  │  ├─ model/              # AuthProvider, useAuth, tiplar
 │  │  ├─ components/         # LoginForm, RequireAuth
 │  │  └─ index.ts            # public API — tashqaridan faqat shu orqali import qilinadi
-│  ├─ products/              # orders bilan bir xil tuzilma (api / model / hooks / lib / components)
+│  ├─ products/ attributes/ categories/ brands/ badges/ models/ partner-brands/
+│  ├─ dashboard/ today/ banners/ publications/ ad-blocks/ push/
+│  │                         # orders bilan bir xil tuzilma (api / model / hooks / lib / components)
 │  └─ orders/
 │     ├─ api/                # orders.api.ts, DTO tiplar, mapper'lar (API ↔ UI), query-keys
 │     ├─ model/              # domen tiplari, konstantalar (statuslar, tablar, ranglar)
@@ -82,7 +85,7 @@ src/
   shuning uchun Tailwind utility'lari doim ustun (`index.css`). Brand ranglari bir marta —
   `theme/colors.ts` da; antd (`theme/antd.ts`) va Tailwind (`theme/tokens.css`, generatsiya) shundan oladi.
   `colors.ts` o‘zgargach `npm run dev` ni qayta ishga tushiring.
-- **i18n:** uz / ru / en; `Translation` tipi barcha tillarda kalitlar bir xilligini tekshiradi. antd va dayjs
+- **i18n:** admin interfeysi uz / ru (kontent maydonlari — uz / ru / en); `Translation` tipi barcha tillarda kalitlar bir xilligini tekshiradi. antd va dayjs
   locale'lari til bilan birga almashadi.
 
 ## Ulangan endpointlar
@@ -96,4 +99,9 @@ src/
 | Mijoz (modalda)          | `GET /admin/customers/{id}/`                                                          |
 | Filial filtri            | `GET /admin/branches/`                                                                |
 
-Mahsulotlar endpointlari `src/features/products/api/products.api.ts` da.
+Boshqa bo‘limlarning endpointlari o‘z feature'larining `api/*.api.ts` faylida: `products`, `categories`,
+`brands`, `badges` (`product-badges`), `attributes`, `models`, `partner-brands`, `banners`, `dashboard`, `today`,
+`publications` (`news`, `articles`, `videos`), `ad-blocks` (`adds-brands`), `push` (`notifications`).
+
+Hali backendi yo‘q (sidebarda "Tez orada"): Bog‘lanmagan SKU, Moderatsiya, Bosh sahifa, Sahifalar, Media kutubxona,
+Sozlamalar, shuningdek Push'dagi "Avtomatik (buyurtma holati)" tabi.
