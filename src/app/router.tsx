@@ -52,6 +52,12 @@ const PushPage = lazy(() => import("@/pages/PushPage").then((m) => ({ default: m
 const PushEditPage = lazy(() =>
   import("@/pages/PushEditPage").then((m) => ({ default: m.PushEditPage })),
 );
+const CustomersPage = lazy(() =>
+  import("@/pages/CustomersPage").then((m) => ({ default: m.CustomersPage })),
+);
+const ManagersPage = lazy(() =>
+  import("@/pages/ManagersPage").then((m) => ({ default: m.ManagersPage })),
+);
 const ComingSoonPage = lazy(() =>
   import("@/pages/ComingSoonPage").then((m) => ({ default: m.ComingSoonPage })),
 );
@@ -65,6 +71,8 @@ const PAGES: Record<string, ReactNode> = {
   "/content/push": <PushPage />,
   "/today": <TodayPage />,
   "/orders": <OrdersPage />,
+  "/customers": <CustomersPage />,
+  "/managers": <ManagersPage />,
   "/products": <ProductsPage />,
   "/attributes/categories": <CategoriesPage />,
   "/attributes/brands": <BrandsPage />,

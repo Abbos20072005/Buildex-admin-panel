@@ -1,4 +1,13 @@
-import { BoxIcon, GaugeIcon, FileIcon, PlayCircleIcon, CartIcon, ListIcon } from "@/shared/icons";
+import {
+  BoxIcon,
+  CartIcon,
+  FileIcon,
+  GaugeIcon,
+  ListIcon,
+  PlayCircleIcon,
+  UserCheckIcon,
+  UsersIcon,
+} from "@/shared/icons";
 import type { ReactNode } from "react";
 
 /** Live counters shown next to menu items (all of them come from the API). */
@@ -28,6 +37,8 @@ export const NAVIGATION: NavItem[] = [
   { path: "/dashboard", label: "nav.dashboard", icon: <GaugeIcon /> },
   { path: "/today", label: "nav.today", icon: <FileIcon /> },
   { path: "/orders", label: "nav.orders", icon: <CartIcon />, badge: "newOrders" },
+  { path: "/customers", label: "nav.customers", icon: <UsersIcon /> },
+  { path: "/managers", label: "nav.managers", icon: <UserCheckIcon /> },
   {
     key: "products",
     label: "nav.products",

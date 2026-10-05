@@ -13,6 +13,8 @@ interface Props {
   onDelete?: () => void;
   deleting?: boolean;
   deleteConfirm?: string;
+  /** drawer width in px (default 680) */
+  size?: number;
   children: ReactNode;
 }
 
@@ -26,6 +28,7 @@ export function EditorDrawer({
   onDelete,
   deleting,
   deleteConfirm,
+  size = 680,
   children,
 }: Props) {
   const { t } = useTranslation();
@@ -33,7 +36,7 @@ export function EditorDrawer({
   return (
     <Drawer
       open
-      size={680}
+      size={size}
       // never wider than a phone screen
       rootClassName="[&_.ant-drawer-content-wrapper]:max-w-screen"
       title={<span className="text-base font-bold">{title}</span>}

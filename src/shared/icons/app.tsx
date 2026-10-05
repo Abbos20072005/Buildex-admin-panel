@@ -116,6 +116,25 @@ export const UserIcon = createIcon(
   </>,
 );
 
+export const UsersIcon = createIcon(
+  "UsersIcon",
+  <>
+    <circle cx="9" cy="8" r="3.5" />
+    <path d="M2.5 19.5c0-3.4 2.9-5.5 6.5-5.5s6.5 2.1 6.5 5.5" />
+    <path d="M15.6 4.9a3.5 3.5 0 0 1 0 6.2" />
+    <path d="M17.6 14.3c2.3.5 3.9 2.2 3.9 5.2" />
+  </>,
+);
+
+export const UserCheckIcon = createIcon(
+  "UserCheckIcon",
+  <>
+    <circle cx="10" cy="8" r="3.8" />
+    <path d="M3.5 20.5c0-3.6 2.9-6.2 6.5-6.2 1 0 2 .2 2.8.6" />
+    <path d="M15.5 17.5l2 2 3.7-4" />
+  </>,
+);
+
 export const UserRemoveIcon = createIcon(
   "UserRemoveIcon",
   <>

@@ -1,5 +1,6 @@
 import { TrashIcon, EditIcon, MoreIcon } from "@/shared/icons";
 import { Button, Dropdown, Table, type TableColumnsType } from "antd";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 const PAGE_SIZES = ["20", "50", "100"];
@@ -15,6 +16,10 @@ interface Props<T> {
   onPageChange: (page: number, pageSize: number) => void;
   onOpen: (item: T) => void;
   onDelete: (item: T) => void;
+  /** search and filters shown inside the same card, above the table */
+  toolbar?: ReactNode;
+  /** text at the left of the footer; default "1–20 / 143" */
+  totalLabel?: (shown: number, total: number) => string;
 }
 
 /** Paginated list of records: a click on a row opens it, the "⋯" menu edits or deletes. */
@@ -28,6 +33,8 @@ export function RecordsTable<T extends { id: number }>({
   onPageChange,
   onOpen,
   onDelete,
+  toolbar,
+  totalLabel,
 }: Props<T>) {
   const { t } = useTranslation();
 
@@ -64,6 +71,7 @@ export function RecordsTable<T extends { id: number }>({
 
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      {toolbar && <div className="flex flex-wrap gap-3 p-4">{toolbar}</div>}
       <Table<T>
         rowKey="id"
         size="middle"
@@ -79,7 +87,8 @@ export function RecordsTable<T extends { id: number }>({
           total,
           showSizeChanger: true,
           pageSizeOptions: PAGE_SIZES,
-          showTotal: (count, [from, to]) => `${from}–${to} / ${count}`,
+          showTotal: (count, [from, to]) =>
+            totalLabel ? totalLabel(to - from + 1, count) : `${from}–${to} / ${count}`,
           onChange: onPageChange,
         }}
       />
