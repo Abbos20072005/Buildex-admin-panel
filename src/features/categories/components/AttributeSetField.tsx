@@ -1,9 +1,4 @@
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  CheckOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { ArrowDownIcon, ArrowUpIcon, CheckIcon, CloseIcon } from "@/shared/icons";
 import { Button, Select } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -73,27 +68,27 @@ export function AttributeSetField({ value = [], onChange }: Props) {
                 </span>
               </span>
               <span className="text-center">
-                {item.isFilterable ? <CheckOutlined className="text-brand" /> : null}
+                {item.isFilterable ? <CheckIcon className="text-brand" /> : null}
               </span>
               <span className="flex justify-end">
                 <Button
                   type="text"
                   size="small"
-                  icon={<ArrowUpOutlined />}
+                  icon={<ArrowUpIcon />}
                   disabled={index === 0}
                   onClick={() => move(index, -1)}
                 />
                 <Button
                   type="text"
                   size="small"
-                  icon={<ArrowDownOutlined />}
+                  icon={<ArrowDownIcon />}
                   disabled={index === value.length - 1}
                   onClick={() => move(index, 1)}
                 />
                 <Button
                   type="text"
                   size="small"
-                  icon={<CloseOutlined />}
+                  icon={<CloseIcon />}
                   onClick={() => onChange?.(value.filter((_, i) => i !== index))}
                 />
               </span>

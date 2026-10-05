@@ -1,4 +1,4 @@
-import { RightOutlined } from "@ant-design/icons";
+import { ChevronRightIcon } from "@/shared/icons";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -23,7 +23,7 @@ function SummaryCard({
     >
       <div className="flex items-center justify-between text-sm font-semibold text-slate-500">
         {label}
-        <RightOutlined className="text-xs text-slate-400" />
+        <ChevronRightIcon className="text-xs text-slate-400" />
       </div>
       <div className="mt-2 text-3xl leading-none font-extrabold tabular-nums">{value}</div>
       <div className="mt-2 text-xs text-slate-500">{note}</div>

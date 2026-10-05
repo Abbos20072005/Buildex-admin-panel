@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, MoreOutlined } from "@ant-design/icons";
+import { TrashIcon, EditIcon, MoreIcon } from "@/shared/icons";
 import { Button, Dropdown, Table, Tag, type TableColumnsType } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
@@ -76,10 +76,10 @@ export function ModelsTable({
             trigger={["click"]}
             menu={{
               items: [
-                { key: "edit", icon: <EditOutlined />, label: t("models.edit") },
+                { key: "edit", icon: <EditIcon />, label: t("models.edit") },
                 {
                   key: "delete",
-                  icon: <DeleteOutlined />,
+                  icon: <TrashIcon />,
                   label: t("common.delete"),
                   danger: true,
                   // a model with products can't be deleted — deactivate it instead
@@ -89,7 +89,7 @@ export function ModelsTable({
               onClick: ({ key }) => (key === "edit" ? onOpen(model.id) : onDelete(model)),
             }}
           >
-            <Button type="text" icon={<MoreOutlined />} aria-label={t("models.actions")} />
+            <Button type="text" icon={<MoreIcon />} aria-label={t("models.actions")} />
           </Dropdown>
         </span>
       ),

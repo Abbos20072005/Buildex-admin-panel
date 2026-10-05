@@ -1,10 +1,10 @@
 import {
-  CheckOutlined,
-  DownOutlined,
-  HolderOutlined,
-  LoadingOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+  CheckIcon,
+  ChevronDownIcon,
+  GripIcon,
+  LoadingIcon,
+  ChevronRightIcon,
+} from "@/shared/icons";
 import { Table, Tag, type TableColumnsType } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,7 @@ interface Props {
 }
 
 const dash = <span className="text-slate-300">—</span>;
-const check = <CheckOutlined className="text-green-600" />;
+const check = <CheckIcon className="text-green-600" />;
 
 export function CategoriesTable({
   rows,
@@ -69,7 +69,7 @@ export function CategoriesTable({
         <div className="flex items-center gap-2" style={{ paddingLeft: depth * 22 }}>
           {!searching && (
             <span className="w-4 shrink-0 text-slate-300" title={t("categories.dragHint")}>
-              <HolderOutlined className="cursor-grab" />
+              <GripIcon className="cursor-grab" />
             </span>
           )}
           {!searching && item.childrenCount > 0 ? (
@@ -83,11 +83,11 @@ export function CategoriesTable({
               className="grid size-5 shrink-0 cursor-pointer place-items-center rounded border-0 bg-transparent text-xs text-slate-500 hover:bg-slate-100"
             >
               {loadingChildren ? (
-                <LoadingOutlined />
+                <LoadingIcon />
               ) : expanded.has(nodeKey(item)) ? (
-                <DownOutlined />
+                <ChevronDownIcon />
               ) : (
-                <RightOutlined />
+                <ChevronRightIcon />
               )}
             </button>
           ) : (

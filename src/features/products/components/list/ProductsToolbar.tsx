@@ -1,9 +1,4 @@
-import {
-  AppstoreOutlined,
-  DownloadOutlined,
-  FilterOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { AppsIcon, DownloadIcon, FilterIcon, ListIcon } from "@/shared/icons";
 import { Badge, Button, Segmented } from "antd";
 import { useTranslation } from "react-i18next";
 import { brand } from "@/theme";
@@ -50,13 +45,13 @@ export function ProductsToolbar({
           value={view}
           onChange={onViewChange}
           options={[
-            { value: "table", label: t("products.view.table"), icon: <UnorderedListOutlined /> },
-            { value: "cards", label: t("products.view.cards"), icon: <AppstoreOutlined /> },
+            { value: "table", label: t("products.view.table"), icon: <ListIcon /> },
+            { value: "cards", label: t("products.view.cards"), icon: <AppsIcon /> },
           ]}
         />
         <Badge count={activeFilterCount} size="small" color={brand.primary}>
           <Button
-            icon={<FilterOutlined />}
+            icon={<FilterIcon />}
             type={filtersOpen ? "primary" : "default"}
             ghost={filtersOpen}
             onClick={onToggleFilters}
@@ -65,7 +60,7 @@ export function ProductsToolbar({
           </Button>
         </Badge>
         <Button
-          icon={<DownloadOutlined />}
+          icon={<DownloadIcon />}
           loading={!!exportLabel}
           disabled={!total}
           onClick={onExport}

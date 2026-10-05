@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseIcon } from "@/shared/icons";
 import { Button, Select } from "antd";
 import { useTranslation } from "react-i18next";
 import { ORDER_STATUSES } from "../../model/constants";
@@ -28,7 +28,7 @@ export function BulkActionsBar({ count, loading, onChangeStatus, onClear }: Prop
       />
       <Button
         type="text"
-        icon={<CloseOutlined />}
+        icon={<CloseIcon />}
         onClick={onClear}
         className="ml-auto text-slate-300! hover:text-white!"
       >

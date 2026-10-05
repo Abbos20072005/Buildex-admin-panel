@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, SaveOutlined, SendOutlined, UndoOutlined } from "@ant-design/icons";
+import { CheckCircleIcon, SaveIcon, SendIcon, UndoIcon } from "@/shared/icons";
 import { Button } from "antd";
 import { useTranslation } from "react-i18next";
 import type { ProductDetail, PublishStatus } from "../../model/types";
@@ -30,11 +30,11 @@ export function ProductPageHeader({ product, dirty, saving, onSave, onReset }: P
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button icon={<UndoOutlined />} disabled={!dirty || saving} onClick={onReset}>
+        <Button icon={<UndoIcon />} disabled={!dirty || saving} onClick={onReset}>
           {t("products.modal.reset")}
         </Button>
         <Button
-          icon={<SaveOutlined />}
+          icon={<SaveIcon />}
           type={dirty ? "primary" : "default"}
           ghost={dirty}
           disabled={!dirty}
@@ -46,7 +46,7 @@ export function ProductPageHeader({ product, dirty, saving, onSave, onReset }: P
         {product.publishStatus === "draft" && (
           <Button
             type="primary"
-            icon={<SendOutlined />}
+            icon={<SendIcon />}
             disabled={saving}
             onClick={() => onSave("review")}
           >
@@ -56,7 +56,7 @@ export function ProductPageHeader({ product, dirty, saving, onSave, onReset }: P
         {product.publishStatus === "review" && (
           <Button
             type="primary"
-            icon={<CheckCircleOutlined />}
+            icon={<CheckCircleIcon />}
             disabled={saving}
             onClick={() => onSave("published")}
           >

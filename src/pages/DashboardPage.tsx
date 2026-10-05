@@ -1,4 +1,4 @@
-import { CalendarOutlined, DownloadOutlined } from "@ant-design/icons";
+import { CalendarIcon, DownloadIcon } from "@/shared/icons";
 import { Alert, Button, Dropdown } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -43,11 +43,11 @@ export function DashboardPage() {
               onClick: ({ key }) => setDays(Number(key)),
             }}
           >
-            <Button icon={<CalendarOutlined />}>{rangeLabel(days)}</Button>
+            <Button icon={<CalendarIcon />}>{rangeLabel(days)}</Button>
           </Dropdown>
           <Button
             type="primary"
-            icon={<DownloadOutlined />}
+            icon={<DownloadIcon />}
             disabled={!dashboard.data}
             onClick={() => dashboard.data && exportDashboardCsv(dashboard.data, t)}
           >

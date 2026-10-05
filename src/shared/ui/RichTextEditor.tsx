@@ -1,10 +1,4 @@
-import {
-  BoldOutlined,
-  ItalicOutlined,
-  OrderedListOutlined,
-  UnderlineOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { BoldIcon, ItalicIcon, ListOrderedIcon, UnderlineIcon, ListIcon } from "@/shared/icons";
 import { Button } from "antd";
 import DOMPurify from "dompurify";
 import { useEffect, useRef, type ReactNode } from "react";
@@ -17,11 +11,11 @@ interface Props {
 }
 
 const COMMANDS: { command: string; icon: ReactNode; label: string }[] = [
-  { command: "bold", icon: <BoldOutlined />, label: "Bold" },
-  { command: "italic", icon: <ItalicOutlined />, label: "Italic" },
-  { command: "underline", icon: <UnderlineOutlined />, label: "Underline" },
-  { command: "insertUnorderedList", icon: <UnorderedListOutlined />, label: "Bullet list" },
-  { command: "insertOrderedList", icon: <OrderedListOutlined />, label: "Numbered list" },
+  { command: "bold", icon: <BoldIcon />, label: "Bold" },
+  { command: "italic", icon: <ItalicIcon />, label: "Italic" },
+  { command: "underline", icon: <UnderlineIcon />, label: "Underline" },
+  { command: "insertUnorderedList", icon: <ListIcon />, label: "Bullet list" },
+  { command: "insertOrderedList", icon: <ListOrderedIcon />, label: "Numbered list" },
 ];
 
 const clean = (html: string) => DOMPurify.sanitize(html);

@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseIcon } from "@/shared/icons";
 import { Button, Card, DatePicker, Form, InputNumber, Select, Space } from "antd";
 import dayjs from "dayjs";
 import { useState, type ReactNode } from "react";
@@ -153,7 +153,7 @@ export function ProductsFilterPanel({ state }: { state: ProductListState }) {
 
         {activeFilterCount > 0 && (
           <div className="flex items-end">
-            <Button icon={<CloseOutlined />} onClick={resetFilters}>
+            <Button icon={<CloseIcon />} onClick={resetFilters}>
               {t("common.reset")}
             </Button>
           </div>

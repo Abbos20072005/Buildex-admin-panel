@@ -1,4 +1,4 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { PlusIcon, SearchIcon } from "@/shared/icons";
 import { Button, Input } from "antd";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -74,12 +74,12 @@ export function AttributesSection({
           <Input
             allowClear
             className="w-72"
-            prefix={<SearchOutlined className="text-slate-400" />}
+            prefix={<SearchIcon className="text-slate-400" />}
             placeholder={searchPlaceholder}
             value={search}
             onChange={(event) => onSearch(event.target.value)}
           />
-          <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
+          <Button type="primary" icon={<PlusIcon />} onClick={onAdd}>
             {addLabel}
           </Button>
         </div>

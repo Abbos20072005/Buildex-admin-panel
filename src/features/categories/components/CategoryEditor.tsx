@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseIcon } from "@/shared/icons";
 import {
   Alert,
   App,
@@ -437,7 +437,7 @@ export function CategoryEditor({
           </div>
           <Button
             type="text"
-            icon={<CloseOutlined />}
+            icon={<CloseIcon />}
             onClick={onClose}
             aria-label={t("common.cancel")}
           />

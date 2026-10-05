@@ -1,11 +1,4 @@
-import {
-  CodeSandboxOutlined,
-  DashboardOutlined,
-  FileTextOutlined,
-  PlayCircleOutlined,
-  ShoppingCartOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { BoxIcon, GaugeIcon, FileIcon, PlayCircleIcon, CartIcon, ListIcon } from "@/shared/icons";
 import type { ReactNode } from "react";
 
 /** Live counters shown next to menu items (all of them come from the API). */
@@ -32,13 +25,13 @@ export const isNavGroup = (item: NavItem): item is NavGroup => "children" in ite
 
 /** Sidebar structure. Pages that aren't built yet render <ComingSoonPage>. */
 export const NAVIGATION: NavItem[] = [
-  { path: "/dashboard", label: "nav.dashboard", icon: <DashboardOutlined /> },
-  { path: "/today", label: "nav.today", icon: <FileTextOutlined /> },
-  { path: "/orders", label: "nav.orders", icon: <ShoppingCartOutlined />, badge: "newOrders" },
+  { path: "/dashboard", label: "nav.dashboard", icon: <GaugeIcon /> },
+  { path: "/today", label: "nav.today", icon: <FileIcon /> },
+  { path: "/orders", label: "nav.orders", icon: <CartIcon />, badge: "newOrders" },
   {
     key: "products",
     label: "nav.products",
-    icon: <CodeSandboxOutlined />,
+    icon: <BoxIcon />,
     children: [
       { path: "/products", label: "nav.allProducts", badge: "productsTotal" },
       { path: "/products/unlinked", label: "nav.unlinkedSku" },
@@ -48,7 +41,7 @@ export const NAVIGATION: NavItem[] = [
   {
     key: "attributes",
     label: "nav.attributes",
-    icon: <UnorderedListOutlined />,
+    icon: <ListIcon />,
     children: [
       { path: "/attributes/categories", label: "nav.categories" },
       { path: "/attributes/brands", label: "nav.brands" },
@@ -61,7 +54,7 @@ export const NAVIGATION: NavItem[] = [
   {
     key: "content",
     label: "nav.contents",
-    icon: <PlayCircleOutlined />,
+    icon: <PlayCircleIcon />,
     children: [
       { path: "/content/banners", label: "nav.banners" },
       { path: "/content/news", label: "nav.news" },

@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusIcon } from "@/shared/icons";
 import { App, Button } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -47,11 +47,7 @@ export function BannersPage() {
           <div className="text-xs text-slate-500">{t("nav.contents")}</div>
           <h1 className="m-0 text-2xl font-bold tracking-tight">{t("nav.banners")}</h1>
         </div>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => navigate(`${BANNERS_PATH}/new`)}
-        >
+        <Button type="primary" icon={<PlusIcon />} onClick={() => navigate(`${BANNERS_PATH}/new`)}>
           {t("banners.add")}
         </Button>
       </div>

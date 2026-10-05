@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchIcon } from "@/shared/icons";
 import { Input, type InputRef } from "antd";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -74,7 +74,7 @@ export function GlobalSearch() {
       onChange={(event) => setValue(event.target.value)}
       onPressEnter={submit}
       placeholder={t(SEARCHABLE_PAGES[pathname] ?? SEARCHABLE_PAGES[FALLBACK_PAGE])}
-      prefix={<SearchOutlined className="text-slate-400" />}
+      prefix={<SearchIcon className="text-slate-400" />}
       className="max-w-[480px]"
     />
   );

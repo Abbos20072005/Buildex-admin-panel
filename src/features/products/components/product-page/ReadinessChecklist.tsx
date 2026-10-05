@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, CloseCircleOutlined, DownOutlined } from "@ant-design/icons";
+import { CheckCircleIcon, CloseCircleIcon, ChevronDownIcon } from "@/shared/icons";
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { getLanguage } from "@/shared/i18n";
@@ -17,9 +17,9 @@ interface Props {
 
 function Mark({ done }: { done: boolean }) {
   return done ? (
-    <CheckCircleOutlined className="text-green-600" />
+    <CheckCircleIcon className="text-green-600" />
   ) : (
-    <CloseCircleOutlined className="text-red-600" />
+    <CloseCircleIcon className="text-red-600" />
   );
 }
 
@@ -64,7 +64,7 @@ function Expandable({
         <Mark done={done} />
         <span>{title}</span>
         {summary && <span className="text-xs font-normal text-slate-500">{summary}</span>}
-        <DownOutlined
+        <ChevronDownIcon
           className={clsx(
             "ml-auto text-xs text-slate-400 transition-transform",
             open && "rotate-180",

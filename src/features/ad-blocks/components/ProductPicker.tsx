@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseIcon } from "@/shared/icons";
 import { Button, Select, Tag } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -76,7 +76,7 @@ export function ProductPicker({ value = [], onChange }: Props) {
             <Button
               type="text"
               size="small"
-              icon={<CloseOutlined />}
+              icon={<CloseIcon />}
               aria-label={t("common.delete")}
               onClick={() => onChange?.(value.filter((item) => item.id !== product.id))}
             />

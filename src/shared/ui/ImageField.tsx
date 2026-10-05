@@ -1,4 +1,4 @@
-import { PictureOutlined } from "@ant-design/icons";
+import { ImageIcon } from "@/shared/icons";
 import { Button, Upload } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,11 +34,7 @@ export function ImageField({ url, file, onPick, hint }: Props) {
     <div>
       <div className="flex items-center gap-4">
         <span className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-xl border border-dashed border-slate-300 bg-slate-50 text-2xl text-slate-300">
-          {src ? (
-            <img src={src} alt="" className="size-full object-contain" />
-          ) : (
-            <PictureOutlined />
-          )}
+          {src ? <img src={src} alt="" className="size-full object-contain" /> : <ImageIcon />}
         </span>
         <Upload
           accept="image/svg+xml,image/png,image/jpeg,image/webp"

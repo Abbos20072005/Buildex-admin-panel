@@ -1,4 +1,4 @@
-import { DownOutlined, GlobalOutlined } from "@ant-design/icons";
+import { ChevronDownIcon, GlobeIcon } from "@/shared/icons";
 import { Button, Dropdown } from "antd";
 import { useTranslation } from "react-i18next";
 import { getLanguage, LANGUAGES } from "@/shared/i18n";
@@ -25,9 +25,9 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
         onClick: ({ key }) => void i18n.changeLanguage(key),
       }}
     >
-      <Button aria-label={t("common.language")} icon={<GlobalOutlined />} className="font-semibold">
+      <Button aria-label={t("common.language")} icon={<GlobeIcon />} className="font-semibold">
         {compact ? current.short : current.label}
-        <DownOutlined className="text-[10px]" />
+        <ChevronDownIcon className="text-[10px]" />
       </Button>
     </Dropdown>
   );

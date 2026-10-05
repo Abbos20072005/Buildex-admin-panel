@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseIcon } from "@/shared/icons";
 import {
   App,
   Button,
@@ -160,7 +160,7 @@ export function BadgeEditor({ badge, onClose }: Props) {
           </div>
           <Button
             type="text"
-            icon={<CloseOutlined />}
+            icon={<CloseIcon />}
             onClick={onClose}
             aria-label={t("common.cancel")}
           />

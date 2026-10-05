@@ -1,4 +1,4 @@
-import { LeftOutlined } from "@ant-design/icons";
+import { ChevronLeftIcon } from "@/shared/icons";
 import { Alert, App, Button, DatePicker, Form, Input, Popconfirm, Tag, TimePicker } from "antd";
 import dayjs, { type Dayjs } from "dayjs";
 import { useState } from "react";
@@ -136,7 +136,7 @@ export function PushForm({ push }: { push: Push | null }) {
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <Link to={PUSH_PATH} className="text-sm font-semibold">
-            <LeftOutlined className="mr-1 text-xs" />
+            <ChevronLeftIcon className="mr-1 text-xs" />
             {t("nav.push")}
           </Link>
           <h1 className="m-0 mt-1 flex items-center gap-3 text-2xl font-bold tracking-tight">

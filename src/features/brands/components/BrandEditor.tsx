@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseIcon } from "@/shared/icons";
 import { App, AutoComplete, Button, Card, Form, Input, Popconfirm, Switch } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -101,7 +101,7 @@ export function BrandEditor({ brand, onClose }: Props) {
           </div>
           <Button
             type="text"
-            icon={<CloseOutlined />}
+            icon={<CloseIcon />}
             onClick={onClose}
             aria-label={t("common.cancel")}
           />

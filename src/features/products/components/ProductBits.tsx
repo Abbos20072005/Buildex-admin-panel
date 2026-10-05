@@ -1,4 +1,4 @@
-import { LockOutlined, PictureOutlined } from "@ant-design/icons";
+import { LockIcon, ImageIcon } from "@/shared/icons";
 import { Tag, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
@@ -26,7 +26,7 @@ export function ErpMark({ className }: { className?: string }) {
           className,
         )}
       >
-        <LockOutlined className="text-[10px]" />
+        <LockIcon className="text-[10px]" />
         1C
       </span>
     </Tooltip>
@@ -53,7 +53,7 @@ export function ProductThumb({
       {src ? (
         <img src={src} alt={alt} loading="lazy" className="size-full object-contain" />
       ) : (
-        <PictureOutlined className="text-xl" />
+        <ImageIcon className="text-xl" />
       )}
     </span>
   );

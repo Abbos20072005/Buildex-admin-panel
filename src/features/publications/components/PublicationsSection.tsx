@@ -1,4 +1,4 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { PlusIcon, SearchIcon } from "@/shared/icons";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import { App, Button, DatePicker, Input, type TableColumnsType } from "antd";
 import type { Dayjs } from "dayjs";
@@ -72,7 +72,7 @@ export function PublicationsSection<T extends { id: number }>({
           <Input
             allowClear
             className="w-72"
-            prefix={<SearchOutlined className="text-slate-400" />}
+            prefix={<SearchIcon className="text-slate-400" />}
             placeholder={t(`publications.search.${kind}`)}
             value={search}
             onChange={(event) => {
@@ -89,7 +89,7 @@ export function PublicationsSection<T extends { id: number }>({
             }}
           />
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setSelected("new")}>
+        <Button type="primary" icon={<PlusIcon />} onClick={() => setSelected("new")}>
           {t(`publications.add.${kind}`)}
         </Button>
       </div>

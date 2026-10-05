@@ -1,4 +1,4 @@
-import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
+import { CloseIcon, PlusIcon } from "@/shared/icons";
 import { App, Button, Card, Form, Input, Popconfirm, Segmented, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
@@ -102,7 +102,7 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
           </div>
           <Button
             type="text"
-            icon={<CloseOutlined />}
+            icon={<CloseIcon />}
             onClick={onClose}
             aria-label={t("common.cancel")}
           />
@@ -201,7 +201,7 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
                       <Button
                         type="text"
                         size="small"
-                        icon={<CloseOutlined />}
+                        icon={<CloseIcon />}
                         disabled={fields.length === 1}
                         onClick={() => removeOption(field.name)}
                         aria-label={t("common.delete")}
@@ -211,7 +211,7 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
                   <Button
                     type="link"
                     className="px-0"
-                    icon={<PlusOutlined />}
+                    icon={<PlusIcon />}
                     onClick={() => add({ uz: "", ru: "" })}
                   >
                     {t("attributes.addOption")}

@@ -1,4 +1,4 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { PlusIcon, SearchIcon } from "@/shared/icons";
 import { App, Button, Input, Select } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -69,7 +69,7 @@ export function AdBlocksPage() {
             )}
           </h1>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setSelected("new")}>
+        <Button type="primary" icon={<PlusIcon />} onClick={() => setSelected("new")}>
           {t("adBlocks.add")}
         </Button>
       </div>
@@ -78,7 +78,7 @@ export function AdBlocksPage() {
         <Input
           allowClear
           className="w-72"
-          prefix={<SearchOutlined className="text-slate-400" />}
+          prefix={<SearchIcon className="text-slate-400" />}
           placeholder={t("adBlocks.search")}
           value={search}
           onChange={(event) => {

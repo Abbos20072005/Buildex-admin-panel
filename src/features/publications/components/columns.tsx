@@ -1,4 +1,4 @@
-import { PictureOutlined } from "@ant-design/icons";
+import { ImageIcon } from "@/shared/icons";
 import type { TableColumnsType } from "antd";
 import type { TFunction } from "i18next";
 import { formatDateTime } from "@/shared/lib/format";
@@ -20,7 +20,7 @@ export const newsColumns = (t: TFunction): TableColumnsType<NewsItem> => [
         {item.image ? (
           <img src={item.image} alt="" className="size-full object-cover" />
         ) : (
-          <PictureOutlined />
+          <ImageIcon />
         )}
       </span>
     ),

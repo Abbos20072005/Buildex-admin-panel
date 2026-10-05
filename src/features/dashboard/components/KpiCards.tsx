@@ -1,9 +1,4 @@
-import {
-  BarChartOutlined,
-  ShoppingCartOutlined,
-  UserOutlined,
-  WalletOutlined,
-} from "@ant-design/icons";
+import { ChartIcon, CartIcon, UserIcon, WalletIcon } from "@/shared/icons";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "@/shared/lib/format";
@@ -59,7 +54,7 @@ export function KpiCards({ summary }: { summary: Dashboard["summary"] }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <KpiCard
-        icon={<ShoppingCartOutlined />}
+        icon={<CartIcon />}
         tone="bg-brand-soft text-brand"
         label={t("dashboard.kpi.orders")}
         value={formatNumber(summary.orders.value)}
@@ -67,7 +62,7 @@ export function KpiCards({ summary }: { summary: Dashboard["summary"] }) {
         days={summary.days}
       />
       <KpiCard
-        icon={<WalletOutlined />}
+        icon={<WalletIcon />}
         tone="bg-amber-50 text-amber-600"
         label={t("dashboard.kpi.revenue")}
         value={revenue.amount}
@@ -76,7 +71,7 @@ export function KpiCards({ summary }: { summary: Dashboard["summary"] }) {
         days={summary.days}
       />
       <KpiCard
-        icon={<BarChartOutlined />}
+        icon={<ChartIcon />}
         tone="bg-brand-soft text-brand"
         label={t("dashboard.kpi.averageCheck")}
         value={average.amount}
@@ -85,7 +80,7 @@ export function KpiCards({ summary }: { summary: Dashboard["summary"] }) {
         days={summary.days}
       />
       <KpiCard
-        icon={<UserOutlined />}
+        icon={<UserIcon />}
         tone="bg-green-50 text-green-700"
         label={t("dashboard.kpi.newCustomers")}
         value={formatNumber(summary.newCustomers.value)}

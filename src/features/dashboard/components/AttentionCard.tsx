@@ -1,11 +1,11 @@
 import {
-  CheckOutlined,
-  ClockCircleOutlined,
-  CommentOutlined,
-  ExclamationOutlined,
-  FileSearchOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
+  CheckIcon,
+  ClockIcon,
+  CommentIcon,
+  ExclamationIcon,
+  FileSearchIcon,
+  QuestionCircleIcon,
+} from "@/shared/icons";
 import dayjs from "dayjs";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,7 +32,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
   if (data.outOfStock > 0) {
     items.push({
       key: "stock",
-      icon: <ExclamationOutlined />,
+      icon: <ExclamationIcon />,
       tone: "bg-red-50 text-red-600",
       title: t("dashboard.attention.outOfStock", { count: data.outOfStock }),
       subtitle: data.outOfStockCategories.join(" · "),
@@ -42,7 +42,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
   if (data.stalePendingOrders > 0) {
     items.push({
       key: "orders",
-      icon: <ClockCircleOutlined />,
+      icon: <ClockIcon />,
       tone: "bg-amber-50 text-amber-600",
       title: t("dashboard.attention.stalePending", { count: data.stalePendingOrders }),
       subtitle: t("dashboard.attention.staleHours", { hours: data.pendingHours }),
@@ -52,7 +52,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
   if (data.unansweredQuestions > 0) {
     items.push({
       key: "questions",
-      icon: <QuestionCircleOutlined />,
+      icon: <QuestionCircleIcon />,
       tone: "bg-brand-soft text-brand",
       title: t("dashboard.attention.questions", { count: data.unansweredQuestions }),
     });
@@ -60,7 +60,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
   if (data.unansweredChats > 0) {
     items.push({
       key: "chats",
-      icon: <CommentOutlined />,
+      icon: <CommentIcon />,
       tone: "bg-brand-soft text-brand",
       title: t("dashboard.attention.chats", { count: data.unansweredChats }),
     });
@@ -68,7 +68,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
   if (data.moderationQueue > 0) {
     items.push({
       key: "moderation",
-      icon: <FileSearchOutlined />,
+      icon: <FileSearchIcon />,
       tone: "bg-brand-soft text-brand",
       title: t("dashboard.attention.moderation", { count: data.moderationQueue }),
       subtitle: t("dashboard.attention.moderationHint"),
@@ -78,7 +78,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
   if (data.lastStockSync) {
     items.push({
       key: "sync",
-      icon: <CheckOutlined />,
+      icon: <CheckIcon />,
       tone: "bg-green-50 text-green-700",
       title: t("dashboard.attention.syncDone"),
       subtitle: t("dashboard.attention.syncTime", {

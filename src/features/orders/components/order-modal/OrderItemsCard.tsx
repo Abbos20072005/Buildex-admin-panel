@@ -1,4 +1,4 @@
-import { InboxOutlined } from "@ant-design/icons";
+import { InboxIcon } from "@/shared/icons";
 import { Card, Table, type TableColumnsType } from "antd";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,7 @@ function useItemColumns(): TableColumnsType<OrderItem> {
       width: 64,
       render: () => (
         <span className="grid size-10 place-items-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400">
-          <InboxOutlined />
+          <InboxIcon />
         </span>
       ),
     },

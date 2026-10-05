@@ -1,4 +1,4 @@
-import { DownOutlined, LogoutOutlined } from "@ant-design/icons";
+import { ChevronDownIcon, LogoutIcon } from "@/shared/icons";
 import { Avatar, Button, Dropdown } from "antd";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +40,7 @@ export function UserMenu() {
             ),
           },
           { type: "divider" },
-          { key: "logout", danger: true, icon: <LogoutOutlined />, label: t("common.logout") },
+          { key: "logout", danger: true, icon: <LogoutIcon />, label: t("common.logout") },
         ],
         onClick: ({ key }) => {
           if (key !== "logout") return;
@@ -54,7 +54,7 @@ export function UserMenu() {
           {initials(user.name)}
         </Avatar>
         <span className="hidden max-w-36 truncate sm:inline">{user.name}</span>
-        <DownOutlined className="text-[10px]" />
+        <ChevronDownIcon className="text-[10px]" />
       </Button>
     </Dropdown>
   );

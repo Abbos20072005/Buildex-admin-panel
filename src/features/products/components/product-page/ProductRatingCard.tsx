@@ -1,4 +1,4 @@
-import { StarFilled } from "@ant-design/icons";
+import { StarIcon } from "@/shared/icons";
 import { Card } from "antd";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,7 +25,7 @@ export function ProductRatingCard({ product }: { product: ProductDetail }) {
           value={
             product.rating ? (
               <span className="inline-flex items-center gap-1">
-                <StarFilled className="text-brand-yellow" />
+                <StarIcon className="text-brand-yellow" />
                 {product.rating.toFixed(1)}
               </span>
             ) : (

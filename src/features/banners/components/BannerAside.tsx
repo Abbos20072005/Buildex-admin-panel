@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { CheckCircleIcon, CloseCircleIcon } from "@/shared/icons";
 import { Segmented } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -82,11 +82,7 @@ export function BannerReadiness({ items }: { items: ReadinessItem[] }) {
               item.done ? "text-slate-700" : "font-semibold text-red-600",
             )}
           >
-            {item.done ? (
-              <CheckCircleOutlined className="text-green-600" />
-            ) : (
-              <CloseCircleOutlined />
-            )}
+            {item.done ? <CheckCircleIcon className="text-green-600" /> : <CloseCircleIcon />}
             {t(`banners.readiness.${item.key}`)}
           </li>
         ))}

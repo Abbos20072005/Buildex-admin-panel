@@ -1,4 +1,4 @@
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckIcon } from "@/shared/icons";
 import { Table, Tag, type TableColumnsType } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
@@ -89,7 +89,7 @@ export function AttributesTable({
       width: 70,
       align: "center",
       render: (_, attribute) =>
-        attribute.isFilterable ? <CheckOutlined className="text-brand" /> : dash,
+        attribute.isFilterable ? <CheckIcon className="text-brand" /> : dash,
     },
     {
       key: "categories",

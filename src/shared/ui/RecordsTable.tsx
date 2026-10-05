@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, MoreOutlined } from "@ant-design/icons";
+import { TrashIcon, EditIcon, MoreIcon } from "@/shared/icons";
 import { Button, Dropdown, Table, type TableColumnsType } from "antd";
 import { useTranslation } from "react-i18next";
 
@@ -44,10 +44,10 @@ export function RecordsTable<T extends { id: number }>({
             trigger={["click"]}
             menu={{
               items: [
-                { key: "edit", icon: <EditOutlined />, label: t("common.edit") },
+                { key: "edit", icon: <EditIcon />, label: t("common.edit") },
                 {
                   key: "delete",
-                  icon: <DeleteOutlined />,
+                  icon: <TrashIcon />,
                   label: t("common.delete"),
                   danger: true,
                 },
@@ -55,7 +55,7 @@ export function RecordsTable<T extends { id: number }>({
               onClick: ({ key }) => (key === "edit" ? onOpen(item) : onDelete(item)),
             }}
           >
-            <Button type="text" icon={<MoreOutlined />} aria-label={t("common.actions")} />
+            <Button type="text" icon={<MoreIcon />} aria-label={t("common.actions")} />
           </Dropdown>
         </span>
       ),

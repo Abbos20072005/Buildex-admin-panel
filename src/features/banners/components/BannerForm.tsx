@@ -1,4 +1,4 @@
-import { LeftOutlined } from "@ant-design/icons";
+import { ChevronLeftIcon } from "@/shared/icons";
 import {
   App,
   Button,
@@ -222,7 +222,7 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <Link to={BANNERS_PATH} className="text-sm font-semibold">
-            <LeftOutlined className="mr-1 text-xs" />
+            <ChevronLeftIcon className="mr-1 text-xs" />
             {t("banners.back")}
           </Link>
           <h1 className="m-0 mt-1 flex items-center gap-3 text-2xl font-bold tracking-tight">

@@ -1,4 +1,4 @@
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import { TrashIcon, UploadIcon } from "@/shared/icons";
 import { App, Button, Card, Image, Popconfirm, Upload } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
@@ -71,7 +71,7 @@ export function ProductImagesCard({ product }: { product: ProductDetail }) {
                 <Button
                   size="small"
                   danger
-                  icon={<DeleteOutlined />}
+                  icon={<TrashIcon />}
                   className="absolute! right-2 bottom-2"
                   aria-label={t("products.modal.deleteImage")}
                 />
@@ -94,7 +94,7 @@ export function ProductImagesCard({ product }: { product: ProductDetail }) {
               className="grid aspect-square w-full cursor-pointer place-items-center rounded-xl border border-dashed border-slate-300 bg-white text-center text-slate-500 transition hover:border-brand hover:text-brand disabled:cursor-wait disabled:opacity-60"
             >
               <span className="px-2">
-                <UploadOutlined className="text-xl" />
+                <UploadIcon className="text-xl" />
                 <span className="mt-2 block text-sm font-semibold">
                   {upload.isPending ? t("products.modal.uploading") : t("products.modal.upload")}
                 </span>

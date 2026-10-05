@@ -1,4 +1,4 @@
-import { CheckCircleOutlined } from "@ant-design/icons";
+import { CheckCircleIcon } from "@/shared/icons";
 import { Button, Popconfirm } from "antd";
 import { useTranslation } from "react-i18next";
 import { formatDateTime, formatOrderId } from "@/shared/lib/format";
@@ -67,7 +67,7 @@ export function OrderModalHeader({ orderId, order, saving, onUpdate }: Props) {
           {next && (
             <Button
               type="primary"
-              icon={<CheckCircleOutlined />}
+              icon={<CheckCircleIcon />}
               loading={saving}
               onClick={() => onUpdate({ status: next })}
             >

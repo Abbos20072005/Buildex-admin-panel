@@ -1,4 +1,4 @@
-import { PictureOutlined } from "@ant-design/icons";
+import { ImageIcon } from "@/shared/icons";
 import { Upload } from "antd";
 import { useEffect, useMemo, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -54,7 +54,7 @@ export function BannerImageDrop({ label, wide, url, file, onPick }: Props) {
             <img src={src} alt="" className="absolute inset-0 size-full object-cover" />
           ) : (
             <span className="flex flex-col items-center gap-2 px-2">
-              <PictureOutlined className="text-base" />
+              <ImageIcon className="text-base" />
               <span className="font-mono text-[11px] leading-tight break-all">
                 {t("banners.upload")}
               </span>

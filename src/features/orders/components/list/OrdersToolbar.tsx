@@ -1,4 +1,4 @@
-import { DownloadOutlined, FilterOutlined } from "@ant-design/icons";
+import { DownloadIcon, FilterIcon } from "@/shared/icons";
 import { Badge, Button } from "antd";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "@/shared/lib/format";
@@ -35,7 +35,7 @@ export function OrdersToolbar({
       <div className="flex gap-2">
         <Badge count={activeFilterCount} size="small" color={brand.primary}>
           <Button
-            icon={<FilterOutlined />}
+            icon={<FilterIcon />}
             type={filtersOpen ? "primary" : "default"}
             ghost={filtersOpen}
             onClick={onToggleFilters}
@@ -44,7 +44,7 @@ export function OrdersToolbar({
           </Button>
         </Badge>
         <Button
-          icon={<DownloadOutlined />}
+          icon={<DownloadIcon />}
           loading={!!exportLabel}
           disabled={!total}
           onClick={onExport}

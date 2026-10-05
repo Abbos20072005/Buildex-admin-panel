@@ -1,4 +1,4 @@
-import { CloseOutlined, FilterOutlined } from "@ant-design/icons";
+import { CloseIcon, FilterIcon } from "@/shared/icons";
 import { Button, Card, Empty, Form, Input, Select, Switch, Tooltip } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -103,7 +103,7 @@ function AttributeRow({ index, row, attribute, onRemove }: RowProps) {
           {meta.name}
           {isFilterable && (
             <Tooltip title={t("products.modal.filterHint")}>
-              <FilterOutlined className="ml-1.5 text-xs text-brand" />
+              <FilterIcon className="ml-1.5 text-xs text-brand" />
             </Tooltip>
           )}
         </div>
@@ -123,7 +123,7 @@ function AttributeRow({ index, row, attribute, onRemove }: RowProps) {
       <td className="py-2.5 pr-3 text-right">
         <Button
           type="text"
-          icon={<CloseOutlined />}
+          icon={<CloseIcon />}
           onClick={onRemove}
           aria-label={t("products.modal.charRemove")}
         />

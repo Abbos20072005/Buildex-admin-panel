@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, MoreOutlined } from "@ant-design/icons";
+import { TrashIcon, EditIcon, MoreIcon } from "@/shared/icons";
 import { Button, Dropdown, Table, Tag, type TableColumnsType } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
@@ -62,10 +62,10 @@ export function PartnerBrandsTable({
             trigger={["click"]}
             menu={{
               items: [
-                { key: "edit", icon: <EditOutlined />, label: t("partnerBrands.edit") },
+                { key: "edit", icon: <EditIcon />, label: t("partnerBrands.edit") },
                 {
                   key: "delete",
-                  icon: <DeleteOutlined />,
+                  icon: <TrashIcon />,
                   label: t("common.delete"),
                   danger: true,
                 },
@@ -73,7 +73,7 @@ export function PartnerBrandsTable({
               onClick: ({ key }) => (key === "edit" ? onOpen(item.id) : onDelete(item)),
             }}
           >
-            <Button type="text" icon={<MoreOutlined />} aria-label={t("partnerBrands.actions")} />
+            <Button type="text" icon={<MoreIcon />} aria-label={t("partnerBrands.actions")} />
           </Dropdown>
         </span>
       ),

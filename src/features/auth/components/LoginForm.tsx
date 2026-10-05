@@ -1,4 +1,4 @@
-import { InfoCircleOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { InfoCircleIcon, LockIcon, UserIcon } from "@/shared/icons";
 import { Alert, Button, Form, Input, Tooltip } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -59,10 +59,10 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
             autoCapitalize="none"
             spellCheck={false}
             placeholder={t("login.login")}
-            prefix={<UserOutlined className="text-slate-400" />}
+            prefix={<UserIcon className="text-slate-400" />}
             suffix={
               <Tooltip title={t("login.loginHint")}>
-                <InfoCircleOutlined className="text-slate-400" />
+                <InfoCircleIcon className="text-slate-400" />
               </Tooltip>
             }
             className="h-14"
@@ -77,7 +77,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
           <Input.Password
             autoComplete="current-password"
             placeholder="••••••••"
-            prefix={<LockOutlined className="text-slate-400" />}
+            prefix={<LockIcon className="text-slate-400" />}
             className="h-14"
           />
         </Form.Item>

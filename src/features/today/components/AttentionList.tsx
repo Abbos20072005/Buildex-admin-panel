@@ -1,15 +1,15 @@
 import {
-  ClockCircleOutlined,
-  CommentOutlined,
-  DollarOutlined,
-  ExclamationOutlined,
-  FileSearchOutlined,
-  NotificationOutlined,
-  PictureOutlined,
-  QuestionCircleOutlined,
-  TagOutlined,
-  UserDeleteOutlined,
-} from "@ant-design/icons";
+  ClockIcon,
+  CommentIcon,
+  DollarIcon,
+  ExclamationIcon,
+  FileSearchIcon,
+  MegaphoneIcon,
+  ImageIcon,
+  QuestionCircleIcon,
+  TagIcon,
+  UserRemoveIcon,
+} from "@/shared/icons";
 import type { TFunction } from "i18next";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,17 +26,17 @@ import type {
 } from "../model/types";
 
 const ICONS: Record<AttentionKey, ReactNode> = {
-  stale_pending_orders: <ClockCircleOutlined />,
-  refund_pending_orders: <DollarOutlined />,
-  unassigned_orders: <UserDeleteOutlined />,
-  out_of_stock_products: <ExclamationOutlined />,
-  no_price_products: <TagOutlined />,
-  review_products: <FileSearchOutlined />,
-  unanswered_questions: <QuestionCircleOutlined />,
-  unanswered_chats: <CommentOutlined />,
-  moderation_queue: <FileSearchOutlined />,
-  expiring_banners: <PictureOutlined />,
-  draft_notifications: <NotificationOutlined />,
+  stale_pending_orders: <ClockIcon />,
+  refund_pending_orders: <DollarIcon />,
+  unassigned_orders: <UserRemoveIcon />,
+  out_of_stock_products: <ExclamationIcon />,
+  no_price_products: <TagIcon />,
+  review_products: <FileSearchIcon />,
+  unanswered_questions: <QuestionCircleIcon />,
+  unanswered_chats: <CommentIcon />,
+  moderation_queue: <FileSearchIcon />,
+  expiring_banners: <ImageIcon />,
+  draft_notifications: <MegaphoneIcon />,
 };
 
 const LEVEL_TONE: Record<AttentionLevel, string> = {

@@ -1,4 +1,4 @@
-import { HolderOutlined } from "@ant-design/icons";
+import { GripIcon } from "@/shared/icons";
 import { Table, Tag, type TableColumnsType } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -71,7 +71,7 @@ export function BannersTable({ banners, loading, canReorder, onOpen, onReorder }
     {
       key: "handle",
       width: 28,
-      render: () => (canReorder ? <HolderOutlined className="cursor-grab text-slate-300" /> : null),
+      render: () => (canReorder ? <GripIcon className="cursor-grab text-slate-300" /> : null),
     },
     {
       key: "image",
