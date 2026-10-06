@@ -1,5 +1,5 @@
 import { App } from "antd";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   BrandEditor,
@@ -19,7 +19,7 @@ type Selected = number | "new" | null;
 
 export function BrandsPage() {
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -37,7 +37,36 @@ export function BrandsPage() {
   const current = typeof selected === "number" ? items.find((item) => item.id === selected) : null;
   const editorOpen = selected === "new" || !!current;
 
-  const toggleVisible = (brand: Brand, isVisible: boolean) =>
+  // unsaved edits in the side panel: asked about before the panel switches or closes
+  const [dirty, setDirty] = useState(false);
+  const dirtyRef = useRef(false);
+  const markDirty = (value: boolean) => {
+    dirtyRef.current = value;
+    setDirty(value);
+  };
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+
+  const select = (next: Selected) => {
+    if (!dirtyRef.current) return setSelected(next);
+    modal.confirm({
+      title: t("products.modal.unsavedTitle"),
+      content: t("products.modal.unsavedText"),
+      okText: t("products.modal.discard"),
+      okButtonProps: { danger: true },
+      cancelText: t("common.cancel"),
+      onOk: () => {
+        markDirty(false);
+        setSelected(next);
+      },
+    });
+  };
+
+  const toggleVisible =(brand: Brand, isVisible: boolean) =>
     setVisible.mutate(
       { id: brand.id, isVisible },
       { onError: (error) => message.error(getErrorMessage(error)) },
@@ -55,7 +84,7 @@ export function BrandsPage() {
         }}
         searchPlaceholder={t("brands.search")}
         addLabel={t("brands.add")}
-        onAdd={() => setSelected("new")}
+        onAdd={() => select("new")}
       />
 
       <div
@@ -77,7 +106,7 @@ export function BrandsPage() {
               setPage(nextSize !== pageSize ? 1 : nextPage);
               setPageSize(nextSize);
             }}
-            onOpen={setSelected}
+            onOpen={select}
             onToggleVisible={toggleVisible}
           />
           {brands.error && (
@@ -91,7 +120,8 @@ export function BrandsPage() {
           <BrandEditor
             key={selected === "new" ? "new" : (current?.id ?? "none")}
             brand={selected === "new" ? null : (current ?? null)}
-            onClose={() => setSelected(null)}
+            onClose={() => select(null)}
+            onDirtyChange={markDirty}
           />
         )}
       </div>

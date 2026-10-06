@@ -12,6 +12,8 @@ interface Props {
   /** null — a new brand is being created */
   brand: Brand | null;
   onClose: () => void;
+  /** reports whether the form has unsaved edits, so the page can warn before leaving */
+  onDirtyChange: (dirty: boolean) => void;
 }
 
 const emptyInput = (): BrandInput => ({
@@ -35,7 +37,7 @@ const toInput = (brand: Brand): BrandInput => ({
  * Side panel: create / edit one brand. The form is remounted (`key`) for every brand,
  * so it always starts from the saved values.
  */
-export function BrandEditor({ brand, onClose }: Props) {
+export function BrandEditor({ brand, onClose, onDirtyChange }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<BrandInput>();
@@ -49,6 +51,11 @@ export function BrandEditor({ brand, onClose }: Props) {
   // a brand with products can't be deleted — it is hidden instead
   const hasProducts = (brand?.productsCount ?? 0) > 0;
   const isVisible = Form.useWatch("isVisible", form) ?? brand?.isVisible ?? false;
+
+  const pickImage = (file: File) => {
+    setImage(file);
+    onDirtyChange(true);
+  };
 
   const handleSave = async () => {
     try {
@@ -64,6 +71,7 @@ export function BrandEditor({ brand, onClose }: Props) {
     const done = {
       onSuccess: () => {
         message.success(t("brands.saved"));
+        onDirtyChange(false);
         onClose();
       },
       onError: (err: unknown) => message.error(getErrorMessage(err)),
@@ -77,6 +85,7 @@ export function BrandEditor({ brand, onClose }: Props) {
     remove.mutate(brand.id, {
       onSuccess: () => {
         message.success(t("brands.deleted"));
+        onDirtyChange(false);
         onClose();
       },
       onError: (err) => message.error(getErrorMessage(err)),
@@ -113,6 +122,7 @@ export function BrandEditor({ brand, onClose }: Props) {
         layout="vertical"
         requiredMark={false}
         initialValues={brand ? toInput(brand) : emptyInput()}
+        onValuesChange={() => onDirtyChange(true)}
         className="max-h-[calc(100vh-17rem)] overflow-y-auto px-5 py-4"
       >
         <Form.Item
@@ -125,7 +135,7 @@ export function BrandEditor({ brand, onClose }: Props) {
           <ImageField
             url={brand?.image ?? null}
             file={image}
-            onPick={setImage}
+            onPick={pickImage}
             hint={t("brands.logoHint")}
           />
         </Form.Item>
