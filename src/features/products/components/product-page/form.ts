@@ -1,3 +1,4 @@
+import type { FieldMap } from "@/shared/form";
 import { hasValue } from "../../lib/characteristics";
 import type {
   AttributeValue,
@@ -23,6 +24,19 @@ export interface ProductFormValues {
   isActive: boolean;
   purchasable: boolean;
 }
+
+/** API field of a server validation error → form field (the rest are the same in camelCase) */
+export const PRODUCT_ERROR_FIELDS: FieldMap = {
+  name_uz: ["names", "uz"],
+  name_ru: ["names", "ru"],
+  name_en: ["names", "en"],
+  description_uz: ["descriptions", "uz"],
+  description_ru: ["descriptions", "ru"],
+  description_en: ["descriptions", "en"],
+  category: "categoryId",
+  brand: "brandId",
+  badge: "badgeId",
+};
 
 export const emptyLocalized = (): Localized => ({ uz: "", ru: "" });
 

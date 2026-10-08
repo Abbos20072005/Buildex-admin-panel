@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { clsx } from "@/shared/lib/clsx";
 import { useCreatePush, useDeletePush, useUpdatePush } from "../hooks/queries";
 import { PUSH_PATH, STATUS_COLOR, TITLE_MAX } from "../model/constants";
@@ -67,6 +68,8 @@ export function PushForm({ push }: { push: Push | null }) {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm<FormValues>();
+  // the schedule is two form fields (date, time) but one API field
+  const guard = useEditorForm(form, { publish_at: "date" });
   const [lang, setLang] = useState<Lang>("uz");
 
   const create = useCreatePush();
@@ -110,9 +113,10 @@ export function PushForm({ push }: { push: Push | null }) {
     const done = {
       onSuccess: () => {
         message.success(t("push.saved"));
+        guard.saved();
         navigate(PUSH_PATH);
       },
-      onError: (error: unknown) => message.error(getErrorMessage(error)),
+      onError: guard.showError,
     };
     if (push) update.mutate({ id: push.id, input }, done);
     else create.mutate(input, done);
@@ -123,6 +127,7 @@ export function PushForm({ push }: { push: Push | null }) {
     remove.mutate(push.id, {
       onSuccess: () => {
         message.success(t("push.deleted"));
+        guard.saved();
         navigate(PUSH_PATH);
       },
       onError: (error) => message.error(getErrorMessage(error)),
@@ -177,6 +182,8 @@ export function PushForm({ push }: { push: Push | null }) {
 
       <Form
         form={form}
+        {...guard.formProps}
+        disabled={saving}
         layout="vertical"
         requiredMark={false}
         initialValues={initialValues(push)}

@@ -2,6 +2,7 @@ import { CloseIcon, PlusIcon } from "@/shared/icons";
 import { App, Button, Card, Form, Input, Popconfirm, Segmented, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { useCreateAttribute, useDeleteAttribute, useUpdateAttribute } from "../hooks/queries";
 import { VALUE_TYPES } from "../model/constants";
 import type { Attribute, AttributeInput } from "../model/types";
@@ -41,6 +42,7 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<AttributeInput>();
+  const guard = useEditorForm(form);
   const valueType = Form.useWatch("valueType", form) ?? attribute?.valueType ?? "list";
 
   const create = useCreateAttribute();
@@ -63,7 +65,7 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
         message.success(t("attributes.saved"));
         onSaved(saved);
       },
-      onError: (err: unknown) => message.error(getErrorMessage(err)),
+      onError: guard.showError,
     };
     if (attribute) update.mutate({ id: attribute.id, input }, done);
     else create.mutate(input, done);
@@ -74,6 +76,7 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
     remove.mutate(attribute.id, {
       onSuccess: () => {
         message.success(t("attributes.deleted"));
+        guard.saved();
         onClose();
       },
       onError: (err) => message.error(getErrorMessage(err)),
@@ -103,7 +106,7 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
           <Button
             type="text"
             icon={<CloseIcon />}
-            onClick={onClose}
+            onClick={() => guard.confirmClose(onClose)}
             aria-label={t("common.cancel")}
           />
         </div>
@@ -111,6 +114,8 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
     >
       <Form
         form={form}
+        {...guard.formProps}
+        disabled={saving}
         layout="vertical"
         requiredMark={false}
         initialValues={attribute ? toInput(attribute) : emptyInput()}
@@ -297,7 +302,7 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
           )}
         </div>
         <div className="flex shrink-0 gap-2">
-          <Button onClick={onClose}>{t("common.cancel")}</Button>
+          <Button onClick={() => guard.confirmClose(onClose)}>{t("common.cancel")}</Button>
           <Button type="primary" loading={saving} onClick={() => void handleSave()}>
             {t("attributes.save")}
           </Button>

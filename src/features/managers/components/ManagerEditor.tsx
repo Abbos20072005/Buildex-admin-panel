@@ -1,6 +1,7 @@
 import { App, Form, Input, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { EditorDrawer } from "@/shared/ui";
 import { useCreateManager, useDeleteManager, useUpdateManager } from "../hooks/queries";
 import type { Manager, ManagerInput } from "../model/types";
@@ -21,12 +22,16 @@ export function ManagerEditor({ item, onClose }: Props) {
   const update = useUpdateManager();
   const remove = useDeleteManager();
 
+  const guard = useEditorForm(form);
+  const saving = create.isPending || update.isPending;
+
   const done = {
     onSuccess: () => {
       message.success(t("common.saved"));
+      guard.saved();
       onClose();
     },
-    onError: (error: unknown) => message.error(getErrorMessage(error)),
+    onError: guard.showError,
   };
 
   const handleSave = async () => {
@@ -45,6 +50,7 @@ export function ManagerEditor({ item, onClose }: Props) {
     remove.mutate(item.id, {
       onSuccess: () => {
         message.success(t("common.deleted"));
+        guard.saved();
         onClose();
       },
       onError: (error) => message.error(getErrorMessage(error)),
@@ -55,15 +61,17 @@ export function ManagerEditor({ item, onClose }: Props) {
     <EditorDrawer
       size={420}
       title={item ? item.fullName : t("managers.newTitle")}
-      onClose={onClose}
+      onClose={() => guard.confirmClose(onClose)}
       onSave={() => void handleSave()}
-      saving={create.isPending || update.isPending}
+      saving={saving}
       onDelete={item ? handleDelete : undefined}
       deleting={remove.isPending}
       deleteConfirm={t("managers.deleteConfirm")}
     >
       <Form
         form={form}
+        {...guard.formProps}
+        disabled={saving}
         layout="vertical"
         requiredMark={false}
         initialValues={{ fullName: item?.fullName ?? "", isActive: item?.isActive ?? true }}

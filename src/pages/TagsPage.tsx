@@ -1,5 +1,6 @@
 import { App } from "antd";
 import { useState } from "react";
+import { useConfirmIfDirty } from "@/shared/form";
 import { useTranslation } from "react-i18next";
 import {
   BadgeEditor,
@@ -24,6 +25,9 @@ export function TagsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [selected, setSelected] = useState<Selected>(null);
+  // opening another record (or "add") with unsaved edits in the panel asks first
+  const confirmIfDirty = useConfirmIfDirty();
+  const select = (next: Selected) => confirmIfDirty(() => setSelected(next));
 
   const debouncedSearch = useDebouncedValue(search, 300);
   const badges = useBadgesListQuery({ filters: { search: debouncedSearch }, page, pageSize });
@@ -48,7 +52,7 @@ export function TagsPage() {
         }}
         searchPlaceholder={t("badges.search")}
         addLabel={t("badges.add")}
-        onAdd={() => setSelected("new")}
+        onAdd={() => select("new")}
       />
 
       <div
@@ -70,7 +74,7 @@ export function TagsPage() {
               setPage(nextSize !== pageSize ? 1 : nextPage);
               setPageSize(nextSize);
             }}
-            onOpen={setSelected}
+            onOpen={select}
             onReorder={(ids) =>
               reorder.mutate(ids, { onError: (error) => message.error(getErrorMessage(error)) })
             }

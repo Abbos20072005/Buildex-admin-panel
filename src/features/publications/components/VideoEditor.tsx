@@ -2,6 +2,7 @@ import { Alert, App, Form, Input } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { emptyLocalized, failedLang, type ContentLang } from "@/shared/lib/localized";
 import { EditorDrawer, LangTabs, LocalizedField } from "@/shared/ui";
 import { videoHooks } from "../hooks/queries";
@@ -18,6 +19,7 @@ export function VideoEditor({ id, onClose }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<VideoInput>();
+  const guard = useEditorForm(form);
   const [lang, setLang] = useState<ContentLang>("uz");
 
   const editing = id !== "new";
@@ -30,9 +32,10 @@ export function VideoEditor({ id, onClose }: Props) {
   const done = {
     onSuccess: () => {
       message.success(t("common.saved"));
+      guard.saved();
       onClose();
     },
-    onError: (error: unknown) => message.error(getErrorMessage(error)),
+    onError: guard.showError,
   };
 
   const handleSave = async () => {
@@ -53,6 +56,7 @@ export function VideoEditor({ id, onClose }: Props) {
     remove.mutate(id, {
       onSuccess: () => {
         message.success(t("common.deleted"));
+        guard.saved();
         onClose();
       },
       onError: (error) => message.error(getErrorMessage(error)),
@@ -62,7 +66,7 @@ export function VideoEditor({ id, onClose }: Props) {
   return (
     <EditorDrawer
       title={item ? item.name : t("publications.newTitle.videos")}
-      onClose={onClose}
+      onClose={() => guard.confirmClose(onClose)}
       onSave={() => void handleSave()}
       saving={create.isPending || update.isPending}
       loading={editing && detail.isPending}
@@ -75,6 +79,8 @@ export function VideoEditor({ id, onClose }: Props) {
       ) : (
         <Form
           form={form}
+          {...guard.formProps}
+          disabled={create.isPending || update.isPending}
           layout="vertical"
           requiredMark={false}
           initialValues={{ title: item?.title ?? emptyLocalized(), url: item?.url ?? "" }}

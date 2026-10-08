@@ -2,6 +2,7 @@ import { CloseIcon } from "@/shared/icons";
 import { App, Button, Card, Form, Input, Popconfirm, Select } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import {
   useCreatePartnerBrand,
   useDeletePartnerBrand,
@@ -20,6 +21,7 @@ export function PartnerBrandEditor({ item, onClose }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<PartnerBrandInput>();
+  const guard = useEditorForm(form);
 
   const create = useCreatePartnerBrand();
   const update = useUpdatePartnerBrand();
@@ -35,9 +37,10 @@ export function PartnerBrandEditor({ item, onClose }: Props) {
     const done = {
       onSuccess: () => {
         message.success(t("partnerBrands.saved"));
+        guard.saved();
         onClose();
       },
-      onError: (error: unknown) => message.error(getErrorMessage(error)),
+      onError: guard.showError,
     };
     if (item) update.mutate({ id: item.id, input }, done);
     else create.mutate(input, done);
@@ -48,6 +51,7 @@ export function PartnerBrandEditor({ item, onClose }: Props) {
     remove.mutate(item.id, {
       onSuccess: () => {
         message.success(t("partnerBrands.deleted"));
+        guard.saved();
         onClose();
       },
       onError: (error) => message.error(getErrorMessage(error)),
@@ -66,7 +70,7 @@ export function PartnerBrandEditor({ item, onClose }: Props) {
           <Button
             type="text"
             icon={<CloseIcon />}
-            onClick={onClose}
+            onClick={() => guard.confirmClose(onClose)}
             aria-label={t("common.cancel")}
           />
         </div>
@@ -74,6 +78,8 @@ export function PartnerBrandEditor({ item, onClose }: Props) {
     >
       <Form
         form={form}
+        {...guard.formProps}
+        disabled={create.isPending || update.isPending}
         layout="vertical"
         requiredMark={false}
         initialValues={{ name: item?.name ?? "", isActive: item?.isActive ?? true }}
@@ -117,7 +123,7 @@ export function PartnerBrandEditor({ item, onClose }: Props) {
           <span />
         )}
         <div className="flex gap-2">
-          <Button onClick={onClose}>{t("common.cancel")}</Button>
+          <Button onClick={() => guard.confirmClose(onClose)}>{t("common.cancel")}</Button>
           <Button
             type="primary"
             loading={create.isPending || update.isPending}

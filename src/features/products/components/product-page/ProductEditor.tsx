@@ -1,10 +1,11 @@
 import { Alert, App, Breadcrumb, Card, Form, Skeleton } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { useProductQuery, useUpdateProduct } from "../../hooks/queries";
 import type { PublishStatus } from "../../model/types";
-import { buildPatch, toFormValues, type ProductFormValues } from "./form";
+import { buildPatch, PRODUCT_ERROR_FIELDS, toFormValues, type ProductFormValues } from "./form";
 import { ProductCatalogCard } from "./ProductCatalogCard";
 import { ProductCharacteristicsCard } from "./ProductCharacteristicsCard";
 import { ProductContentCard } from "./ProductContentCard";
@@ -39,12 +40,13 @@ function LoadingState() {
  */
 export function ProductEditor({ productId, onBack }: Props) {
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const [form] = Form.useForm<ProductFormValues>();
 
   const { data: product, error, isPending } = useProductQuery(productId);
   const updateProduct = useUpdateProduct();
-  const [dirty, setDirty] = useState(false);
+  const guard = useEditorForm(form, PRODUCT_ERROR_FIELDS);
+  const { dirty } = guard;
 
   // fill the form once per opened product — refetches (photos, language) must not wipe edits
   const loadedId = useRef<number | null>(null);
@@ -53,33 +55,16 @@ export function ProductEditor({ productId, onBack }: Props) {
     if (!shown || loadedId.current === shown.id) return;
     loadedId.current = shown.id;
     form.setFieldsValue(toFormValues(shown));
-    setDirty(false);
+    guard.saved();
   }, [shown, form]);
 
-  // closing the tab / reloading with unsaved edits
-  useEffect(() => {
-    if (!dirty) return;
-    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, [dirty]);
-
-  const leave = () => {
-    if (!dirty) return onBack();
-    modal.confirm({
-      title: t("products.modal.unsavedTitle"),
-      content: t("products.modal.unsavedText"),
-      okText: t("products.modal.discard"),
-      okButtonProps: { danger: true },
-      cancelText: t("common.cancel"),
-      onOk: onBack,
-    });
-  };
+  // leaving (breadcrumb, sidebar, closing the tab) with unsaved edits asks first
+  const leave = () => guard.confirmClose(onBack);
 
   const handleReset = () => {
     if (!shown) return;
     form.setFieldsValue(toFormValues(shown));
-    setDirty(false);
+    guard.saved();
   };
 
   const handleSave = async (publishStatus?: PublishStatus) => {
@@ -91,17 +76,17 @@ export function ProductEditor({ productId, onBack }: Props) {
     }
     const values = form.getFieldsValue(true) as ProductFormValues;
     const patch = buildPatch(shown, publishStatus ? { ...values, publishStatus } : values);
-    if (!Object.keys(patch).length) return setDirty(false);
+    if (!Object.keys(patch).length) return guard.saved();
 
     updateProduct.mutate(
       { id: shown.id, patch },
       {
         onSuccess: (saved) => {
           form.setFieldsValue(toFormValues(saved));
-          setDirty(false);
+          guard.saved();
           message.success(t("products.toast.saved"));
         },
-        onError: (err) => message.error(getErrorMessage(err)),
+        onError: guard.showError,
       },
     );
   };
@@ -146,9 +131,10 @@ export function ProductEditor({ productId, onBack }: Props) {
           </div>
           <Form
             form={form}
+            {...guard.formProps}
+            disabled={updateProduct.isPending}
             layout="vertical"
             requiredMark={false}
-            onValuesChange={() => setDirty(true)}
             className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_380px]"
           >
             <div className="flex min-w-0 flex-col gap-4">

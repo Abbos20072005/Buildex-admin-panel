@@ -1,6 +1,7 @@
 import { Alert, App, Form, Input, Select, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { formatDateTime, formatMoney } from "@/shared/lib/format";
 import { EditorDrawer, InitialsAvatar } from "@/shared/ui";
 import {
@@ -28,6 +29,7 @@ export function CustomerEditor({ id, onClose }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<CustomerInput>();
+  const guard = useEditorForm(form);
 
   const editing = id !== "new";
   const detail = useCustomerQuery(editing ? id : null);
@@ -39,9 +41,10 @@ export function CustomerEditor({ id, onClose }: Props) {
   const done = {
     onSuccess: () => {
       message.success(t("common.saved"));
+      guard.saved();
       onClose();
     },
-    onError: (error: unknown) => message.error(getErrorMessage(error)),
+    onError: guard.showError,
   };
 
   const handleSave = async () => {
@@ -60,6 +63,7 @@ export function CustomerEditor({ id, onClose }: Props) {
     remove.mutate(id, {
       onSuccess: () => {
         message.success(t("common.deleted"));
+        guard.saved();
         onClose();
       },
       onError: (error) => message.error(getErrorMessage(error)),
@@ -70,7 +74,7 @@ export function CustomerEditor({ id, onClose }: Props) {
     <EditorDrawer
       size={560}
       title={item ? item.fullName || item.phone : t("customers.newTitle")}
-      onClose={onClose}
+      onClose={() => guard.confirmClose(onClose)}
       onSave={() => void handleSave()}
       saving={create.isPending || update.isPending}
       loading={editing && detail.isPending}
@@ -110,6 +114,8 @@ export function CustomerEditor({ id, onClose }: Props) {
 
           <Form
             form={form}
+            {...guard.formProps}
+            disabled={create.isPending || update.isPending}
             layout="vertical"
             requiredMark={false}
             initialValues={{

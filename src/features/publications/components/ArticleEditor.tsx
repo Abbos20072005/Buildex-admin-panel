@@ -1,6 +1,7 @@
 import { Alert, App, Form, Input } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { isBlankHtml } from "@/shared/lib/localized";
 import { EditorDrawer, RichTextEditor } from "@/shared/ui";
 import { articleHooks } from "../hooks/queries";
@@ -17,6 +18,7 @@ export function ArticleEditor({ id, onClose }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<ArticleInput>();
+  const guard = useEditorForm(form);
 
   const editing = id !== "new";
   const detail = articleHooks.useDetail(editing ? id : null);
@@ -29,9 +31,10 @@ export function ArticleEditor({ id, onClose }: Props) {
   const done = {
     onSuccess: () => {
       message.success(t("common.saved"));
+      guard.saved();
       onClose();
     },
-    onError: (error: unknown) => message.error(getErrorMessage(error)),
+    onError: guard.showError,
   };
 
   const handleSave = async () => {
@@ -50,6 +53,7 @@ export function ArticleEditor({ id, onClose }: Props) {
     remove.mutate(id, {
       onSuccess: () => {
         message.success(t("common.deleted"));
+        guard.saved();
         onClose();
       },
       onError: (error) => message.error(getErrorMessage(error)),
@@ -59,7 +63,7 @@ export function ArticleEditor({ id, onClose }: Props) {
   return (
     <EditorDrawer
       title={item ? item.title : t("publications.newTitle.articles")}
-      onClose={onClose}
+      onClose={() => guard.confirmClose(onClose)}
       onSave={() => void handleSave()}
       saving={create.isPending || update.isPending}
       loading={editing && detail.isPending}
@@ -72,6 +76,8 @@ export function ArticleEditor({ id, onClose }: Props) {
       ) : (
         <Form
           form={form}
+          {...guard.formProps}
+          disabled={create.isPending || update.isPending}
           layout="vertical"
           requiredMark={false}
           initialValues={{

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useConfirmIfDirty } from "@/shared/form";
 import { useTranslation } from "react-i18next";
 import {
   AttributeEditor,
@@ -20,6 +21,9 @@ export function AttributesPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [selected, setSelected] = useState<Selected>(null);
+  // opening another record (or "add") with unsaved edits in the panel asks first
+  const confirmIfDirty = useConfirmIfDirty();
+  const select = (next: Selected) => confirmIfDirty(() => setSelected(next));
 
   const debouncedSearch = useDebouncedValue(search, 300);
   const attributes = useAttributesListQuery({
@@ -43,7 +47,7 @@ export function AttributesPage() {
         }}
         searchPlaceholder={t("attributes.search")}
         addLabel={t("attributes.add")}
-        onAdd={() => setSelected("new")}
+        onAdd={() => select("new")}
       />
 
       <div
@@ -64,7 +68,7 @@ export function AttributesPage() {
               setPage(nextSize !== pageSize ? 1 : nextPage);
               setPageSize(nextSize);
             }}
-            onOpen={setSelected}
+            onOpen={select}
           />
           {attributes.error && (
             <p className="mt-3 text-sm text-red-600">

@@ -16,6 +16,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { WidgetCard } from "@/shared/ui";
 import { BannerContentCard } from "./BannerContentCard";
 import { BannerImageDrop } from "./BannerImageDrop";
@@ -96,7 +97,12 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm<FormValues>();
-  const [files, setFiles] = useState<BannerFiles>({});
+  const guard = useEditorForm(form);
+  const [files, setFilesState] = useState<BannerFiles>({});
+  const setFiles: typeof setFilesState = (next) => {
+    setFilesState(next);
+    guard.markDirty();
+  };
 
   const create = useCreateBanner();
   const update = useUpdateBanner();
@@ -168,10 +174,11 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
     const done = {
       onSuccess: (saved: Banner) => {
         message.success(t("banners.saved"));
+        guard.saved();
         navigate(banner ? BANNERS_PATH : `${BANNERS_PATH}/${saved.id}`, { replace: !banner });
-        setFiles({});
+        setFilesState({});
       },
-      onError: (error: unknown) => message.error(getErrorMessage(error)),
+      onError: guard.showError,
     };
     if (banner) update.mutate({ banner, input, files }, done);
     else create.mutate({ input, files }, done);
@@ -205,6 +212,7 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
     remove.mutate(banner.id, {
       onSuccess: () => {
         message.success(t("banners.deleted"));
+        guard.saved();
         navigate(BANNERS_PATH);
       },
       onError: (error) => message.error(getErrorMessage(error)),
@@ -270,6 +278,8 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
 
       <Form
         form={form}
+        {...guard.formProps}
+        disabled={create.isPending || update.isPending}
         layout="vertical"
         requiredMark={false}
         initialValues={initialValues(banner)}

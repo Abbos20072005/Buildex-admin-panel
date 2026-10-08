@@ -15,6 +15,7 @@ import {
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useConfirmIfDirty, useEditorForm } from "@/shared/form";
 import { LANGUAGES, type LanguageCode } from "@/shared/i18n";
 import { ImageField } from "@/shared/ui";
 import { parentKey } from "../api/categories.mappers";
@@ -135,7 +136,12 @@ function CategoryForm({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<CategoryFormValues>();
-  const [files, setFiles] = useState<CategoryFiles>({});
+  const guard = useEditorForm(form);
+  const [files, setFilesState] = useState<CategoryFiles>({});
+  const setFiles: typeof setFilesState = (next) => {
+    setFilesState(next);
+    guard.markDirty();
+  };
   const [seoLang, setSeoLang] = useState<LanguageCode>("uz");
 
   const save = useSaveCategory();
@@ -201,9 +207,10 @@ function CategoryForm({
       {
         onSuccess: () => {
           message.success(t("categories.saved"));
+          guard.saved();
           onClose();
         },
-        onError: (error) => message.error(getErrorMessage(error)),
+        onError: guard.showError,
       },
     );
   };
@@ -215,6 +222,7 @@ function CategoryForm({
       {
         onSuccess: () => {
           message.success(t("categories.deleted"));
+          guard.saved();
           onClose();
         },
         onError: (error) => message.error(getErrorMessage(error)),
@@ -234,6 +242,8 @@ function CategoryForm({
     <>
       <Form
         form={form}
+        {...guard.formProps}
+        disabled={save.isPending}
         layout="vertical"
         requiredMark={false}
         initialValues={initial}
@@ -391,7 +401,7 @@ function CategoryForm({
           )}
         </div>
         <div className="flex shrink-0 gap-2">
-          <Button onClick={onClose}>{t("common.cancel")}</Button>
+          <Button onClick={() => guard.confirmClose(onClose)}>{t("common.cancel")}</Button>
           <Button type="primary" loading={save.isPending} onClick={() => void submit()}>
             {t("categories.save")}
           </Button>
@@ -410,6 +420,7 @@ export function CategoryEditor({
   onClose: () => void;
 }) {
   const { t } = useTranslation();
+  const confirmIfDirty = useConfirmIfDirty();
   const item = target === "create" ? null : target;
 
   const parents = useParentOptionsQuery(true);
@@ -438,7 +449,7 @@ export function CategoryEditor({
           <Button
             type="text"
             icon={<CloseIcon />}
-            onClick={onClose}
+            onClick={() => confirmIfDirty(onClose)}
             aria-label={t("common.cancel")}
           />
         </div>

@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { clsx } from "@/shared/lib/clsx";
 import { badgeColors } from "@/theme";
 import { useCreateBadge, useDeleteBadge, useUpdateBadge } from "../hooks/queries";
@@ -94,6 +95,7 @@ export function BadgeEditor({ badge, onClose }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<BadgeInput>();
+  const guard = useEditorForm(form);
 
   const create = useCreateBadge();
   const update = useUpdateBadge();
@@ -116,9 +118,10 @@ export function BadgeEditor({ badge, onClose }: Props) {
     const done = {
       onSuccess: () => {
         message.success(t("badges.saved"));
+        guard.saved();
         onClose();
       },
-      onError: (err: unknown) => message.error(getErrorMessage(err)),
+      onError: guard.showError,
     };
     if (badge) update.mutate({ id: badge.id, input }, done);
     else create.mutate(input, done);
@@ -129,6 +132,7 @@ export function BadgeEditor({ badge, onClose }: Props) {
     remove.mutate(badge.id, {
       onSuccess: () => {
         message.success(t("badges.deleted"));
+        guard.saved();
         onClose();
       },
       onError: (err) => message.error(getErrorMessage(err)),
@@ -161,7 +165,7 @@ export function BadgeEditor({ badge, onClose }: Props) {
           <Button
             type="text"
             icon={<CloseIcon />}
-            onClick={onClose}
+            onClick={() => guard.confirmClose(onClose)}
             aria-label={t("common.cancel")}
           />
         </div>
@@ -169,6 +173,8 @@ export function BadgeEditor({ badge, onClose }: Props) {
     >
       <Form
         form={form}
+        {...guard.formProps}
+        disabled={saving}
         layout="vertical"
         requiredMark={false}
         initialValues={badge ? toInput(badge) : emptyInput()}
@@ -287,7 +293,7 @@ export function BadgeEditor({ badge, onClose }: Props) {
           )}
         </div>
         <div className="flex shrink-0 gap-2">
-          <Button onClick={onClose}>{t("common.cancel")}</Button>
+          <Button onClick={() => guard.confirmClose(onClose)}>{t("common.cancel")}</Button>
           <Button type="primary" loading={saving} onClick={() => void handleSave()}>
             {t("badges.save")}
           </Button>

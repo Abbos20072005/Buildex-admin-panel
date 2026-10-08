@@ -1,5 +1,6 @@
 import { App } from "antd";
 import { useState } from "react";
+import { useConfirmIfDirty } from "@/shared/form";
 import { useTranslation } from "react-i18next";
 import {
   DEFAULT_PAGE_SIZE,
@@ -25,6 +26,9 @@ export function ModelsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [selected, setSelected] = useState<Selected>(null);
+  // opening another record (or "add") with unsaved edits in the panel asks first
+  const confirmIfDirty = useConfirmIfDirty();
+  const select = (next: Selected) => confirmIfDirty(() => setSelected(next));
 
   const models = useModelsListQuery({
     filters: { search: useDebouncedValue(search, 300) },
@@ -63,7 +67,7 @@ export function ModelsPage() {
         }}
         searchPlaceholder={t("models.search")}
         addLabel={t("models.add")}
-        onAdd={() => setSelected("new")}
+        onAdd={() => select("new")}
       />
 
       <div
@@ -84,7 +88,7 @@ export function ModelsPage() {
               setPage(nextSize !== pageSize ? 1 : nextPage);
               setPageSize(nextSize);
             }}
-            onOpen={setSelected}
+            onOpen={select}
             onDelete={confirmDelete}
           />
           {models.error && (

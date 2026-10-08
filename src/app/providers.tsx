@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { App as AntApp, ConfigProvider } from "antd";
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { BrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "@/features/auth";
 import { ApiError } from "@/shared/api";
 import { getLanguage } from "@/shared/i18n";
@@ -36,6 +36,11 @@ function LocalizedConfigProvider({ children }: { children: ReactNode }) {
 
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(createQueryClient);
+  // a data router (not <BrowserRouter>) so forms can block navigation with unsaved edits;
+  // the real routes stay in <AppRouter>
+  const [router] = useState(() =>
+    createBrowserRouter([{ path: "*", element: <AuthProvider>{children}</AuthProvider> }]),
+  );
 
   return (
     // antd styles go into @layer antd (see index.css) so Tailwind utilities can override them
@@ -43,9 +48,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
       <LocalizedConfigProvider>
         <AntApp>
           <QueryClientProvider client={queryClient}>
-            <BrowserRouter>
-              <AuthProvider>{children}</AuthProvider>
-            </BrowserRouter>
+            <RouterProvider router={router} />
           </QueryClientProvider>
         </AntApp>
       </LocalizedConfigProvider>

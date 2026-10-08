@@ -1,5 +1,6 @@
 import { App } from "antd";
 import { useState } from "react";
+import { useConfirmIfDirty } from "@/shared/form";
 import { useTranslation } from "react-i18next";
 import {
   PartnerBrandEditor,
@@ -24,6 +25,9 @@ export function PartnerBrandsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [selected, setSelected] = useState<Selected>(null);
+  // opening another record (or "add") with unsaved edits in the panel asks first
+  const confirmIfDirty = useConfirmIfDirty();
+  const select = (next: Selected) => confirmIfDirty(() => setSelected(next));
 
   const list = usePartnerBrandsQuery({
     filters: { search: useDebouncedValue(search, 300) },
@@ -62,7 +66,7 @@ export function PartnerBrandsPage() {
         }}
         searchPlaceholder={t("partnerBrands.search")}
         addLabel={t("partnerBrands.add")}
-        onAdd={() => setSelected("new")}
+        onAdd={() => select("new")}
       />
 
       <div
@@ -83,7 +87,7 @@ export function PartnerBrandsPage() {
               setPage(nextSize !== pageSize ? 1 : nextPage);
               setPageSize(nextSize);
             }}
-            onOpen={setSelected}
+            onOpen={select}
             onDelete={confirmDelete}
           />
           {list.error && (

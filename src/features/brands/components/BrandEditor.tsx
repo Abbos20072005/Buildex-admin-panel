@@ -3,6 +3,7 @@ import { App, AutoComplete, Button, Card, Form, Input, Popconfirm, Switch } from
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { ImageField } from "@/shared/ui";
 import { useCreateBrand, useDeleteBrand, useUpdateBrand } from "../hooks/queries";
 import { COUNTRY_SUGGESTIONS } from "../model/constants";
@@ -12,8 +13,6 @@ interface Props {
   /** null — a new brand is being created */
   brand: Brand | null;
   onClose: () => void;
-  /** reports whether the form has unsaved edits, so the page can warn before leaving */
-  onDirtyChange: (dirty: boolean) => void;
 }
 
 const emptyInput = (): BrandInput => ({
@@ -37,10 +36,11 @@ const toInput = (brand: Brand): BrandInput => ({
  * Side panel: create / edit one brand. The form is remounted (`key`) for every brand,
  * so it always starts from the saved values.
  */
-export function BrandEditor({ brand, onClose, onDirtyChange }: Props) {
+export function BrandEditor({ brand, onClose }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<BrandInput>();
+  const guard = useEditorForm(form);
   const [image, setImage] = useState<File | undefined>();
 
   const create = useCreateBrand();
@@ -54,7 +54,7 @@ export function BrandEditor({ brand, onClose, onDirtyChange }: Props) {
 
   const pickImage = (file: File) => {
     setImage(file);
-    onDirtyChange(true);
+    guard.markDirty();
   };
 
   const handleSave = async () => {
@@ -71,10 +71,10 @@ export function BrandEditor({ brand, onClose, onDirtyChange }: Props) {
     const done = {
       onSuccess: () => {
         message.success(t("brands.saved"));
-        onDirtyChange(false);
+        guard.saved();
         onClose();
       },
-      onError: (err: unknown) => message.error(getErrorMessage(err)),
+      onError: guard.showError,
     };
     if (brand) update.mutate({ brand, input, image }, done);
     else if (image) create.mutate({ input, image }, done);
@@ -85,7 +85,7 @@ export function BrandEditor({ brand, onClose, onDirtyChange }: Props) {
     remove.mutate(brand.id, {
       onSuccess: () => {
         message.success(t("brands.deleted"));
-        onDirtyChange(false);
+        guard.saved();
         onClose();
       },
       onError: (err) => message.error(getErrorMessage(err)),
@@ -111,7 +111,7 @@ export function BrandEditor({ brand, onClose, onDirtyChange }: Props) {
           <Button
             type="text"
             icon={<CloseIcon />}
-            onClick={onClose}
+            onClick={() => guard.confirmClose(onClose)}
             aria-label={t("common.cancel")}
           />
         </div>
@@ -122,7 +122,8 @@ export function BrandEditor({ brand, onClose, onDirtyChange }: Props) {
         layout="vertical"
         requiredMark={false}
         initialValues={brand ? toInput(brand) : emptyInput()}
-        onValuesChange={() => onDirtyChange(true)}
+        {...guard.formProps}
+        disabled={saving}
         className="max-h-[calc(100vh-17rem)] overflow-y-auto px-5 py-4"
       >
         <Form.Item
@@ -213,7 +214,7 @@ export function BrandEditor({ brand, onClose, onDirtyChange }: Props) {
           )}
         </div>
         <div className="flex shrink-0 gap-2">
-          <Button onClick={onClose}>{t("common.cancel")}</Button>
+          <Button onClick={() => guard.confirmClose(onClose)}>{t("common.cancel")}</Button>
           <Button type="primary" loading={saving} onClick={() => void handleSave()}>
             {t("brands.save")}
           </Button>

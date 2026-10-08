@@ -41,6 +41,9 @@ export function EditorDrawer({
       rootClassName="[&_.ant-drawer-content-wrapper]:max-w-screen"
       title={<span className="text-base font-bold">{title}</span>}
       onClose={onClose}
+      // a save in flight can't be dismissed by a stray click or Esc
+      mask={{ closable: !saving }}
+      keyboard={!saving}
       destroyOnHidden
       footer={
         <div className="flex items-center justify-between gap-3">

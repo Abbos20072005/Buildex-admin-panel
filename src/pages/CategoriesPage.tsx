@@ -11,6 +11,7 @@ import {
   type CategoryItem,
 } from "@/features/categories";
 import { getErrorMessage } from "@/shared/api";
+import { useConfirmIfDirty } from "@/shared/form";
 import { clsx } from "@/shared/lib/clsx";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
 import { AttributesSection } from "./AttributesSection";
@@ -22,6 +23,9 @@ export function CategoriesPage() {
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set());
   const [target, setTarget] = useState<CategoryEditorTarget | null>(null);
+  // opening another category (or "add") with unsaved edits in the panel asks first
+  const confirmIfDirty = useConfirmIfDirty();
+  const select = (next: CategoryEditorTarget | null) => confirmIfDirty(() => setTarget(next));
 
   const debouncedSearch = useDebouncedValue(search, 300);
   const { rows, loading, error } = useCategoryRows(expanded, debouncedSearch);
@@ -44,7 +48,7 @@ export function CategoriesPage() {
         onSearch={setSearch}
         searchPlaceholder={t("categories.search")}
         addLabel={t("categories.add")}
-        onAdd={() => setTarget("create")}
+        onAdd={() => select("create")}
       />
 
       <div
@@ -58,7 +62,7 @@ export function CategoriesPage() {
             expanded={expanded}
             selectedKey={target && target !== "create" ? nodeKey(target) : null}
             onToggle={toggle}
-            onOpen={setTarget}
+            onOpen={select}
             onReorder={(item, ids) =>
               reorder.mutate(
                 { level: item.level, parentId: item.level === 1 ? null : item.parentId, ids },

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useBrandsListQuery } from "@/features/brands";
 import { getErrorMessage } from "@/shared/api";
+import { useEditorForm } from "@/shared/form";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
 import { useCreateModel, useDeleteModel, useUpdateModel } from "../hooks/queries";
 import type { ProductModel, ProductModelInput } from "../model/types";
@@ -35,6 +36,7 @@ export function ModelEditor({ model, onClose }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<ProductModelInput>();
+  const guard = useEditorForm(form);
   const [brandSearch, setBrandSearch] = useState("");
 
   const brands = useBrandsListQuery({
@@ -74,9 +76,10 @@ export function ModelEditor({ model, onClose }: Props) {
     const done = {
       onSuccess: () => {
         message.success(t("models.saved"));
+        guard.saved();
         onClose();
       },
-      onError: (err: unknown) => message.error(getErrorMessage(err)),
+      onError: guard.showError,
     };
     if (model) update.mutate({ id: model.id, input: valid }, done);
     else create.mutate(valid, done);
@@ -87,6 +90,7 @@ export function ModelEditor({ model, onClose }: Props) {
     remove.mutate(model.id, {
       onSuccess: () => {
         message.success(t("models.deleted"));
+        guard.saved();
         onClose();
       },
       onError: (err) => message.error(getErrorMessage(err)),
@@ -118,7 +122,7 @@ export function ModelEditor({ model, onClose }: Props) {
           <Button
             type="text"
             icon={<CloseIcon />}
-            onClick={onClose}
+            onClick={() => guard.confirmClose(onClose)}
             aria-label={t("common.cancel")}
           />
         </div>
@@ -126,6 +130,8 @@ export function ModelEditor({ model, onClose }: Props) {
     >
       <Form
         form={form}
+        {...guard.formProps}
+        disabled={saving}
         layout="vertical"
         requiredMark={false}
         initialValues={model ? toInput(model) : emptyInput()}
@@ -188,7 +194,7 @@ export function ModelEditor({ model, onClose }: Props) {
           )}
         </div>
         <div className="flex shrink-0 gap-2">
-          <Button onClick={onClose}>{t("common.cancel")}</Button>
+          <Button onClick={() => guard.confirmClose(onClose)}>{t("common.cancel")}</Button>
           <Button type="primary" loading={saving} onClick={() => void handleSave()}>
             {t("models.save")}
           </Button>
