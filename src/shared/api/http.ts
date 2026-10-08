@@ -1,5 +1,4 @@
 import { env } from "@/shared/config/env";
-import { compressFormImages } from "@/shared/lib/compressImage";
 import { ApiError, extractErrorMessage } from "./errors";
 import { session } from "./session";
 import { extractTokens } from "./tokens";
@@ -85,11 +84,8 @@ function refreshTokens(): Promise<boolean> {
 /* ---------- request ---------- */
 
 export async function http<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { query, retryOnUnauthorized = true, headers: initHeaders, ...init } = options;
+  const { query, body, retryOnUnauthorized = true, headers: initHeaders, ...init } = options;
 
-  // photos in a multipart body are shrunk to ~100 KB before they leave the browser
-  const body =
-    options.body instanceof FormData ? await compressFormImages(options.body) : options.body;
   const isFormData = body instanceof FormData;
   const headers = new Headers(initHeaders);
   headers.set("Accept", "application/json");
@@ -112,8 +108,7 @@ export async function http<T>(path: string, options: RequestOptions = {}): Promi
   }
 
   if (response.status === 401 && token && retryOnUnauthorized) {
-    if (await refreshTokens())
-      return http<T>(path, { ...options, body, retryOnUnauthorized: false });
+    if (await refreshTokens()) return http<T>(path, { ...options, retryOnUnauthorized: false });
     session.clear();
     window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
   }
