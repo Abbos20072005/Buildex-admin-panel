@@ -3,8 +3,12 @@ import {
   CartIcon,
   FileIcon,
   GaugeIcon,
+  HeadsetIcon,
   ListIcon,
   PlayCircleIcon,
+  SettingsIcon,
+  SyncIcon,
+  TrendIcon,
   UserCheckIcon,
   UsersIcon,
 } from "@/shared/icons";
@@ -36,9 +40,26 @@ export const isNavGroup = (item: NavItem): item is NavGroup => "children" in ite
 export const NAVIGATION: NavItem[] = [
   { path: "/dashboard", label: "nav.dashboard", icon: <GaugeIcon /> },
   { path: "/today", label: "nav.today", icon: <FileIcon /> },
-  { path: "/orders", label: "nav.orders", icon: <CartIcon />, badge: "newOrders" },
+  {
+    key: "orders",
+    label: "nav.orders",
+    icon: <CartIcon />,
+    children: [
+      { path: "/orders", label: "nav.allOrders", badge: "newOrders" },
+      { path: "/orders/returns", label: "nav.returns" },
+    ],
+  },
   { path: "/customers", label: "nav.customers", icon: <UsersIcon /> },
   { path: "/managers", label: "nav.managers", icon: <UserCheckIcon /> },
+  {
+    key: "support",
+    label: "nav.support",
+    icon: <HeadsetIcon />,
+    children: [
+      { path: "/support/requests", label: "nav.requests" },
+      { path: "/support/scripts", label: "nav.scripts" },
+    ],
+  },
   {
     key: "products",
     label: "nav.products",
@@ -77,9 +98,29 @@ export const NAVIGATION: NavItem[] = [
       { path: "/content/settings", label: "nav.settings" },
     ],
   },
+  {
+    key: "analytics",
+    label: "nav.analytics",
+    icon: <TrendIcon />,
+    children: [
+      { path: "/analytics/sales", label: "nav.sales" },
+      { path: "/analytics/launch", label: "nav.launchMetrics" },
+    ],
+  },
+  { path: "/sync", label: "nav.sync", icon: <SyncIcon /> },
+];
+
+/** Pinned to the bottom of the sidebar, under a divider. */
+export const NAVIGATION_BOTTOM: NavItem[] = [
+  {
+    key: "system",
+    label: "nav.systemSettings",
+    icon: <SettingsIcon />,
+    children: [{ path: "/settings/staff", label: "nav.staff" }],
+  },
 ];
 
 /** every leaf route (used by the router for the "coming soon" pages) */
-export const NAV_LEAVES: NavLeaf[] = NAVIGATION.flatMap((item) =>
+export const NAV_LEAVES: NavLeaf[] = [...NAVIGATION, ...NAVIGATION_BOTTOM].flatMap((item) =>
   isNavGroup(item) ? item.children : [item],
 );

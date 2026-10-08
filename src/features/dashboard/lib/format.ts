@@ -1,5 +1,6 @@
 import type { TFunction } from "i18next";
 import dayjs from "dayjs";
+import type { DateRange } from "../model/types";
 
 /** "12.50" → "12,5": decimal comma, no trailing zeros */
 const decimal = (value: number, digits: number) =>
@@ -45,10 +46,10 @@ export function weekdayLabel(date: string, t: TFunction): string {
   return t(`dashboard.weekdays.${WEEKDAYS[(dayjs(date).day() + 6) % 7]}`);
 }
 
-/** "1 – 30 sentabr" for the last `days` days including today. */
-export function rangeLabel(days: number): string {
-  const end = dayjs();
-  const start = end.subtract(days - 1, "day");
+/** "1 – 30 sentabr" for the last N days including today, or for the chosen dates. */
+export function rangeLabel(range: DateRange): string {
+  const end = "days" in range ? dayjs() : dayjs(range.to);
+  const start = "days" in range ? end.subtract(range.days - 1, "day") : dayjs(range.from);
   return start.month() === end.month() && start.year() === end.year()
     ? `${start.format("D")} – ${end.format("D MMMM")}`
     : `${start.format("D MMM")} – ${end.format("D MMM")}`;

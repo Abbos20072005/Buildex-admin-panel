@@ -6,8 +6,9 @@ import type { DashboardDto, KpiDto } from "./dashboard.dto";
 const kpi = (dto: KpiDto): Kpi => ({ value: dto.value ?? 0, change: dto.change ?? null });
 
 export function paramsToQuery(params: DashboardParams): Query {
+  const { range } = params;
   return {
-    days: params.days,
+    ...("days" in range ? { days: range.days } : { date_from: range.from, date_to: range.to }),
     period: params.period,
     months: params.months,
     low_stock: params.lowStock,
@@ -26,6 +27,8 @@ export function mapDashboard(dto: DashboardDto): Dashboard {
   return {
     summary: {
       days: summary.days,
+      dateFrom: summary.date_from,
+      dateTo: summary.date_to,
       orders: kpi(summary.orders),
       revenue: kpi(summary.revenue),
       averageCheck: kpi(summary.average_check),
@@ -33,6 +36,7 @@ export function mapDashboard(dto: DashboardDto): Dashboard {
     },
     delivered: {
       period: delivered.period,
+      step: delivered.step,
       count: delivered.count,
       revenue: delivered.revenue,
       change: delivered.change ?? null,
@@ -44,10 +48,12 @@ export function mapDashboard(dto: DashboardDto): Dashboard {
       })),
     },
     registrations: {
+      step: registrations.step,
       days: registrations.days,
       total: registrations.total,
       mobile: registrations.mobile,
       web: registrations.web,
+      hasSplit: true,
       mobilePercent: registrations.mobile_percent,
       webPercent: registrations.web_percent,
       points: registrations.points,

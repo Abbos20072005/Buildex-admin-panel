@@ -12,15 +12,27 @@ interface Props {
   series: Series[];
   /** which labels are printed under the axis (every nth) */
   labelEvery?: number;
+  /** drawing size: a wide card gets a wide chart so the text keeps its size */
+  width?: number;
+  height?: number;
+  /** a dot with the value above it on every point of the first line (few points, e.g. 7 days) */
+  showValues?: boolean;
 }
 
-const WIDTH = 520;
-const HEIGHT = 220;
 const PAD = { top: 12, right: 8, bottom: 26, left: 40 };
 const TICKS = 5;
 
 /** Two or more lines over the same x labels, with a grid and a marker on the highest point. */
-export function LineChart({ labels, series, labelEvery = 1 }: Props) {
+export function LineChart({
+  labels,
+  series,
+  labelEvery = 1,
+  width = 520,
+  height = 220,
+  showValues = false,
+}: Props) {
+  const WIDTH = width;
+  const HEIGHT = height;
   const max = niceCeil(Math.max(0, ...series.flatMap((line) => line.values)));
   const innerW = WIDTH - PAD.left - PAD.right;
   const innerH = HEIGHT - PAD.top - PAD.bottom;
@@ -88,7 +100,29 @@ export function LineChart({ labels, series, labelEvery = 1 }: Props) {
         />
       ))}
 
-      {first && peak >= 0 && first.values[peak] > 0 && (
+      {showValues &&
+        first?.values.map((value, index) => (
+          <g key={index}>
+            <circle
+              cx={x(index)}
+              cy={y(value)}
+              r={4}
+              fill={first.color}
+              stroke={brand.white}
+              strokeWidth={2}
+            />
+            <text
+              x={x(index)}
+              y={y(value) - 10}
+              textAnchor="middle"
+              className="fill-slate-800 text-[11px] font-semibold"
+            >
+              {value}
+            </text>
+          </g>
+        ))}
+
+      {!showValues && first && peak >= 0 && first.values[peak] > 0 && (
         <circle
           cx={x(peak)}
           cy={y(first.values[peak])}

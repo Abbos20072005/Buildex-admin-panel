@@ -3,17 +3,23 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useOrderStatsQuery } from "@/features/orders";
 import { useProductsInReviewCount, useProductsTotalCount } from "@/features/products";
-import { isNavGroup, NAV_LEAVES, NAVIGATION, type NavBadge, type NavLeaf } from "./navigation";
+import { isNavGroup, NAV_LEAVES, type NavBadge, type NavItem, type NavLeaf } from "./navigation";
 
 function Counter({ value }: { value: number }) {
   return (
-    <span className="ml-auto min-w-7 rounded-full bg-brand-yellow px-2 text-center text-xs leading-5 font-bold text-amber-950">
+    <span className="ml-auto min-w-7 rounded-full bg-surface px-2 text-center text-xs leading-5 font-bold text-slate-600">
       {value}
     </span>
   );
 }
 
-export function SidebarMenu({ onNavigate }: { onNavigate?: () => void }) {
+interface Props {
+  /** the part of the sidebar structure this menu shows */
+  nav: NavItem[];
+  onNavigate?: () => void;
+}
+
+export function SidebarMenu({ nav, onNavigate }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -39,7 +45,7 @@ export function SidebarMenu({ onNavigate }: { onNavigate?: () => void }) {
     </span>
   );
 
-  const items: MenuProps["items"] = NAVIGATION.map((item) =>
+  const items: MenuProps["items"] = nav.map((item) =>
     isNavGroup(item)
       ? {
           key: item.key,
@@ -52,7 +58,6 @@ export function SidebarMenu({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <Menu
-      theme="dark"
       mode="inline"
       inlineIndent={20}
       items={items}

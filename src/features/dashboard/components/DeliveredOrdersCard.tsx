@@ -1,4 +1,3 @@
-import { Segmented } from "antd";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "@/shared/lib/format";
@@ -6,6 +5,7 @@ import { brand } from "@/theme";
 import { weekdayLabel } from "../lib/format";
 import type { Dashboard, Period } from "../model/types";
 import { LineChart } from "./charts/LineChart";
+import { PeriodSwitch } from "./PeriodSwitch";
 import { Change, WidgetCard } from "./Widgets";
 
 interface Props {
@@ -17,24 +17,15 @@ interface Props {
 /** Delivered orders: revenue and average check per day, switchable between a week and a month. */
 export function DeliveredOrdersCard({ data, period, onPeriodChange }: Props) {
   const { t } = useTranslation();
-  const labels = data.points.map((point) =>
-    period === "week" ? weekdayLabel(point.date, t) : dayjs(point.date).format("D"),
-  );
+  const labels = data.points.map((point) => {
+    if (data.step === "month") return dayjs(point.date).format("MMM");
+    return period === "week" ? weekdayLabel(point.date, t) : dayjs(point.date).format("D");
+  });
 
   return (
     <WidgetCard
       title={t("dashboard.delivered.title")}
-      extra={
-        <Segmented<Period>
-          size="small"
-          value={period}
-          onChange={onPeriodChange}
-          options={[
-            { value: "week", label: t("dashboard.delivered.week") },
-            { value: "month", label: t("dashboard.delivered.month") },
-          ]}
-        />
-      }
+      extra={<PeriodSwitch value={period} onChange={onPeriodChange} />}
     >
       <div className="flex items-baseline gap-2">
         <span className="text-2xl font-extrabold tracking-tight tabular-nums">
@@ -47,7 +38,7 @@ export function DeliveredOrdersCard({ data, period, onPeriodChange }: Props) {
       <div className="mt-3">
         <LineChart
           labels={labels}
-          labelEvery={period === "week" ? 1 : 5}
+          labelEvery={period === "month" ? 5 : 1}
           series={[
             { key: "revenue", color: brand.primary, values: data.points.map((p) => p.revenue) },
             { key: "average", color: brand.yellow, values: data.points.map((p) => p.averageCheck) },

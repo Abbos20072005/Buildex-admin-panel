@@ -10,19 +10,23 @@ export interface KpiDto {
 export interface DashboardDto {
   summary: {
     days: number;
+    date_from: string;
+    date_to: string;
     orders: KpiDto;
     revenue: KpiDto;
     average_check: KpiDto;
     new_customers: KpiDto;
   };
   delivered_orders: {
-    period: "week" | "month";
+    period: "week" | "month" | "year";
+    step: "day" | "month";
     count: number;
     revenue: number;
     change: number | null;
     points: { date: string; count: number; revenue: number; average_check: number }[];
   };
   registrations: {
+    step: "day" | "month";
     days: number;
     total: number;
     mobile: number;

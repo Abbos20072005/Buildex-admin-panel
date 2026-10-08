@@ -1,7 +1,7 @@
 import { clsx } from "@/shared/lib/clsx";
 
 interface LogoProps {
-  /** "sidebar" — compact, white wordmark for dark backgrounds; "hero" — big, brand colours */
+  /** "sidebar" — compact, for the light sidebar; "hero" — big, brand colours */
   variant?: "sidebar" | "hero";
   className?: string;
 }
@@ -23,15 +23,11 @@ export function Logo({ variant = "sidebar", className }: LogoProps) {
       <img
         src="/logo-text.png"
         alt="buildex"
-        className={clsx("w-auto", hero ? "h-[72px]" : "h-[22px] brightness-0 invert")}
+        className={clsx("w-auto", hero ? "h-[72px]" : "h-[22px]")}
         width={hero ? 310 : 95}
         height={hero ? 72 : 22}
       />
-      {!hero && (
-        <span className="mt-1 text-[10.5px] font-semibold tracking-[0.12em] text-brand-yellow">
-          ADMIN
-        </span>
-      )}
+      {!hero && <span className="mt-1 text-xs font-medium text-slate-500">Admin</span>}
     </div>
   );
 }

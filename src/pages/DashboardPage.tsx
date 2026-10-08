@@ -1,28 +1,39 @@
-import { CalendarIcon, DownloadIcon } from "@/shared/icons";
-import { Alert, Button, Dropdown } from "antd";
+import { DownloadIcon } from "@/shared/icons";
+import { Alert, Button } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   DashboardSkeleton,
   DashboardView,
+  DateRangeButton,
   exportDashboardCsv,
-  rangeLabel,
+  spans,
+  toApiPeriod,
   useDashboardQuery,
   type DashboardParams,
+  type DateRange,
   type Period,
 } from "@/features/dashboard";
 import { getErrorMessage } from "@/shared/api";
 
-/** KPI windows offered in the date button (the API takes 1–365 days) */
-const DAY_PRESETS = [7, 30, 90, 365];
-
 export function DashboardPage() {
   const { t } = useTranslation();
-  const [days, setDays] = useState(30);
-  const [period, setPeriod] = useState<Period>("week");
+  const [range, setRange] = useState<DateRange>({ days: 30 });
+  // every chart card has its own time span
+  const [deliveredPeriod, setDeliveredPeriod] = useState<Period>("week");
+  const [registrationsPeriod, setRegistrationsPeriod] = useState<Period>("week");
+  const [months, setMonths] = useState(6);
 
-  const params: DashboardParams = { days, period, months: 6, lowStock: 10 };
+  const base = { range, months, lowStock: 10 };
+  const params: DashboardParams = { ...base, period: toApiPeriod(deliveredPeriod) };
   const dashboard = useDashboardQuery(params);
+  // the API has one `period` per response: a second request only when the two cards differ
+  // (with equal periods both share the same cached response)
+  const registrationsQuery = useDashboardQuery({
+    ...base,
+    period: toApiPeriod(registrationsPeriod),
+  });
+  const registrationsData = registrationsQuery.data?.registrations ?? dashboard.data?.registrations;
 
   return (
     <>
@@ -32,19 +43,7 @@ export function DashboardPage() {
           <h1 className="m-0 text-2xl font-bold tracking-tight">{t("nav.dashboard")}</h1>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Dropdown
-            trigger={["click"]}
-            menu={{
-              selectedKeys: [String(days)],
-              items: DAY_PRESETS.map((preset) => ({
-                key: String(preset),
-                label: t("dashboard.lastDays", { count: preset }),
-              })),
-              onClick: ({ key }) => setDays(Number(key)),
-            }}
-          >
-            <Button icon={<CalendarIcon />}>{rangeLabel(days)}</Button>
-          </Dropdown>
+          <DateRangeButton value={range} onChange={setRange} />
           <Button
             type="primary"
             icon={<DownloadIcon />}
@@ -68,8 +67,22 @@ export function DashboardPage() {
             </Button>
           }
         />
-      ) : dashboard.data ? (
-        <DashboardView data={dashboard.data} period={period} onPeriodChange={setPeriod} />
+      ) : dashboard.data && registrationsData ? (
+        <DashboardView
+          data={dashboard.data}
+          delivered={{
+            data: spans.delivered(dashboard.data.delivered, deliveredPeriod),
+            period: deliveredPeriod,
+            onPeriodChange: setDeliveredPeriod,
+          }}
+          registrations={{
+            data: spans.registrations(registrationsData, registrationsPeriod),
+            period: registrationsPeriod,
+            onPeriodChange: setRegistrationsPeriod,
+          }}
+          months={months}
+          onMonthsChange={setMonths}
+        />
       ) : (
         <DashboardSkeleton />
       )}

@@ -21,10 +21,10 @@ export const brand = {
   yellow: "#ffb700",
   /** --tertiary: hsl(223 59% 24%) */
   navy: "#192e61",
-  /** hover/active shade of navy: hsl(223 59% 30%) */
-  navyLight: "#1f3979",
-  /** menu text on the navy sidebar */
-  navyText: "#c8d3ee",
+  /** sidebar item under the cursor */
+  sidebarHover: "#f4f5f7",
+  /** sidebar item of the open page */
+  sidebarSelected: "#eceef1",
   /** --muted: hsl(210 14% 97%) — page background */
   surface: "#f6f7f8",
   /** table header / zebra background */
@@ -60,7 +60,6 @@ export const tailwindColors = {
   "brand-tint": brand.primaryTint,
   "brand-yellow": brand.yellow,
   navy: brand.navy,
-  "navy-light": brand.navyLight,
   surface: brand.surface,
   "surface-alt": brand.surfaceAlt,
   panel: brand.panel,

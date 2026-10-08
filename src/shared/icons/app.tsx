@@ -214,6 +214,40 @@ export const RocketIcon = createIcon(
   </>,
 );
 
+export const HeadsetIcon = createIcon(
+  "HeadsetIcon",
+  <>
+    <path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2" />
+    <rect x="3.5" y="13.5" width="4" height="6" rx="1.6" />
+    <rect x="16.5" y="13.5" width="4" height="6" rx="1.6" />
+    <path d="M18.5 19.5c0 1.4-1.6 2-4 2" />
+  </>,
+);
+
+export const TrendIcon = createIcon(
+  "TrendIcon",
+  <>
+    <path d="M3.5 4v16.5H21" />
+    <path d="M7 15l3.6-4.2 3 2.6L19 7.5" />
+  </>,
+);
+
+export const SyncIcon = createIcon(
+  "SyncIcon",
+  <>
+    <path d="M19.5 9A8 8 0 0 0 5 7.5L3.5 9.5M3.5 4.5v5h5" />
+    <path d="M4.5 15A8 8 0 0 0 19 16.5l1.5-2M20.5 19.5v-5h-5" />
+  </>,
+);
+
+export const SettingsIcon = createIcon(
+  "SettingsIcon",
+  <>
+    <circle cx="12" cy="12" r="3" />
+    <path d="M12 2.8l1.4 2.2 2.6-.5.8 2.5 2.5.8-.5 2.6 2.2 1.4-2.2 1.4.5 2.6-2.5.8-.8 2.5-2.6-.5L12 21.2 10.6 19l-2.6.5-.8-2.5-2.5-.8.5-2.6L3 12l2.2-1.4-.5-2.6 2.5-.8.8-2.5 2.6.5z" />
+  </>,
+);
+
 export const StarIcon = createIcon(
   "StarIcon",
   <path d="M12 3.3l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z" />,
