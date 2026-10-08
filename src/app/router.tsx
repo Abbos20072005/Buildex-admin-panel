@@ -1,7 +1,7 @@
 import { Spin } from "antd";
 import { lazy, Suspense, type ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { RequireAuth } from "@/features/auth";
+import { CHANGE_PASSWORD_PATH, RequireAuth } from "@/features/auth";
 import { AdminLayout } from "@/layouts/admin/AdminLayout";
 import { NAV_LEAVES } from "@/layouts/admin/navigation";
 
@@ -58,6 +58,10 @@ const CustomersPage = lazy(() =>
 const ManagersPage = lazy(() =>
   import("@/pages/ManagersPage").then((m) => ({ default: m.ManagersPage })),
 );
+const StaffPage = lazy(() => import("@/pages/StaffPage").then((m) => ({ default: m.StaffPage })));
+const ChangePasswordPage = lazy(() =>
+  import("@/pages/ChangePasswordPage").then((m) => ({ default: m.ChangePasswordPage })),
+);
 const ComingSoonPage = lazy(() =>
   import("@/pages/ComingSoonPage").then((m) => ({ default: m.ComingSoonPage })),
 );
@@ -73,6 +77,7 @@ const PAGES: Record<string, ReactNode> = {
   "/orders": <OrdersPage />,
   "/customers": <CustomersPage />,
   "/managers": <ManagersPage />,
+  "/settings/staff": <StaffPage />,
   "/products": <ProductsPage />,
   "/attributes/categories": <CategoriesPage />,
   "/attributes/brands": <BrandsPage />,
@@ -95,6 +100,14 @@ export function AppRouter() {
     <Suspense fallback={<PageLoader />}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route
+          path={CHANGE_PASSWORD_PATH}
+          element={
+            <RequireAuth>
+              <ChangePasswordPage />
+            </RequireAuth>
+          }
+        />
         <Route
           element={
             <RequireAuth>

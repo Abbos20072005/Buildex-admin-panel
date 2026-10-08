@@ -1,21 +1,27 @@
 import { api, ApiError, extractTokens, session } from "@/shared/api";
-import type { AdminUser, LoginCredentials } from "../model/types";
+import type { AdminUser, ChangePasswordInput, LoginCredentials } from "../model/types";
 
 interface AdminDto {
   id: number;
   username: string;
+  full_name?: string;
+  position?: string;
+  access_level?: "staff" | "super_admin";
+  must_change_password?: boolean;
   first_name?: string;
   last_name?: string;
   is_superuser?: boolean;
 }
 
 function toAdminUser(dto: AdminDto): AdminUser {
-  const name = [dto.first_name, dto.last_name].filter(Boolean).join(" ").trim();
+  const legacyName = [dto.first_name, dto.last_name].filter(Boolean).join(" ").trim();
   return {
     id: dto.id,
     username: dto.username,
-    name: name || dto.username,
-    isSuperuser: !!dto.is_superuser,
+    name: dto.full_name?.trim() || legacyName || dto.username,
+    position: dto.position?.trim() ?? "",
+    isSuperuser: dto.access_level === "super_admin" || !!dto.is_superuser,
+    mustChangePassword: !!dto.must_change_password,
   };
 }
 
@@ -44,6 +50,18 @@ export const authApi = {
       session.clear();
       throw error;
     }
+  },
+
+  /** POST /admin/auth/change-password/ → the profile (tokens stay valid) */
+  async changePassword({ oldPassword, newPassword }: ChangePasswordInput): Promise<AdminUser> {
+    const user = toAdminUser(
+      await api.post<AdminDto>("/auth/change-password/", {
+        old_password: oldPassword,
+        new_password: newPassword,
+      }),
+    );
+    session.setCached(user);
+    return user;
   },
 
   logout() {

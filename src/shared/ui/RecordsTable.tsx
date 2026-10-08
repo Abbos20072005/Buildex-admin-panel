@@ -5,6 +5,16 @@ import { useTranslation } from "react-i18next";
 
 const PAGE_SIZES = ["20", "50", "100"];
 
+export interface RowMenuItem {
+  key: string;
+  label: ReactNode;
+  icon?: ReactNode;
+  danger?: boolean;
+  disabled?: boolean;
+  /** a line above this item */
+  separated?: boolean;
+}
+
 interface Props<T> {
   /** content columns — the "⋯" actions column is added here */
   columns: TableColumnsType<T>;
@@ -15,7 +25,11 @@ interface Props<T> {
   pageSize: number;
   onPageChange: (page: number, pageSize: number) => void;
   onOpen: (item: T) => void;
-  onDelete: (item: T) => void;
+  /** used by the default "Edit / Delete" menu */
+  onDelete?: (item: T) => void;
+  /** replaces the default menu: the actions of one row, and what a click on one does */
+  rowMenu?: (item: T) => RowMenuItem[];
+  onMenuAction?: (key: string, item: T) => void;
   /** search and filters shown inside the same card, above the table */
   toolbar?: ReactNode;
   /** text at the left of the footer; default "1–20 / 143" */
@@ -33,6 +47,8 @@ export function RecordsTable<T extends { id: number }>({
   onPageChange,
   onOpen,
   onDelete,
+  rowMenu,
+  onMenuAction,
   toolbar,
   totalLabel,
 }: Props<T>) {
@@ -49,18 +65,27 @@ export function RecordsTable<T extends { id: number }>({
         <span onClick={(event) => event.stopPropagation()}>
           <Dropdown
             trigger={["click"]}
-            menu={{
-              items: [
-                { key: "edit", icon: <EditIcon />, label: t("common.edit") },
-                {
-                  key: "delete",
-                  icon: <TrashIcon />,
-                  label: t("common.delete"),
-                  danger: true,
-                },
-              ],
-              onClick: ({ key }) => (key === "edit" ? onOpen(item) : onDelete(item)),
-            }}
+            menu={
+              rowMenu
+                ? {
+                    items: rowMenu(item).flatMap(({ separated, ...entry }) =>
+                      separated ? [{ type: "divider" as const }, entry] : [entry],
+                    ),
+                    onClick: ({ key }) => onMenuAction?.(key, item),
+                  }
+                : {
+                    items: [
+                      { key: "edit", icon: <EditIcon />, label: t("common.edit") },
+                      {
+                        key: "delete",
+                        icon: <TrashIcon />,
+                        label: t("common.delete"),
+                        danger: true,
+                      },
+                    ],
+                    onClick: ({ key }) => (key === "edit" ? onOpen(item) : onDelete?.(item)),
+                  }
+            }
           >
             <Button type="text" icon={<MoreIcon />} aria-label={t("common.actions")} />
           </Dropdown>

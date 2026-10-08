@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { UNAUTHORIZED_EVENT } from "@/shared/api";
 import { authApi } from "../api/auth.api";
 import { AuthContext } from "./auth-context";
-import type { AdminUser, LoginCredentials } from "./types";
+import type { AdminUser, ChangePasswordInput, LoginCredentials } from "./types";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
@@ -11,6 +11,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(async (credentials: LoginCredentials) => {
     setUser(await authApi.login(credentials));
+  }, []);
+
+  const changePassword = useCallback(async (input: ChangePasswordInput) => {
+    setUser(await authApi.changePassword(input));
   }, []);
 
   const signOut = useCallback(() => {
@@ -36,6 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
   }, [queryClient]);
 
-  const value = useMemo(() => ({ user, signIn, signOut }), [user, signIn, signOut]);
+  const value = useMemo(
+    () => ({ user, signIn, changePassword, signOut }),
+    [user, signIn, changePassword, signOut],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
