@@ -45,6 +45,8 @@ export const mapCategoryAttribute = (dto: CategoryAttributeDto): CategoryAttribu
   valueType: dto.value_type,
   unit: text(dto.unit),
   isFilterable: dto.is_filterable ?? false,
+  isQuickFilter: dto.is_quick_filter ?? false,
+  maxQuickFilters: dto.max_quick_filters ?? 0,
 });
 
 /** Parent choices from the first two levels, labelled with their path. */

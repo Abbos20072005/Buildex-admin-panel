@@ -81,6 +81,11 @@ export const productsApi = {
     return { id: dto.id, url: dto.image };
   },
 
+  /** POST /admin/products/{id}/images/reorder/ — the first id becomes the main photo */
+  async reorderImages(id: number, ids: number[]): Promise<void> {
+    await api.post(`/products/${id}/images/reorder/`, { ids });
+  },
+
   /** DELETE /admin/products/{id}/images/{image_id}/ */
   async deleteImage(id: number, imageId: number): Promise<void> {
     await api.delete(`/products/${id}/images/${imageId}/`);

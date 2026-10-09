@@ -36,7 +36,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
       tone: "bg-red-50 text-red-600",
       title: t("dashboard.attention.outOfStock", { count: data.outOfStock }),
       subtitle: data.outOfStockCategories.join(" · "),
-      to: "/products",
+      to: "/products?tab=soldOut",
     });
   }
   if (data.stalePendingOrders > 0) {
@@ -46,7 +46,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
       tone: "bg-amber-50 text-amber-600",
       title: t("dashboard.attention.stalePending", { count: data.stalePendingOrders }),
       subtitle: t("dashboard.attention.staleHours", { hours: data.pendingHours }),
-      to: "/orders",
+      to: "/orders?tab=new",
     });
   }
   if (data.unansweredQuestions > 0) {

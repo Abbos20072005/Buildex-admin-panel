@@ -7,20 +7,17 @@ export const PlusIcon = createIcon("PlusIcon", <path d="M12 5v14M5 12h14" />);
 
 export const CloseIcon = createIcon("CloseIcon", <path d="M6 6l12 12M18 6L6 18" />);
 
-export const CheckIcon = createIcon("CheckIcon", <path d="M5 12.5l5 5L19 7" />);
+export const CheckIcon = createIcon("CheckIcon", <path d="M5 13l4 4L19 7" />);
 
 export const SearchIcon = createIcon(
   "SearchIcon",
   <>
-    <circle cx="11" cy="11" r="6.5" />
-    <path d="M16 16l4.5 4.5" />
+    <circle cx="11" cy="11" r="7" />
+    <path d="M20 20l-4.2-4.2" />
   </>,
 );
 
-export const FilterIcon = createIcon(
-  "FilterIcon",
-  <path d="M4 5.5h16l-6.2 7.6V19l-3.6 1.6v-7.5z" />,
-);
+export const FilterIcon = createIcon("FilterIcon", <path d="M3 5h18l-7 8v6l-4 2v-8z" />);
 
 export const EditIcon = createIcon(
   "EditIcon",
@@ -33,9 +30,7 @@ export const EditIcon = createIcon(
 export const TrashIcon = createIcon(
   "TrashIcon",
   <>
-    <path d="M4 7h16M9.5 7V4.5h5V7" />
-    <path d="M6.5 7l.8 12a1.5 1.5 0 0 0 1.5 1.4h6.4a1.5 1.5 0 0 0 1.5-1.4L17.5 7" />
-    <path d="M10 11v5M14 11v5" />
+    <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
   </>,
 );
 
@@ -51,8 +46,8 @@ export const SaveIcon = createIcon(
 export const UndoIcon = createIcon(
   "UndoIcon",
   <>
-    <path d="M9 14L4 9l5-5" />
-    <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+    <path d="M9 14l-4-4 4-4" />
+    <path d="M5 10h10a4 4 0 0 1 0 8h-3" />
   </>,
 );
 
@@ -67,40 +62,35 @@ export const SendIcon = createIcon(
 export const DownloadIcon = createIcon(
   "DownloadIcon",
   <>
-    <path d="M12 4v11" />
-    <path d="M7.5 10.5L12 15l4.5-4.5" />
-    <path d="M5 19.5h14" />
+    <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
   </>,
 );
 
 export const UploadIcon = createIcon(
   "UploadIcon",
   <>
-    <path d="M12 15.5v-11" />
-    <path d="M7.5 9L12 4.5 16.5 9" />
-    <path d="M5 19.5h14" />
+    <path d="M12 16V5M7.5 9.5 12 5l4.5 4.5" />
+    <path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
   </>,
 );
 
 export const LogoutIcon = createIcon(
   "LogoutIcon",
   <>
-    <path d="M10 4H6.5A2.5 2.5 0 0 0 4 6.5v11A2.5 2.5 0 0 0 6.5 20H10" />
-    <path d="M15 8l4 4-4 4" />
-    <path d="M19 12H9.5" />
+    <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+    <path d="M10 16l-4-4 4-4M6 12h10" />
   </>,
 );
 
 export const LockIcon = createIcon(
   "LockIcon",
   <>
-    <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
-    <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
-    <path d="M12 14.8v2.2" />
+    <rect x="5" y="11" width="14" height="9" rx="2" />
+    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
   </>,
 );
 
-export const MenuIcon = createIcon("MenuIcon", <path d="M4 7h16M4 12h16M4 17h16" />);
+export const MenuIcon = createIcon("MenuIcon", <path d="M3 6h18M3 12h18M3 18h18" />);
 
 export const MoreIcon = createIcon(
   "MoreIcon",
@@ -115,19 +105,19 @@ export const MoreIcon = createIcon(
 export const GripIcon = createIcon(
   "GripIcon",
   <>
-    <circle cx="9" cy="6" r="1.3" />
-    <circle cx="15" cy="6" r="1.3" />
-    <circle cx="9" cy="12" r="1.3" />
-    <circle cx="15" cy="12" r="1.3" />
-    <circle cx="9" cy="18" r="1.3" />
-    <circle cx="15" cy="18" r="1.3" />
+    <circle cx="9" cy="6" r="1.6" />
+    <circle cx="15" cy="6" r="1.6" />
+    <circle cx="9" cy="12" r="1.6" />
+    <circle cx="15" cy="12" r="1.6" />
+    <circle cx="9" cy="18" r="1.6" />
+    <circle cx="15" cy="18" r="1.6" />
   </>,
   { filled: true },
 );
 
-export const ChevronDownIcon = createIcon("ChevronDownIcon", <path d="M6 9.5l6 6 6-6" />);
-export const ChevronLeftIcon = createIcon("ChevronLeftIcon", <path d="M14.5 6l-6 6 6 6" />);
-export const ChevronRightIcon = createIcon("ChevronRightIcon", <path d="M9.5 6l6 6-6 6" />);
+export const ChevronDownIcon = createIcon("ChevronDownIcon", <path d="M6 9l6 6 6-6" />);
+export const ChevronLeftIcon = createIcon("ChevronLeftIcon", <path d="M15 6l-6 6 6 6" />);
+export const ChevronRightIcon = createIcon("ChevronRightIcon", <path d="M9 6l6 6-6 6" />);
 
 export const ArrowUpIcon = createIcon("ArrowUpIcon", <path d="M12 19V5M6 11l6-6 6 6" />);
 export const ArrowDownIcon = createIcon("ArrowDownIcon", <path d="M12 5v14M6 13l6 6 6-6" />);
@@ -140,7 +130,7 @@ export const CheckCircleIcon = createIcon(
   "CheckCircleIcon",
   <>
     <circle cx="12" cy="12" r="9" />
-    <path d="M8 12.5l3 3 5.5-6.5" />
+    <path d="M8 12.5l2.5 2.5L16 9.5" />
   </>,
 );
 
@@ -156,8 +146,7 @@ export const InfoCircleIcon = createIcon(
   "InfoCircleIcon",
   <>
     <circle cx="12" cy="12" r="9" />
-    <path d="M12 11v5.5" />
-    <Dot x={12} y={7.9} />
+    <path d="M12 11v5M12 8v.01" />
   </>,
 );
 

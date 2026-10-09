@@ -37,4 +37,8 @@ export interface CategoryAttributeDto {
   value_type: "number" | "list" | "text" | "boolean";
   unit?: string | null;
   is_filterable?: boolean;
+  /** this category only: quick filter chips above the product list */
+  is_quick_filter?: boolean;
+  /** how many values become chips; 0 — all */
+  max_quick_filters?: number;
 }

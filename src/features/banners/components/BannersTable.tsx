@@ -1,5 +1,5 @@
-import { GripIcon } from "@/shared/icons";
-import { Table, Tag, type TableColumnsType } from "antd";
+import { EditIcon, GripIcon, TrashIcon } from "@/shared/icons";
+import { Button, Popconfirm, Table, Tag, Tooltip, type TableColumnsType } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
@@ -13,6 +13,9 @@ interface Props {
   /** the whole tab is on screen — rows can be dragged to reorder */
   canReorder: boolean;
   onOpen: (id: number) => void;
+  onDelete: (id: number) => void;
+  /** the banner being deleted right now */
+  deletingId: number | null;
   /** every id of the tab in the new order */
   onReorder: (ids: number[]) => void;
 }
@@ -52,7 +55,15 @@ function Channel({ label, on }: { label: string; on: boolean }) {
   );
 }
 
-export function BannersTable({ banners, loading, canReorder, onOpen, onReorder }: Props) {
+export function BannersTable({
+  banners,
+  loading,
+  canReorder,
+  deletingId,
+  onOpen,
+  onDelete,
+  onReorder,
+}: Props) {
   const { t } = useTranslation();
   const [dragging, setDragging] = useState<number | null>(null);
   const [over, setOver] = useState<number | null>(null);
@@ -110,7 +121,7 @@ export function BannersTable({ banners, loading, canReorder, onOpen, onReorder }
     {
       key: "link",
       title: t("banners.columns.link"),
-      width: 240,
+      // no width: this column takes the free space, so there is no gap after the last one
       render: (_, banner) => {
         const value =
           banner.linkType === "page"
@@ -160,17 +171,53 @@ export function BannersTable({ banners, loading, canReorder, onOpen, onReorder }
     {
       key: "status",
       title: t("banners.columns.status"),
-      width: 170,
+      width: 90,
       render: (_, banner) => (
         <span className="flex flex-col items-start gap-1">
           <Tag color={STATUS_COLOR[banner.status]} variant="filled" className="m-0 font-semibold">
             {t(`banners.status.${banner.status}`)}
           </Tag>
           {banner.linkType === "url" && banner.status !== "archived" && (
-            <Tag color="red" className="m-0 font-semibold">
+            <Tag color="red" className="m-0 font-semibold whitespace-normal">
               {t("banners.needsCheck")}
             </Tag>
           )}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      width: 80,
+      fixed: "right",
+      align: "right",
+      render: (_, banner) => (
+        // clicks here must not open the row
+        <span className="flex justify-end gap-1" onClick={(event) => event.stopPropagation()}>
+          <Tooltip title={t("common.edit")}>
+            <Button
+              type="text"
+              icon={<EditIcon />}
+              aria-label={t("common.edit")}
+              onClick={() => onOpen(banner.id)}
+            />
+          </Tooltip>
+          <Popconfirm
+            title={t("banners.deleteConfirm")}
+            okText={t("common.delete")}
+            okButtonProps={{ danger: true }}
+            cancelText={t("common.cancel")}
+            onConfirm={() => onDelete(banner.id)}
+          >
+            <Tooltip title={t("common.delete")}>
+              <Button
+                type="text"
+                danger
+                icon={<TrashIcon />}
+                loading={deletingId === banner.id}
+                aria-label={t("common.delete")}
+              />
+            </Tooltip>
+          </Popconfirm>
         </span>
       ),
     },

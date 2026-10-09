@@ -38,6 +38,9 @@ export const theme: ThemeConfig = {
       itemSelectedColor: brand.text,
       itemBorderRadius: 8,
       itemMarginInline: 10,
+      iconSize: 18,
+      itemHeight: 36,
+      itemMarginBlock: 2,
     },
     Table: {
       headerBg: brand.surfaceAlt,

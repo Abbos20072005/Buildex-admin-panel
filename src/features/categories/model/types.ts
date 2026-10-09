@@ -48,6 +48,10 @@ export interface CategoryAttributeRef {
   valueType: "number" | "list" | "text" | "boolean";
   unit: string;
   isFilterable: boolean;
+  /** setting of this category, not of the attribute */
+  isQuickFilter: boolean;
+  /** 0 — every value */
+  maxQuickFilters: number;
 }
 
 /** Editable state of the category form. */

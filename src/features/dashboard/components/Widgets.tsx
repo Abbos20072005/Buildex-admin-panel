@@ -1,3 +1,4 @@
+import { Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
 import { percent } from "../lib/format";
@@ -42,16 +43,21 @@ export function Change({
 export function ProgressBar({
   percent: value,
   colorClass,
+  label,
 }: {
   percent: number;
   colorClass: string;
+  /** shown with the percent in the hover tooltip */
+  label?: string;
 }) {
   return (
-    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-      <div
-        className={clsx("h-full rounded-full", colorClass)}
-        style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
-      />
-    </div>
+    <Tooltip title={`${label ? `${label}: ` : ""}${percent(value)}`}>
+      <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+        <div
+          className={clsx("h-full rounded-full", colorClass)}
+          style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+        />
+      </div>
+    </Tooltip>
   );
 }

@@ -6,56 +6,51 @@ import { createIcon } from "./createIcon";
 export const AppsIcon = createIcon(
   "AppsIcon",
   <>
-    <rect x="3.5" y="3.5" width="7" height="7" rx="2" />
-    <rect x="13.5" y="3.5" width="7" height="7" rx="2" />
-    <rect x="3.5" y="13.5" width="7" height="7" rx="2" />
-    <rect x="13.5" y="13.5" width="7" height="7" rx="2" />
+    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+    <rect x="14" y="14" width="7" height="7" rx="1.5" />
   </>,
 );
 
 export const ChartIcon = createIcon(
   "ChartIcon",
   <>
-    <rect x="4" y="11" width="4" height="9" rx="1.2" />
-    <rect x="10" y="4" width="4" height="16" rx="1.2" />
-    <rect x="16" y="8" width="4" height="12" rx="1.2" />
+    <path d="M4 19V9M10 19V5M16 19v-7M22 19H2" />
   </>,
 );
 
 export const GaugeIcon = createIcon(
   "GaugeIcon",
   <>
-    <path d="M3.5 16a8.5 8.5 0 1 1 17 0" />
-    <path d="M12 16l3.6-5" />
-    <circle cx="12" cy="16" r="1.3" />
-    <path d="M7 20.5h10" />
+    <rect x="3" y="4" width="18" height="14" rx="2" />
+    <path d="M7 14v-3M11 14V9M15 14v-5M8 21h8" />
   </>,
 );
 
 export const BoxIcon = createIcon(
   "BoxIcon",
   <>
-    <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" />
-    <path d="M4.2 7.6L12 12l7.8-4.4" />
-    <path d="M12 12v9" />
+    <path d="M4 8.5 12 4l8 4.5v7L12 20l-8-4.5z" />
+    <path d="M4 8.5 12 13l8-4.5M12 13v7" />
   </>,
 );
 
 export const CartIcon = createIcon(
   "CartIcon",
   <>
-    <path d="M3 4h2.4l2 10.4a1.5 1.5 0 0 0 1.5 1.2h8.2a1.5 1.5 0 0 0 1.5-1.1L20 8H6.2" />
-    <circle cx="9.5" cy="19.5" r="1.3" />
-    <circle cx="17" cy="19.5" r="1.3" />
+    <path d="M3 6h2l2.5 10.5h10L20 9H6.5" />
+    <circle cx="9" cy="20" r="1.4" />
+    <circle cx="17" cy="20" r="1.4" />
   </>,
 );
 
 export const FileIcon = createIcon(
   "FileIcon",
   <>
-    <path d="M14 3H7.5A2.5 2.5 0 0 0 5 5.5v13A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V8z" />
-    <path d="M14 3v3.5A1.5 1.5 0 0 0 15.5 8H19" />
-    <path d="M8.5 12.5h7M8.5 16.5H13" />
+    <rect x="5" y="4" width="14" height="17" rx="2" />
+    <path d="M9 4V3h6v1" />
+    <path d="M8.5 11l1.5 1.5 3-3M8.5 16.5h7" />
   </>,
 );
 
@@ -73,8 +68,8 @@ export const FileSearchIcon = createIcon(
 export const BellIcon = createIcon(
   "BellIcon",
   <>
-    <path d="M6 10a6 6 0 1 1 12 0c0 5 1.5 6.5 2 7H4c.5-.5 2-2 2-7z" />
-    <path d="M10 20.5a2.2 2.2 0 0 0 4 0" />
+    <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z" />
+    <path d="M10 19a2 2 0 0 0 4 0" />
   </>,
 );
 
@@ -86,10 +81,7 @@ export const MegaphoneIcon = createIcon(
   </>,
 );
 
-export const CommentIcon = createIcon(
-  "CommentIcon",
-  <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H12l-4 3.5V17H6.5A2.5 2.5 0 0 1 4 14.5z" />,
-);
+export const CommentIcon = createIcon("CommentIcon", <path d="M4 5h16v11H9l-5 4z" />);
 
 export const TagIcon = createIcon(
   "TagIcon",
@@ -111,8 +103,8 @@ export const GlobeIcon = createIcon(
 export const UserIcon = createIcon(
   "UserIcon",
   <>
-    <circle cx="12" cy="8" r="4" />
-    <path d="M4.5 20.5c0-3.9 3.4-6.5 7.5-6.5s7.5 2.6 7.5 6.5" />
+    <circle cx="12" cy="8" r="3.2" />
+    <path d="M5 19c1.2-3.2 3.8-4.6 7-4.6s5.8 1.4 7 4.6" />
   </>,
 );
 
@@ -120,9 +112,8 @@ export const UsersIcon = createIcon(
   "UsersIcon",
   <>
     <circle cx="9" cy="8" r="3.5" />
-    <path d="M2.5 19.5c0-3.4 2.9-5.5 6.5-5.5s6.5 2.1 6.5 5.5" />
-    <path d="M15.6 4.9a3.5 3.5 0 0 1 0 6.2" />
-    <path d="M17.6 14.3c2.3.5 3.9 2.2 3.9 5.2" />
+    <path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5" />
+    <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.4 3.5 5.2" />
   </>,
 );
 
@@ -167,15 +158,15 @@ export const ClockIcon = createIcon(
   "ClockIcon",
   <>
     <circle cx="12" cy="12" r="9" />
-    <path d="M12 7v5l3.5 2" />
+    <path d="M12 7.5V12l3 2" />
   </>,
 );
 
 export const CalendarIcon = createIcon(
   "CalendarIcon",
   <>
-    <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
-    <path d="M3.5 10h17M8 3v4M16 3v4" />
+    <rect x="3" y="5" width="18" height="16" rx="2" />
+    <path d="M3 10h18M8 3v4M16 3v4" />
   </>,
 );
 
@@ -191,17 +182,17 @@ export const InboxIcon = createIcon(
 export const ImageIcon = createIcon(
   "ImageIcon",
   <>
-    <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" />
+    <rect x="3" y="5" width="18" height="14" rx="2" />
     <circle cx="9" cy="10" r="1.6" />
-    <path d="M4 17.5l4.8-4.8a1.5 1.5 0 0 1 2.1 0L16 17.8M14 15.7l1.5-1.5a1.5 1.5 0 0 1 2.1 0l2.9 2.9" />
+    <path d="M21 16l-5-5-8 8" />
   </>,
 );
 
 export const PlayCircleIcon = createIcon(
   "PlayCircleIcon",
   <>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M10.2 8.7v6.6a.6.6 0 0 0 .9.5l5.2-3.3a.6.6 0 0 0 0-1l-5.2-3.3a.6.6 0 0 0-.9.5z" />
+    <rect x="3" y="6" width="18" height="12" rx="2" />
+    <path d="M10 9.5l5 2.5-5 2.5z" />
   </>,
 );
 
@@ -217,26 +208,28 @@ export const RocketIcon = createIcon(
 export const HeadsetIcon = createIcon(
   "HeadsetIcon",
   <>
-    <path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2" />
-    <rect x="3.5" y="13.5" width="4" height="6" rx="1.6" />
-    <rect x="16.5" y="13.5" width="4" height="6" rx="1.6" />
-    <path d="M18.5 19.5c0 1.4-1.6 2-4 2" />
+    <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+    <rect x="3" y="13" width="4" height="6" rx="1.5" />
+    <rect x="17" y="13" width="4" height="6" rx="1.5" />
+    <path d="M19 19c0 1.5-1.5 2.5-4 2.5h-2" />
   </>,
 );
 
 export const TrendIcon = createIcon(
   "TrendIcon",
   <>
-    <path d="M3.5 4v16.5H21" />
-    <path d="M7 15l3.6-4.2 3 2.6L19 7.5" />
+    <path d="M4 20V4M4 20h16" />
+    <path d="M7 15l4-4 3 3 5-6" />
   </>,
 );
 
 export const SyncIcon = createIcon(
   "SyncIcon",
   <>
-    <path d="M19.5 9A8 8 0 0 0 5 7.5L3.5 9.5M3.5 4.5v5h5" />
-    <path d="M4.5 15A8 8 0 0 0 19 16.5l1.5-2M20.5 19.5v-5h-5" />
+    <path d="M4 12a8 8 0 0 1 13.7-5.7L20 8" />
+    <path d="M20 4v4h-4" />
+    <path d="M20 12a8 8 0 0 1-13.7 5.7L4 16" />
+    <path d="M4 20v-4h4" />
   </>,
 );
 
@@ -244,7 +237,7 @@ export const SettingsIcon = createIcon(
   "SettingsIcon",
   <>
     <circle cx="12" cy="12" r="3" />
-    <path d="M12 2.8l1.4 2.2 2.6-.5.8 2.5 2.5.8-.5 2.6 2.2 1.4-2.2 1.4.5 2.6-2.5.8-.8 2.5-2.6-.5L12 21.2 10.6 19l-2.6.5-.8-2.5-2.5-.8.5-2.6L3 12l2.2-1.4-.5-2.6 2.5-.8.8-2.5 2.6.5z" />
+    <path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" />
   </>,
 );
 

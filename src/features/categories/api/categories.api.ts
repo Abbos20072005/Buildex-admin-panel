@@ -83,7 +83,13 @@ export const categoriesApi = {
   },
 
   /** PUT /admin/item-categories/{id}/attributes/ — replaces the whole list */
-  async setAttributes(id: number, attributeIds: number[]): Promise<void> {
-    await api.put(`/item-categories/${id}/attributes/`, { attributes: attributeIds });
+  async setAttributes(id: number, attributes: CategoryAttributeRef[]): Promise<void> {
+    await api.put(`/item-categories/${id}/attributes/`, {
+      attributes: attributes.map((attribute) => ({
+        id: attribute.id,
+        is_quick_filter: attribute.isQuickFilter,
+        max_quick_filters: attribute.maxQuickFilters,
+      })),
+    });
   },
 };

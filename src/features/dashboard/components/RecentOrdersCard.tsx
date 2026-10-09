@@ -12,7 +12,7 @@ export function RecentOrdersCard({ orders }: { orders: Order[] }) {
   return (
     <WidgetCard
       title={t("dashboard.recent.title")}
-      extra={<CardLink to="/orders">{t("dashboard.all")}</CardLink>}
+      extra={<CardLink to="/orders?tab=new">{t("dashboard.all")}</CardLink>}
       className="[&_.ant-card-body]:p-0!"
     >
       {orders.length === 0 ? (
@@ -33,7 +33,7 @@ export function RecentOrdersCard({ orders }: { orders: Order[] }) {
             {orders.map((order) => (
               <tr
                 key={order.id}
-                onClick={() => navigate("/orders")}
+                onClick={() => navigate(`/orders?order=${order.id}`)}
                 className="cursor-pointer border-t border-slate-100 hover:bg-slate-50"
               >
                 <td className="px-5 py-3 font-bold">{formatOrderId(order.id)}</td>

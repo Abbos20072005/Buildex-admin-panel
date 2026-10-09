@@ -167,6 +167,37 @@ export function useUploadProductImage() {
   });
 }
 
+/** The photos are reordered on screen at once, then confirmed (or rolled back) by the server. */
+export function useReorderProductImages() {
+  const queryClient = useQueryClient();
+  const invalidate = useInvalidateProducts();
+
+  return useMutation({
+    mutationFn: ({ id, ids }: { id: number; ids: number[] }) => productsApi.reorderImages(id, ids),
+    onMutate: async ({ id, ids }) => {
+      const key = [...productKeys.details(), id];
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueriesData<ProductDetail>({ queryKey: key });
+      const order = new Map(ids.map((imageId, index) => [imageId, index]));
+      queryClient.setQueriesData<ProductDetail>({ queryKey: key }, (product) =>
+        product
+          ? {
+              ...product,
+              images: [...product.images].sort(
+                (a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0),
+              ),
+            }
+          : product,
+      );
+      return { previous };
+    },
+    onError: (_error, _input, context) => {
+      context?.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
+    },
+    onSettled: (_data, _error, { id }) => invalidate(id),
+  });
+}
+
 export function useDeleteProductImage() {
   const invalidate = useInvalidateProducts();
   return useMutation({

@@ -1,3 +1,4 @@
+import { Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { formatNumber } from "@/shared/lib/format";
@@ -45,12 +46,12 @@ export function CatalogCard({
     >
       <div className="flex h-2.5 overflow-hidden rounded-full bg-slate-100">
         {rows.slice(0, 3).map((row) => (
-          <div
+          <Tooltip
             key={row.key}
-            className={row.dot}
-            style={{ width: `${(row.value / barTotal) * 100}%` }}
-            title={`${row.label}: ${formatNumber(row.value)}`}
-          />
+            title={`${row.label}: ${formatNumber(row.value)} · ${((row.value / barTotal) * 100).toFixed(1)}%`}
+          >
+            <div className={row.dot} style={{ width: `${(row.value / barTotal) * 100}%` }} />
+          </Tooltip>
         ))}
       </div>
 

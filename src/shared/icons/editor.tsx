@@ -1,4 +1,3 @@
-import { Dot } from "./Dot";
 import { createIcon } from "./createIcon";
 
 /** Text editor toolbar and lists. */
@@ -21,10 +20,7 @@ export const UnderlineIcon = createIcon(
 export const ListIcon = createIcon(
   "ListIcon",
   <>
-    <path d="M9.5 6H20M9.5 12H20M9.5 18H20" />
-    <Dot x={4.8} y={6} r={1.15} />
-    <Dot x={4.8} y={12} r={1.15} />
-    <Dot x={4.8} y={18} r={1.15} />
+    <path d="M4 6h3M4 12h3M4 18h3M10 6h10M10 12h10M10 18h10" />
   </>,
 );
 

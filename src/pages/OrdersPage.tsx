@@ -1,6 +1,7 @@
 import { App } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import {
   BulkActionsBar,
   OrderModal,
@@ -30,7 +31,17 @@ export function OrdersPage() {
 
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [openOrderId, setOpenOrderId] = useState<number | null>(null);
+  // the opened order lives in the address (?order=351): links from the dashboard open it directly
+  const [params, setParams] = useSearchParams();
+  const orderParam = Number(params.get("order"));
+  const openOrderId = Number.isInteger(orderParam) && orderParam > 0 ? orderParam : null;
+  const setOpenOrderId = (id: number | null) =>
+    setParams((current) => {
+      const next = new URLSearchParams(current);
+      if (id === null) next.delete("order");
+      else next.set("order", String(id));
+      return next;
+    });
 
   const changeSelectedStatus = (status: OrderStatus) =>
     bulkUpdate.mutate(

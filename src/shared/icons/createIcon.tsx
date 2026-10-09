@@ -27,7 +27,7 @@ export function createIcon(name: string, glyph: ReactNode, { filled, spin }: Opt
       height="1em"
       fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
-      strokeWidth={filled ? 1.25 : 1.75}
+      strokeWidth={filled ? 1.25 : 1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
       focusable="false"

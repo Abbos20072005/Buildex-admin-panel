@@ -10,6 +10,7 @@ import {
   TABS,
   useBannersQuery,
   useBannerStatsQuery,
+  useDeleteBanner,
   useReorderBanners,
   type BannerStats,
   type BannerTab,
@@ -35,6 +36,7 @@ export function BannersPage() {
   const stats = useBannerStatsQuery();
   const banners = useBannersQuery(tab);
   const reorder = useReorderBanners();
+  const remove = useDeleteBanner();
 
   const items = banners.data?.items ?? [];
   // the order is the order of the whole tab — only possible when all of it is on screen
@@ -84,7 +86,14 @@ export function BannersPage() {
         banners={items}
         loading={banners.isFetching}
         canReorder={canReorder}
+        deletingId={remove.isPending ? remove.variables : null}
         onOpen={(id) => navigate(`${BANNERS_PATH}/${id}`)}
+        onDelete={(id) =>
+          remove.mutate(id, {
+            onSuccess: () => message.success(t("banners.deleted")),
+            onError: (error) => message.error(getErrorMessage(error)),
+          })
+        }
         onReorder={(ids) =>
           reorder.mutate(ids, { onError: (error) => message.error(getErrorMessage(error)) })
         }

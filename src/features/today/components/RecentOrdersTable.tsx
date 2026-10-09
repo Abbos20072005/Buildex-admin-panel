@@ -30,7 +30,7 @@ export function RecentOrdersTable({ orders }: { orders: Order[] }) {
   return (
     <WidgetCard
       title={t("today.recent.title")}
-      extra={<CardLink to="/orders">{t("today.recent.all")}</CardLink>}
+      extra={<CardLink to="/orders?tab=new">{t("today.recent.all")}</CardLink>}
       className="[&_.ant-card-body]:p-0!"
     >
       {orders.length === 0 ? (
@@ -54,7 +54,7 @@ export function RecentOrdersTable({ orders }: { orders: Order[] }) {
               {orders.map((order) => (
                 <tr
                   key={order.id}
-                  onClick={() => navigate("/orders")}
+                  onClick={() => navigate(`/orders?order=${order.id}`)}
                   className="cursor-pointer border-t border-slate-100 align-middle hover:bg-slate-50"
                 >
                   <td className="py-3 pr-3 pl-5 font-bold text-brand">{formatOrderId(order.id)}</td>

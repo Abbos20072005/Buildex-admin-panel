@@ -40,8 +40,18 @@ export function DeliveredOrdersCard({ data, period, onPeriodChange }: Props) {
           labels={labels}
           labelEvery={period === "month" ? 5 : 1}
           series={[
-            { key: "revenue", color: brand.primary, values: data.points.map((p) => p.revenue) },
-            { key: "average", color: brand.yellow, values: data.points.map((p) => p.averageCheck) },
+            {
+              key: "revenue",
+              name: t("dashboard.delivered.revenue"),
+              color: brand.primary,
+              values: data.points.map((p) => p.revenue),
+            },
+            {
+              key: "average",
+              name: t("dashboard.delivered.average"),
+              color: brand.yellow,
+              values: data.points.map((p) => p.averageCheck),
+            },
           ]}
         />
       </div>

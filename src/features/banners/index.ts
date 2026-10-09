@@ -5,6 +5,7 @@ export {
   useBannerQuery,
   useBannersQuery,
   useBannerStatsQuery,
+  useDeleteBanner,
   useReorderBanners,
 } from "./hooks/queries";
 export { BANNERS_PATH, TABS } from "./model/constants";

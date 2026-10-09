@@ -44,9 +44,15 @@ export function RevenueCard({ data, months, onMonthsChange }: Props) {
         height={260}
         labels={data.months.map((month) => dayjs(month.month).format("MMM"))}
         series={[
-          { key: "b2b", color: brand.primary, values: data.months.map((month) => month.b2b) },
+          {
+            key: "b2b",
+            name: "B2B",
+            color: brand.primary,
+            values: data.months.map((month) => month.b2b),
+          },
           {
             key: "individual",
+            name: t("dashboard.revenue.individual"),
             color: brand.yellow,
             values: data.months.map((month) => month.individual),
           },

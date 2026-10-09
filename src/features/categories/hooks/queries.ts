@@ -163,9 +163,11 @@ export function useSaveCategory() {
         input.parentId,
       );
       if (input.level === 3) {
-        const next = input.values.attributes.map((attribute) => attribute.id);
-        const before = input.initialAttributes.map((attribute) => attribute.id);
-        if (next.join() !== before.join()) await categoriesApi.setAttributes(saved.id, next);
+        // the set, its order and the quick filter settings
+        const signature = (items: CategoryAttributeRef[]) =>
+          items.map((item) => [item.id, item.isQuickFilter, item.maxQuickFilters].join(":")).join();
+        if (signature(input.values.attributes) !== signature(input.initialAttributes))
+          await categoriesApi.setAttributes(saved.id, input.values.attributes);
       }
       return saved;
     },

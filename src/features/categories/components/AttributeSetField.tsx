@@ -1,10 +1,12 @@
 import { ArrowDownIcon, ArrowUpIcon, CheckIcon, CloseIcon } from "@/shared/icons";
-import { Button, Select } from "antd";
+import { Button, Checkbox, InputNumber, Select, Tooltip } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAttributesListQuery } from "@/features/attributes";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
 import type { CategoryAttributeRef } from "../model/types";
+
+const GRID = "grid grid-cols-[28px_1fr_56px_120px_92px]";
 
 interface Props {
   value?: CategoryAttributeRef[];
@@ -40,13 +42,21 @@ export function AttributeSetField({ value = [], onChange }: Props) {
     onChange?.(next);
   };
 
+  const update = (index: number, patch: Partial<CategoryAttributeRef>) =>
+    onChange?.(value.map((item, i) => (i === index ? { ...item, ...patch } : item)));
+
   return (
     <div>
       <div className="overflow-hidden rounded-lg border border-slate-200">
-        <div className="grid grid-cols-[28px_1fr_56px_92px] bg-surface-alt px-3 py-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+        <div
+          className={`${GRID} bg-surface-alt px-3 py-2 text-xs font-semibold tracking-wide text-slate-500 uppercase`}
+        >
           <span>#</span>
           <span>{t("categories.attribute")}</span>
           <span className="text-center">{t("categories.filter")}</span>
+          <Tooltip title={t("categories.quickFilterHint")}>
+            <span className="text-center">{t("categories.quickFilter")}</span>
+          </Tooltip>
           <span />
         </div>
         {value.length === 0 ? (
@@ -57,7 +67,7 @@ export function AttributeSetField({ value = [], onChange }: Props) {
           value.map((item, index) => (
             <div
               key={item.id}
-              className="grid grid-cols-[28px_1fr_56px_92px] items-center border-t border-slate-100 px-3 py-1.5 text-sm"
+              className={`${GRID} items-center border-t border-slate-100 px-3 py-1.5 text-sm`}
             >
               <span className="text-slate-400">{index + 1}</span>
               <span className="min-w-0 truncate">
@@ -69,6 +79,36 @@ export function AttributeSetField({ value = [], onChange }: Props) {
               </span>
               <span className="text-center">
                 {item.isFilterable ? <CheckIcon className="text-brand" /> : null}
+              </span>
+              {/* only filterable attributes that aren't numbers can be chips */}
+              <span className="flex items-center justify-center gap-1.5">
+                {item.isFilterable && item.valueType !== "number" ? (
+                  <>
+                    <Checkbox
+                      checked={item.isQuickFilter}
+                      onChange={(event) =>
+                        update(index, {
+                          isQuickFilter: event.target.checked,
+                          maxQuickFilters: event.target.checked ? item.maxQuickFilters : 0,
+                        })
+                      }
+                    />
+                    {item.isQuickFilter && (
+                      <Tooltip title={t("categories.quickFilterMax")}>
+                        <InputNumber
+                          size="small"
+                          min={0}
+                          max={50}
+                          className="w-14"
+                          value={item.maxQuickFilters}
+                          onChange={(count) => update(index, { maxQuickFilters: count ?? 0 })}
+                        />
+                      </Tooltip>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-slate-300">—</span>
+                )}
               </span>
               <span className="flex justify-end">
                 <Button
@@ -117,6 +157,8 @@ export function AttributeSetField({ value = [], onChange }: Props) {
               valueType: attribute.valueType,
               unit: attribute.unit,
               isFilterable: attribute.isFilterable,
+              isQuickFilter: false,
+              maxQuickFilters: 0,
             },
           ]);
         }}
