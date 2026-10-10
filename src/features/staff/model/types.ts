@@ -32,6 +32,8 @@ export interface StaffInput {
   position: string;
   accessLevel: AccessLevel;
   mustChangePassword: boolean;
+  /** a new password; left out — the password stays as it is (update only) */
+  password?: string;
 }
 
 /** Create-only fields. */

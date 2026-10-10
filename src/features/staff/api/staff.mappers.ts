@@ -40,12 +40,13 @@ export const filtersToQuery = (filters: StaffFilters): Query => ({
   status: filters.status,
 });
 
-/** PATCH body: the login can't change, the password has its own action */
+/** PATCH body: the login can't change; the password goes only when a new one is set */
 export const inputToDto = (input: StaffInput) => ({
   full_name: input.fullName.trim(),
   position: input.position.trim(),
   access_level: input.accessLevel,
   must_change_password: input.mustChangePassword,
+  ...(input.password ? { password: input.password } : {}),
 });
 
 export const createInputToDto = (input: StaffCreateInput) => ({

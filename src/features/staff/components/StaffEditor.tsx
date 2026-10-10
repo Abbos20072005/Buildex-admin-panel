@@ -68,9 +68,12 @@ function AccessLevelField({
 function PasswordField({
   value,
   onChange,
+  clearable,
 }: {
   value?: string;
   onChange?: (value: string) => void;
+  /** a "Cancel" button that drops the generated password (editing: the password is optional) */
+  clearable?: boolean;
 }) {
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -98,6 +101,7 @@ function PasswordField({
         {t("staff.copy")}
       </Button>
       <Button onClick={() => onChange?.(generatePassword())}>{t("staff.regenerate")}</Button>
+      {clearable && <Button onClick={() => onChange?.("")}>{t("common.cancel")}</Button>}
     </div>
   );
 }
@@ -131,10 +135,9 @@ export function StaffEditor({ item, isSelf, onClose }: Props) {
       return;
     }
     if (item) {
-      // the login and the password aren't part of an update
-      const { username, password, ...input } = values;
+      // the login can't change; an empty password field leaves the password as it is
+      const { username, ...input } = values;
       void username;
-      void password;
       update.mutate({ id: item.id, input }, done);
     } else create.mutate(values, done);
   };
@@ -226,15 +229,14 @@ export function StaffEditor({ item, isSelf, onClose }: Props) {
           <AccessLevelField disabled={isSelf} />
         </Form.Item>
 
-        {!item && (
-          <Form.Item
-            name="password"
-            label={required(t("staff.password"))}
-            rules={[{ required: true, message: t("staff.passwordRequired") }]}
-          >
-            <PasswordField />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="password"
+          label={item ? t("staff.newPassword") : required(t("staff.password"))}
+          extra={item ? t("staff.newPasswordNote") : undefined}
+          rules={item ? [] : [{ required: true, message: t("staff.passwordRequired") }]}
+        >
+          <PasswordField clearable={!!item} />
+        </Form.Item>
 
         <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-4">
           <div>
