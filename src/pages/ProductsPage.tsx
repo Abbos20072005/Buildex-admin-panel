@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { BulkBar, useRowSelection } from "@/shared/ui";
 import { useNavigate } from "react-router-dom";
 import {
   ProductsFilterPanel,
@@ -7,10 +8,13 @@ import {
   ProductsTable,
   ProductsToolbar,
   ProductTabs,
+  PUBLISH_STATUSES,
+  useBulkSetPublishStatus,
   useProductListState,
   useProductsExport,
   useProductsQuery,
   useProductTabCountsQuery,
+  type Product,
 } from "@/features/products";
 
 export function ProductsPage() {
@@ -23,6 +27,8 @@ export function ProductsPage() {
   const products = useProductsQuery({ filters: listFilters, page, pageSize, sort });
   const tabCounts = useProductTabCountsQuery(filters);
   const exporter = useProductsExport();
+  const selection = useRowSelection<Product>();
+  const bulk = useBulkSetPublishStatus();
 
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -60,10 +66,27 @@ export function ProductsPage() {
 
       {filtersOpen && <ProductsFilterPanel state={state} />}
 
+      {view === "table" && (
+        <BulkBar
+          ids={selection.ids}
+          mutation={bulk}
+          onClear={selection.clear}
+          options={PUBLISH_STATUSES.map((status) => ({
+            value: status,
+            label: t(`publishStatus.${status}`),
+          }))}
+        />
+      )}
+
       {view === "cards" ? (
         <ProductsGrid {...listProps} />
       ) : (
-        <ProductsTable {...listProps} sort={sort} onSortChange={state.setSort} />
+        <ProductsTable
+          {...listProps}
+          rowSelection={selection.rowSelection}
+          sort={sort}
+          onSortChange={state.setSort}
+        />
       )}
 
       {products.error && (

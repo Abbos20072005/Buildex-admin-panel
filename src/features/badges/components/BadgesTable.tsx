@@ -1,4 +1,4 @@
-import { Table, Tag, type TableColumnsType } from "antd";
+import { Table, Tag, type TableColumnsType, type TableProps } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
@@ -9,6 +9,8 @@ import type { Badge } from "../model/types";
 import { BadgeChip } from "./BadgeChip";
 
 interface Props {
+  /** checkboxes in the first column (see useRowSelection) */
+  rowSelection?: TableProps<Badge>["rowSelection"];
   badges: Badge[];
   total: number;
   loading: boolean;
@@ -34,6 +36,7 @@ export function BadgesTable({
   onPageChange,
   onOpen,
   onReorder,
+  rowSelection,
 }: Props) {
   const { t } = useTranslation();
   const [dragging, setDragging] = useState<number | null>(null);
@@ -126,6 +129,7 @@ export function BadgesTable({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <Table<Badge>
+        rowSelection={rowSelection}
         rowKey="id"
         size="middle"
         columns={columns}
@@ -140,7 +144,11 @@ export function BadgesTable({
             over === badge.id && dragging !== badge.id && "bg-brand/10",
             dragging === badge.id && "opacity-40",
           ),
-          onClick: () => onOpen(badge.id),
+          onClick: (event) => {
+            // a click on the checkbox must not open the record
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(badge.id);
+          },
           onDragStart: (event) => {
             event.dataTransfer.effectAllowed = "move";
             setDragging(badge.id);

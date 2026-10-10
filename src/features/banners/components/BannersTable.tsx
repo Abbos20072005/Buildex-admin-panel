@@ -1,5 +1,5 @@
-import { EditIcon, GripIcon, TrashIcon } from "@/shared/icons";
-import { Button, Popconfirm, Table, Tag, Tooltip, type TableColumnsType } from "antd";
+import { EditIcon, GripIcon, MoreIcon, TrashIcon } from "@/shared/icons";
+import { App, Button, Dropdown, Table, Tag, type TableColumnsType, type TableProps } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
@@ -8,6 +8,8 @@ import { STATUS_COLOR } from "../model/constants";
 import type { Banner } from "../model/types";
 
 interface Props {
+  /** checkboxes in the first column (see useRowSelection) */
+  rowSelection?: TableProps<Banner>["rowSelection"];
   banners: Banner[];
   loading: boolean;
   /** the whole tab is on screen — rows can be dragged to reorder */
@@ -63,8 +65,10 @@ export function BannersTable({
   onOpen,
   onDelete,
   onReorder,
+  rowSelection,
 }: Props) {
   const { t } = useTranslation();
+  const { modal } = App.useApp();
   const [dragging, setDragging] = useState<number | null>(null);
   const [over, setOver] = useState<number | null>(null);
 
@@ -192,32 +196,39 @@ export function BannersTable({
       align: "right",
       render: (_, banner) => (
         // clicks here must not open the row
-        <span className="flex justify-end gap-1" onClick={(event) => event.stopPropagation()}>
-          <Tooltip title={t("common.edit")}>
+        <span className="flex justify-end" onClick={(event) => event.stopPropagation()}>
+          <Dropdown
+            trigger={["click"]}
+            menu={{
+              items: [
+                { key: "edit", icon: <EditIcon />, label: t("common.edit") },
+                {
+                  key: "delete",
+                  icon: <TrashIcon />,
+                  label: t("common.delete"),
+                  danger: true,
+                },
+              ],
+              onClick: ({ key }) => {
+                if (key === "edit") return onOpen(banner.id);
+                modal.confirm({
+                  title: t("banners.deleteConfirm"),
+                  content: banner.name,
+                  okText: t("common.delete"),
+                  okButtonProps: { danger: true },
+                  cancelText: t("common.cancel"),
+                  onOk: () => onDelete(banner.id),
+                });
+              },
+            }}
+          >
             <Button
               type="text"
-              icon={<EditIcon />}
-              aria-label={t("common.edit")}
-              onClick={() => onOpen(banner.id)}
+              icon={<MoreIcon />}
+              loading={deletingId === banner.id}
+              aria-label={t("common.actions")}
             />
-          </Tooltip>
-          <Popconfirm
-            title={t("banners.deleteConfirm")}
-            okText={t("common.delete")}
-            okButtonProps={{ danger: true }}
-            cancelText={t("common.cancel")}
-            onConfirm={() => onDelete(banner.id)}
-          >
-            <Tooltip title={t("common.delete")}>
-              <Button
-                type="text"
-                danger
-                icon={<TrashIcon />}
-                loading={deletingId === banner.id}
-                aria-label={t("common.delete")}
-              />
-            </Tooltip>
-          </Popconfirm>
+          </Dropdown>
         </span>
       ),
     },
@@ -226,6 +237,7 @@ export function BannersTable({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <Table<Banner>
+        rowSelection={rowSelection}
         rowKey="id"
         size="middle"
         columns={columns}
@@ -240,7 +252,11 @@ export function BannersTable({
             over === banner.id && dragging !== banner.id && "bg-brand/10",
             dragging === banner.id && "opacity-40",
           ),
-          onClick: () => onOpen(banner.id),
+          onClick: (event) => {
+            // a click on the checkbox must not open the record
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(banner.id);
+          },
           onDragStart: (event) => {
             event.dataTransfer.effectAllowed = "move";
             setDragging(banner.id);

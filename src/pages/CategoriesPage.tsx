@@ -5,6 +5,7 @@ import {
   CategoriesTable,
   CategoryEditor,
   nodeKey,
+  useBulkSetCategoryActive,
   useCategoryRows,
   useReorderCategories,
   type CategoryEditorTarget,
@@ -14,6 +15,7 @@ import { getErrorMessage } from "@/shared/api";
 import { useConfirmIfDirty } from "@/shared/form";
 import { clsx } from "@/shared/lib/clsx";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
+import { BulkBar } from "@/shared/ui";
 import { AttributesSection } from "./AttributesSection";
 
 export function CategoriesPage() {
@@ -30,6 +32,9 @@ export function CategoriesPage() {
   const debouncedSearch = useDebouncedValue(search, 300);
   const { rows, loading, error } = useCategoryRows(expanded, debouncedSearch);
   const reorder = useReorderCategories();
+  // selected rows (keys are "level:id"); kept while branches are opened and closed
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const bulk = useBulkSetCategoryActive();
 
   const toggle = (item: CategoryItem) =>
     setExpanded((current) => {
@@ -55,7 +60,21 @@ export function CategoriesPage() {
         className={clsx("grid items-start gap-4", target && "xl:grid-cols-[minmax(0,1fr)_480px]")}
       >
         <div className="min-w-0">
+          <BulkBar
+            ids={selectedKeys}
+            mutation={bulk}
+            onClear={() => setSelectedKeys([])}
+            options={[
+              { value: true, label: t("bulk.active") },
+              { value: false, label: t("categories.draft") },
+            ]}
+          />
           <CategoriesTable
+            rowSelection={{
+              selectedRowKeys: selectedKeys,
+              onChange: (keys) => setSelectedKeys(keys as string[]),
+              preserveSelectedRowKeys: true,
+            }}
             rows={rows}
             loading={loading}
             searching={debouncedSearch.trim() !== ""}

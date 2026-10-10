@@ -7,6 +7,7 @@ export {
   useBannerStatsQuery,
   useDeleteBanner,
   useReorderBanners,
+  useBulkSetBannerVisible,
 } from "./hooks/queries";
 export { BANNERS_PATH, TABS } from "./model/constants";
 export type { Banner, BannerStats, BannerTab } from "./model/types";

@@ -2,6 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { modelsApi, type ModelsListParams } from "../api/models.api";
 import { modelKeys } from "../api/query-keys";
 import type { ProductModelInput } from "../model/types";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 
 type ValidInput = ProductModelInput & { brandId: number };
 
@@ -45,4 +46,9 @@ export function useDeleteModel() {
     mutationFn: (id: number) => modelsApi.remove(id),
     onSuccess: invalidate,
   });
+}
+
+/** Sets the field of every selected row (one request per row). */
+export function useBulkSetModelActive() {
+  return useBulkMutation<boolean>((id, value) => modelsApi.setActive(id, value), modelKeys.all);
 }

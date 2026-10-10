@@ -1,9 +1,10 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 import { productReferencesApi, productsApi, type ProductsListParams } from "../api/products.api";
 import { productKeys, productReferenceKeys } from "../api/query-keys";
 import { type ProductTab } from "../model/constants";
-import type { ProductDetail, ProductFilters, ProductPatch } from "../model/types";
+import type { ProductDetail, ProductFilters, ProductPatch, PublishStatus } from "../model/types";
 
 /** current UI language — translated names depend on it */
 export function useLang() {
@@ -157,6 +158,17 @@ export function useUpdateProduct() {
       invalidate(product.id);
     },
   });
+}
+
+/**
+ * Moves every selected product to a publish status (draft / review / published): one request per
+ * product; a product that isn't ready to publish fails on its own and is counted.
+ */
+export function useBulkSetPublishStatus() {
+  return useBulkMutation<PublishStatus>(
+    (id, publishStatus) => productsApi.update(id, { publishStatus }),
+    productKeys.all,
+  );
 }
 
 export function useUploadProductImage() {

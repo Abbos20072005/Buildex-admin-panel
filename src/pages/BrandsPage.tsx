@@ -1,6 +1,7 @@
 import { App } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { BulkBar, useRowSelection } from "@/shared/ui";
 import {
   BrandEditor,
   BrandsTable,
@@ -8,6 +9,7 @@ import {
   useBrandsListQuery,
   useSetBrandVisible,
   type Brand,
+  useBulkSetBrandVisible,
 } from "@/features/brands";
 import { getErrorMessage } from "@/shared/api";
 import { useConfirmIfDirty } from "@/shared/form";
@@ -20,6 +22,8 @@ type Selected = number | "new" | null;
 
 export function BrandsPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<Brand>();
+  const bulk = useBulkSetBrandVisible();
   const { message } = App.useApp();
 
   const [search, setSearch] = useState("");
@@ -70,7 +74,18 @@ export function BrandsPage() {
         )}
       >
         <div className="min-w-0">
+          <BulkBar
+            ids={selection.ids}
+            mutation={bulk}
+            onClear={selection.clear}
+            options={[
+              { value: true, label: t("bulk.visible") },
+              { value: false, label: t("bulk.hidden") },
+            ]}
+          />
+
           <BrandsTable
+            rowSelection={selection.rowSelection}
             brands={items}
             total={brands.data?.total ?? 0}
             loading={brands.isFetching}

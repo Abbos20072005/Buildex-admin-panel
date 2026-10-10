@@ -5,7 +5,7 @@ import {
   LoadingIcon,
   ChevronRightIcon,
 } from "@/shared/icons";
-import { Table, Tag, type TableColumnsType } from "antd";
+import { Table, Tag, type TableColumnsType, type TableProps } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
@@ -20,6 +20,8 @@ interface Props {
   searching: boolean;
   expanded: ReadonlySet<string>;
   selectedKey: string | null;
+  /** checkboxes in the first column; row keys are `nodeKey`s */
+  rowSelection?: TableProps<CategoryRow>["rowSelection"];
   onToggle: (item: CategoryItem) => void;
   onOpen: (item: CategoryItem) => void;
   /** all brothers and sisters of `item` in their new order */
@@ -35,6 +37,7 @@ export function CategoriesTable({
   searching,
   expanded,
   selectedKey,
+  rowSelection,
   onToggle,
   onOpen,
   onReorder,
@@ -179,6 +182,7 @@ export function CategoriesTable({
         dataSource={rows}
         loading={loading}
         pagination={false}
+        rowSelection={rowSelection}
         scroll={{ x: 760 }}
         locale={{ emptyText: <div className="py-10 text-slate-500">{t("common.noData")}</div> }}
         onRow={(row) => ({
@@ -189,7 +193,11 @@ export function CategoriesTable({
             over === nodeKey(row.item) && canDrop(row) && "bg-brand/10",
             dragging && nodeKey(dragging.item) === nodeKey(row.item) && "opacity-40",
           ),
-          onClick: () => onOpen(row.item),
+          onClick: (event) => {
+            // a click on the checkbox must not open the category
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(row.item);
+          },
           onDragStart: (event) => {
             event.dataTransfer.effectAllowed = "move";
             setDragging(row);

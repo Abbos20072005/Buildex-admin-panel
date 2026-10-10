@@ -48,4 +48,8 @@ export const attributesApi = {
   async remove(id: number): Promise<void> {
     await api.delete(`/attributes/${id}/`);
   },
+  /** PATCH /attributes/{id}/ { is_active } — one field, used by the bulk status change */
+  async setActive(id: number, value: boolean): Promise<void> {
+    await api.patch(`/attributes/${id}/`, { is_active: value });
+  },
 };

@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 import { staffApi } from "../api/staff.api";
 import type { StaffCreateInput, StaffInput, StaffListParams } from "../model/types";
 
@@ -56,4 +57,12 @@ export function useBlockStaff() {
       block ? staffApi.block(id) : staffApi.unblock(id),
     onSuccess: invalidate,
   });
+}
+
+/** Blocks (true) or unblocks (false) every selected account; blocking yourself fails on its own. */
+export function useBulkBlockStaff() {
+  return useBulkMutation<boolean>(
+    (id, block) => (block ? staffApi.block(id) : staffApi.unblock(id)),
+    ALL,
+  );
 }

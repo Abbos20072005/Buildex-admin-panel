@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { attributesApi, type AttributesListParams } from "../api/attributes.api";
 import { attributeKeys } from "../api/query-keys";
 import type { AttributeInput } from "../model/types";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 
 export function useAttributesListQuery(params: Omit<AttributesListParams, "lang">) {
   const lang = useTranslation().i18n.language;
@@ -47,4 +48,12 @@ export function useDeleteAttribute() {
     mutationFn: (id: number) => attributesApi.remove(id),
     onSuccess: invalidate,
   });
+}
+
+/** Sets the field of every selected row (one request per row). */
+export function useBulkSetAttributeActive() {
+  return useBulkMutation<boolean>(
+    (id, value) => attributesApi.setActive(id, value),
+    attributeKeys.all,
+  );
 }

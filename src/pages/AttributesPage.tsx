@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useConfirmIfDirty } from "@/shared/form";
 import { useTranslation } from "react-i18next";
+import { BulkBar, useRowSelection } from "@/shared/ui";
 import {
   AttributeEditor,
   AttributesTable,
   DEFAULT_PAGE_SIZE,
   useAttributesListQuery,
+  useBulkSetAttributeActive,
+  type Attribute,
 } from "@/features/attributes";
 import { clsx } from "@/shared/lib/clsx";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
@@ -16,6 +19,8 @@ type Selected = number | "new" | null;
 
 export function AttributesPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<Attribute>();
+  const bulk = useBulkSetAttributeActive();
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -57,7 +62,18 @@ export function AttributesPage() {
         )}
       >
         <div className="min-w-0">
+          <BulkBar
+            ids={selection.ids}
+            mutation={bulk}
+            onClear={selection.clear}
+            options={[
+              { value: true, label: t("bulk.active") },
+              { value: false, label: t("bulk.inactive") },
+            ]}
+          />
+
           <AttributesTable
+            rowSelection={selection.rowSelection}
             attributes={items}
             total={attributes.data?.total ?? 0}
             loading={attributes.isFetching}

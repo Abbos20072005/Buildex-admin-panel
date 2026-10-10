@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { customersApi } from "../api/customers.api";
 import type { CustomerInput, CustomerListParams } from "../model/types";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 
 /** Query-key root of the feature — one place that defines its cache structure. */
 const ALL = ["customers-admin"] as const;
@@ -53,4 +54,9 @@ export function useDeleteCustomer() {
     mutationFn: (id: number) => customersApi.remove(id),
     onSuccess: invalidate,
   });
+}
+
+/** Sets the field of every selected row (one request per row). */
+export function useBulkSetCustomerBlocked() {
+  return useBulkMutation<boolean>((id, value) => customersApi.setBlocked(id, value), ALL);
 }

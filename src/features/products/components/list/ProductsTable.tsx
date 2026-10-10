@@ -1,4 +1,4 @@
-import { Table, type TablePaginationConfig } from "antd";
+import { Table, type TablePaginationConfig, type TableProps } from "antd";
 import type { SorterResult } from "antd/es/table/interface";
 import { useTranslation } from "react-i18next";
 import { PAGE_SIZES } from "../../model/constants";
@@ -6,6 +6,8 @@ import type { Product, ProductSort } from "../../model/types";
 import { useProductColumns } from "./useProductColumns";
 
 interface Props {
+  /** checkboxes in the first column (see useRowSelection) */
+  rowSelection?: TableProps<Product>["rowSelection"];
   products: Product[];
   total: number;
   loading: boolean;
@@ -27,6 +29,7 @@ export function ProductsTable({
   onPageChange,
   onSortChange,
   onOpen,
+  rowSelection,
 }: Props) {
   const { t } = useTranslation();
   const columns = useProductColumns(sort);
@@ -50,6 +53,7 @@ export function ProductsTable({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <Table<Product>
+        rowSelection={rowSelection}
         rowKey="id"
         size="middle"
         columns={columns}
@@ -58,7 +62,11 @@ export function ProductsTable({
         scroll={{ x: 980 }}
         onRow={(product) => ({
           className: "cursor-pointer",
-          onClick: () => onOpen(product.id),
+          onClick: (event) => {
+            // a click on the checkbox must not open the record
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(product.id);
+          },
         })}
         onChange={handleChange}
         locale={{ emptyText: <div className="py-10 text-slate-500">{t("common.noData")}</div> }}

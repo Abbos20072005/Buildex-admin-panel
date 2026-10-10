@@ -2,12 +2,14 @@ import { App } from "antd";
 import { useState } from "react";
 import { useConfirmIfDirty } from "@/shared/form";
 import { useTranslation } from "react-i18next";
+import { BulkBar, useRowSelection } from "@/shared/ui";
 import {
   PartnerBrandEditor,
   PartnerBrandsTable,
   useDeletePartnerBrand,
   usePartnerBrandsQuery,
   type PartnerBrand,
+  useBulkSetPartnerBrandActive,
 } from "@/features/partner-brands";
 import { getErrorMessage } from "@/shared/api";
 import { clsx } from "@/shared/lib/clsx";
@@ -19,6 +21,8 @@ type Selected = number | "new" | null;
 
 export function PartnerBrandsPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<PartnerBrand>();
+  const bulk = useBulkSetPartnerBrandActive();
   const { message, modal } = App.useApp();
 
   const [search, setSearch] = useState("");
@@ -76,7 +80,18 @@ export function PartnerBrandsPage() {
         )}
       >
         <div className="min-w-0">
+          <BulkBar
+            ids={selection.ids}
+            mutation={bulk}
+            onClear={selection.clear}
+            options={[
+              { value: true, label: t("bulk.active") },
+              { value: false, label: t("bulk.inactive") },
+            ]}
+          />
+
           <PartnerBrandsTable
+            rowSelection={selection.rowSelection}
             items={items}
             total={list.data?.total ?? 0}
             loading={list.isFetching}

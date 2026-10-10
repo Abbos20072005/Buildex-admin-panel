@@ -29,4 +29,8 @@ export const managersApi = {
   async remove(id: number): Promise<void> {
     await api.delete(`/managers/${id}/`);
   },
+  /** PATCH /managers/{id}/ { is_active } — one field, used by the bulk status change */
+  async setActive(id: number, value: boolean): Promise<void> {
+    await api.patch(`/managers/${id}/`, { is_active: value });
+  },
 };

@@ -2,6 +2,7 @@ import { PlusIcon } from "@/shared/icons";
 import { App, Button } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { BulkBar, useRowSelection } from "@/shared/ui";
 import { useNavigate } from "react-router-dom";
 import {
   BANNERS_PATH,
@@ -14,6 +15,8 @@ import {
   useReorderBanners,
   type BannerStats,
   type BannerTab,
+  useBulkSetBannerVisible,
+  type Banner,
 } from "@/features/banners";
 import { getErrorMessage } from "@/shared/api";
 import { clsx } from "@/shared/lib/clsx";
@@ -29,6 +32,8 @@ const tabCount = (stats: BannerStats | undefined, tab: BannerTab) =>
 
 export function BannersPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<Banner>();
+  const bulk = useBulkSetBannerVisible();
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [tab, setTab] = useState<BannerTab>("site_home");
@@ -82,7 +87,18 @@ export function BannersPage() {
         ))}
       </div>
 
+      <BulkBar
+        ids={selection.ids}
+        mutation={bulk}
+        onClear={selection.clear}
+        options={[
+          { value: true, label: t("bulk.active") },
+          { value: false, label: t("bulk.archived") },
+        ]}
+      />
+
       <BannersTable
+        rowSelection={selection.rowSelection}
         banners={items}
         loading={banners.isFetching}
         canReorder={canReorder}

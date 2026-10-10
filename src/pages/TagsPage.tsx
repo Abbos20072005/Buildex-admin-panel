@@ -2,12 +2,15 @@ import { App } from "antd";
 import { useState } from "react";
 import { useConfirmIfDirty } from "@/shared/form";
 import { useTranslation } from "react-i18next";
+import { BulkBar, useRowSelection } from "@/shared/ui";
 import {
   BadgeEditor,
   BadgesTable,
   DEFAULT_PAGE_SIZE,
   useBadgesListQuery,
   useReorderBadges,
+  useBulkSetBadgeActive,
+  type Badge,
 } from "@/features/badges";
 import { getErrorMessage } from "@/shared/api";
 import { clsx } from "@/shared/lib/clsx";
@@ -19,6 +22,8 @@ type Selected = number | "new" | null;
 
 export function TagsPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<Badge>();
+  const bulk = useBulkSetBadgeActive();
   const { message } = App.useApp();
 
   const [search, setSearch] = useState("");
@@ -62,7 +67,18 @@ export function TagsPage() {
         )}
       >
         <div className="min-w-0">
+          <BulkBar
+            ids={selection.ids}
+            mutation={bulk}
+            onClear={selection.clear}
+            options={[
+              { value: true, label: t("bulk.active") },
+              { value: false, label: t("bulk.inactive") },
+            ]}
+          />
+
           <BadgesTable
+            rowSelection={selection.rowSelection}
             badges={items}
             total={total}
             loading={badges.isFetching}

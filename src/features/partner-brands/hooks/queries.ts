@@ -2,6 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { partnerBrandsApi, type PartnerBrandsListParams } from "../api/partner-brands.api";
 import { partnerBrandKeys } from "../api/query-keys";
 import type { PartnerBrandInput } from "../model/types";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 
 export function usePartnerBrandsQuery(params: PartnerBrandsListParams) {
   return useQuery({
@@ -39,4 +40,12 @@ export function useDeletePartnerBrand() {
     mutationFn: (id: number) => partnerBrandsApi.remove(id),
     onSuccess: invalidate,
   });
+}
+
+/** Sets the field of every selected row (one request per row). */
+export function useBulkSetPartnerBrandActive() {
+  return useBulkMutation<boolean>(
+    (id, value) => partnerBrandsApi.setActive(id, value),
+    partnerBrandKeys.all,
+  );
 }

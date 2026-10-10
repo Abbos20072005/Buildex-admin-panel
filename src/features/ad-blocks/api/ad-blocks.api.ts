@@ -58,4 +58,8 @@ export const adBlocksApi = {
     });
     return data.results.map(mapBrand);
   },
+  /** PATCH /adds-brands/{id}/ { is_visible } — one field, used by the bulk status change */
+  async setVisible(id: number, value: boolean): Promise<void> {
+    await api.patch(`/adds-brands/${id}/`, { is_visible: value });
+  },
 };

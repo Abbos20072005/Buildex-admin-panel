@@ -4,6 +4,7 @@ import type { Page } from "@/shared/api";
 import { badgesApi, type BadgesListParams } from "../api/badges.api";
 import { badgeKeys } from "../api/query-keys";
 import type { Badge, BadgeInput } from "../model/types";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 
 export function useBadgesListQuery(params: Omit<BadgesListParams, "lang">) {
   const lang = useTranslation().i18n.language;
@@ -76,4 +77,9 @@ export function useReorderBadges() {
     },
     onSettled: invalidate,
   });
+}
+
+/** Sets the field of every selected row (one request per row). */
+export function useBulkSetBadgeActive() {
+  return useBulkMutation<boolean>((id, value) => badgesApi.setActive(id, value), badgeKeys.all);
 }

@@ -7,18 +7,21 @@ import {
   useDeleteManager,
   useManagersQuery,
   type Manager,
+  useBulkSetManagerActive,
 } from "@/features/managers";
 import { getErrorMessage } from "@/shared/api";
 import { PlusIcon, SearchIcon } from "@/shared/icons";
 import { formatNumber } from "@/shared/lib/format";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
-import { RecordsTable } from "@/shared/ui";
+import { RecordsTable, BulkBar, useRowSelection } from "@/shared/ui";
 
 type Status = "all" | "active" | "inactive";
 
 /** "Menejerlar": the people orders are assigned to — one card with the filters and the table. */
 export function ManagersPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<Manager>();
+  const bulk = useBulkSetManagerActive();
   const { message, modal } = App.useApp();
 
   const [search, setSearch] = useState("");
@@ -66,7 +69,18 @@ export function ManagersPage() {
         </Button>
       </div>
 
+      <BulkBar
+        ids={selection.ids}
+        mutation={bulk}
+        onClear={selection.clear}
+        options={[
+          { value: true, label: t("bulk.active") },
+          { value: false, label: t("bulk.inactive") },
+        ]}
+      />
+
       <RecordsTable<Manager>
+        rowSelection={selection.rowSelection}
         toolbar={
           <>
             <Input

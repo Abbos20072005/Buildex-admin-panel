@@ -13,12 +13,13 @@ import {
   type Customer,
   type CustomerFilters,
   type CustomerRole,
+  useBulkSetCustomerBlocked,
 } from "@/features/customers";
 import { getErrorMessage } from "@/shared/api";
 import { PlusIcon, SearchIcon } from "@/shared/icons";
 import { formatNumber } from "@/shared/lib/format";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
-import { RecordsTable } from "@/shared/ui";
+import { RecordsTable, BulkBar, useRowSelection } from "@/shared/ui";
 
 type RoleFilter = "all" | CustomerRole;
 type StateFilter = "all" | "active" | "verified" | "unverified" | "blocked";
@@ -40,6 +41,8 @@ const stateToFilters = (state: StateFilter): CustomerFilters =>
 /** "Mijozlar": counters, then one card with the filters and the table. */
 export function CustomersPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<Customer>();
+  const bulk = useBulkSetCustomerBlocked();
   const { message, modal } = App.useApp();
 
   const [search, setSearch] = useState("");
@@ -105,7 +108,18 @@ export function CustomersPage() {
 
       <CustomerStatsCards stats={stats.data} />
 
+      <BulkBar
+        ids={selection.ids}
+        mutation={bulk}
+        onClear={selection.clear}
+        options={[
+          { value: false, label: t("bulk.active") },
+          { value: true, label: t("bulk.blocked") },
+        ]}
+      />
+
       <RecordsTable<Customer>
+        rowSelection={selection.rowSelection}
         toolbar={
           <>
             <Input

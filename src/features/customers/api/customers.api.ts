@@ -39,4 +39,8 @@ export const customersApi = {
   async remove(id: number): Promise<void> {
     await api.delete(`/customers/${id}/`);
   },
+  /** PATCH /customers/{id}/ { is_blocked } — one field, used by the bulk status change */
+  async setBlocked(id: number, value: boolean): Promise<void> {
+    await api.patch(`/customers/${id}/`, { is_blocked: value });
+  },
 };

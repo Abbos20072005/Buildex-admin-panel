@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { brandsApi, type BrandsListParams } from "../api/brands.api";
 import { brandKeys } from "../api/query-keys";
 import type { Brand, BrandInput } from "../model/types";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 
 export function useBrandsListQuery(params: Omit<BrandsListParams, "lang">) {
   const lang = useTranslation().i18n.language;
@@ -57,4 +58,9 @@ export function useDeleteBrand() {
     mutationFn: (id: number) => brandsApi.remove(id),
     onSuccess: invalidate,
   });
+}
+
+/** Sets the field of every selected row (one request per row). */
+export function useBulkSetBrandVisible() {
+  return useBulkMutation<boolean>((id, value) => brandsApi.setVisible(id, value), brandKeys.all);
 }

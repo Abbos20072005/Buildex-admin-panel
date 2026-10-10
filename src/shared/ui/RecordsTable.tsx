@@ -1,5 +1,5 @@
 import { TrashIcon, EditIcon, MoreIcon } from "@/shared/icons";
-import { Button, Dropdown, Table, type TableColumnsType } from "antd";
+import { Button, Dropdown, Table, type TableColumnsType, type TableProps } from "antd";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -25,6 +25,8 @@ interface Props<T> {
   pageSize: number;
   onPageChange: (page: number, pageSize: number) => void;
   onOpen: (item: T) => void;
+  /** checkboxes in the first column (see useRowSelection) */
+  rowSelection?: TableProps<T>["rowSelection"];
   /** used by the default "Edit / Delete" menu */
   onDelete?: (item: T) => void;
   /** replaces the default menu: the actions of one row, and what a click on one does */
@@ -49,6 +51,7 @@ export function RecordsTable<T extends { id: number }>({
   onDelete,
   rowMenu,
   onMenuAction,
+  rowSelection,
   toolbar,
   totalLabel,
 }: Props<T>) {
@@ -104,7 +107,15 @@ export function RecordsTable<T extends { id: number }>({
         dataSource={items}
         loading={loading}
         scroll={{ x: 640 }}
-        onRow={(item) => ({ className: "cursor-pointer", onClick: () => onOpen(item) })}
+        rowSelection={rowSelection}
+        onRow={(item) => ({
+          className: "cursor-pointer",
+          // a click on the checkbox must not open the record
+          onClick: (event) => {
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(item);
+          },
+        })}
         locale={{ emptyText: <div className="py-10 text-slate-500">{t("common.noData")}</div> }}
         pagination={{
           current: page,

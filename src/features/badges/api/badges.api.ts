@@ -42,4 +42,8 @@ export const badgesApi = {
   async reorder(ids: number[]): Promise<void> {
     await api.post("/product-badges/reorder/", { ids });
   },
+  /** PATCH /product-badges/{id}/ { is_active } — one field, used by the bulk status change */
+  async setActive(id: number, value: boolean): Promise<void> {
+    await api.patch(`/product-badges/${id}/`, { is_active: value });
+  },
 };

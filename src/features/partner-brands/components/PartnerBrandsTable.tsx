@@ -1,5 +1,5 @@
 import { TrashIcon, EditIcon, MoreIcon } from "@/shared/icons";
-import { Button, Dropdown, Table, Tag, type TableColumnsType } from "antd";
+import { Button, Dropdown, Table, Tag, type TableColumnsType, type TableProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
 import type { PartnerBrand } from "../model/types";
@@ -7,6 +7,8 @@ import type { PartnerBrand } from "../model/types";
 const PAGE_SIZES = ["20", "50", "100"];
 
 interface Props {
+  /** checkboxes in the first column (see useRowSelection) */
+  rowSelection?: TableProps<PartnerBrand>["rowSelection"];
   items: PartnerBrand[];
   total: number;
   loading: boolean;
@@ -28,6 +30,7 @@ export function PartnerBrandsTable({
   onPageChange,
   onOpen,
   onDelete,
+  rowSelection,
 }: Props) {
   const { t } = useTranslation();
 
@@ -83,6 +86,7 @@ export function PartnerBrandsTable({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <Table<PartnerBrand>
+        rowSelection={rowSelection}
         rowKey="id"
         size="middle"
         columns={columns}
@@ -91,7 +95,11 @@ export function PartnerBrandsTable({
         scroll={{ x: 480 }}
         onRow={(item) => ({
           className: clsx("cursor-pointer", item.id === selectedId && "bg-brand/5"),
-          onClick: () => onOpen(item.id),
+          onClick: (event) => {
+            // a click on the checkbox must not open the record
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(item.id);
+          },
         })}
         locale={{ emptyText: <div className="py-10 text-slate-500">{t("common.noData")}</div> }}
         pagination={{

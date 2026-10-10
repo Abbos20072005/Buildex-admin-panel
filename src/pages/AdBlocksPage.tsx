@@ -8,18 +8,21 @@ import {
   useAdBlocksQuery,
   useDeleteAdBlock,
   type AdBlock,
+  useBulkSetAdBlockVisible,
 } from "@/features/ad-blocks";
 import { getErrorMessage } from "@/shared/api";
 import { formatNumber } from "@/shared/lib/format";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
-import { RecordsTable } from "@/shared/ui";
+import { RecordsTable, BulkBar, useRowSelection } from "@/shared/ui";
 
 type Visibility = "visible" | "hidden";
 type BrandFilter = "with" | "without";
 
-/** "Reklama bloklari": home-page product sections with their campaign pages. */
+/** "Karusellar" (ad blocks): home-page product sections with their campaign pages. */
 export function AdBlocksPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<AdBlock>();
+  const bulk = useBulkSetAdBlockVisible();
   const { message, modal } = App.useApp();
 
   const [search, setSearch] = useState("");
@@ -116,7 +119,18 @@ export function AdBlocksPage() {
         />
       </div>
 
+      <BulkBar
+        ids={selection.ids}
+        mutation={bulk}
+        onClear={selection.clear}
+        options={[
+          { value: true, label: t("bulk.visible") },
+          { value: false, label: t("bulk.hidden") },
+        ]}
+      />
+
       <RecordsTable<AdBlock>
+        rowSelection={selection.rowSelection}
         columns={adBlockColumns(t)}
         items={list.data?.items ?? []}
         total={list.data?.total ?? 0}

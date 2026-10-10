@@ -64,6 +64,11 @@ export const categoriesApi = {
     return mapItem(dto, level);
   },
 
+  /** PATCH { is_active } — one field, used by the bulk status change */
+  async setActive(level: CategoryLevel, id: number, isActive: boolean): Promise<void> {
+    await api.patch(`/${LEVEL_ENDPOINT[level]}/${id}/`, { is_active: isActive });
+  },
+
   /** DELETE — refused while the category has products */
   async remove(level: CategoryLevel, id: number): Promise<void> {
     await api.delete(`/${LEVEL_ENDPOINT[level]}/${id}/`);

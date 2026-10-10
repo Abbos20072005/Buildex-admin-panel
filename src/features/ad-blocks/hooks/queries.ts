@@ -2,6 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { useTranslation } from "react-i18next";
 import { adBlocksApi } from "../api/ad-blocks.api";
 import type { AdBlockInput, AdBlockListParams } from "../model/types";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 
 /** Query-key root of the feature — one place that defines its cache structure. */
 const ALL = ["ad-blocks"] as const;
@@ -71,4 +72,9 @@ export function useDeleteAdBlock() {
     mutationFn: (id: number) => adBlocksApi.remove(id),
     onSuccess: invalidate,
   });
+}
+
+/** Sets the field of every selected row (one request per row). */
+export function useBulkSetAdBlockVisible() {
+  return useBulkMutation<boolean>((id, value) => adBlocksApi.setVisible(id, value), ALL);
 }

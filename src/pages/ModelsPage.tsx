@@ -2,6 +2,7 @@ import { App } from "antd";
 import { useState } from "react";
 import { useConfirmIfDirty } from "@/shared/form";
 import { useTranslation } from "react-i18next";
+import { BulkBar, useRowSelection } from "@/shared/ui";
 import {
   DEFAULT_PAGE_SIZE,
   ModelEditor,
@@ -9,6 +10,7 @@ import {
   useDeleteModel,
   useModelsListQuery,
   type ProductModel,
+  useBulkSetModelActive,
 } from "@/features/models";
 import { getErrorMessage } from "@/shared/api";
 import { clsx } from "@/shared/lib/clsx";
@@ -20,6 +22,8 @@ type Selected = number | "new" | null;
 
 export function ModelsPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<ProductModel>();
+  const bulk = useBulkSetModelActive();
   const { message, modal } = App.useApp();
 
   const [search, setSearch] = useState("");
@@ -77,7 +81,18 @@ export function ModelsPage() {
         )}
       >
         <div className="min-w-0">
+          <BulkBar
+            ids={selection.ids}
+            mutation={bulk}
+            onClear={selection.clear}
+            options={[
+              { value: true, label: t("bulk.active") },
+              { value: false, label: t("bulk.inactive") },
+            ]}
+          />
+
           <ModelsTable
+            rowSelection={selection.rowSelection}
             models={items}
             total={models.data?.total ?? 0}
             loading={models.isFetching}

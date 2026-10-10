@@ -1,5 +1,5 @@
 import { CheckIcon } from "@/shared/icons";
-import { Table, Tag, type TableColumnsType } from "antd";
+import { Table, Tag, type TableColumnsType, type TableProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
 import { DEFAULT_PAGE_SIZE, PAGE_SIZES } from "../model/constants";
@@ -8,6 +8,8 @@ import { previewList } from "../lib/preview";
 import { ValueTypeTag } from "./AttributeBits";
 
 interface Props {
+  /** checkboxes in the first column (see useRowSelection) */
+  rowSelection?: TableProps<Attribute>["rowSelection"];
   attributes: Attribute[];
   total: number;
   loading: boolean;
@@ -29,6 +31,7 @@ export function AttributesTable({
   selectedId,
   onPageChange,
   onOpen,
+  rowSelection,
 }: Props) {
   const { t } = useTranslation();
 
@@ -126,6 +129,7 @@ export function AttributesTable({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <Table<Attribute>
+        rowSelection={rowSelection}
         rowKey="id"
         size="middle"
         columns={columns}
@@ -134,7 +138,11 @@ export function AttributesTable({
         scroll={{ x: 1000 }}
         onRow={(attribute) => ({
           className: clsx("cursor-pointer", attribute.id === selectedId && "bg-brand/5"),
-          onClick: () => onOpen(attribute.id),
+          onClick: (event) => {
+            // a click on the checkbox must not open the record
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(attribute.id);
+          },
         })}
         locale={{ emptyText: <div className="py-10 text-slate-500">{t("common.noData")}</div> }}
         pagination={{

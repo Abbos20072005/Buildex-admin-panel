@@ -1,5 +1,5 @@
 import { TrashIcon, EditIcon, MoreIcon } from "@/shared/icons";
-import { Button, Dropdown, Table, Tag, type TableColumnsType } from "antd";
+import { Button, Dropdown, Table, Tag, type TableColumnsType, type TableProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
 import { formatNumber } from "@/shared/lib/format";
@@ -7,6 +7,8 @@ import { DEFAULT_PAGE_SIZE, PAGE_SIZES } from "../model/constants";
 import type { ProductModel } from "../model/types";
 
 interface Props {
+  /** checkboxes in the first column (see useRowSelection) */
+  rowSelection?: TableProps<ProductModel>["rowSelection"];
   models: ProductModel[];
   total: number;
   loading: boolean;
@@ -28,6 +30,7 @@ export function ModelsTable({
   onPageChange,
   onOpen,
   onDelete,
+  rowSelection,
 }: Props) {
   const { t } = useTranslation();
 
@@ -99,6 +102,7 @@ export function ModelsTable({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <Table<ProductModel>
+        rowSelection={rowSelection}
         rowKey="id"
         size="middle"
         columns={columns}
@@ -107,7 +111,11 @@ export function ModelsTable({
         scroll={{ x: 640 }}
         onRow={(model) => ({
           className: clsx("cursor-pointer", model.id === selectedId && "bg-brand/5"),
-          onClick: () => onOpen(model.id),
+          onClick: (event) => {
+            // a click on the checkbox must not open the record
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(model.id);
+          },
         })}
         locale={{ emptyText: <div className="py-10 text-slate-500">{t("common.noData")}</div> }}
         pagination={{

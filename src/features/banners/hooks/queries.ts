@@ -5,6 +5,7 @@ import { bannersApi } from "../api/banners.api";
 import { bannerKeys } from "../api/query-keys";
 import { TARGET_LINK_TYPES } from "../model/constants";
 import type { Banner, BannerFiles, BannerInput, BannerTab, LinkType } from "../model/types";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 
 export function useBannersQuery(tab: BannerTab, page = 1) {
   return useQuery({
@@ -116,4 +117,9 @@ export function useReorderBanners() {
     },
     onSettled: invalidate,
   });
+}
+
+/** Sets the field of every selected row (one request per row). */
+export function useBulkSetBannerVisible() {
+  return useBulkMutation<boolean>((id, value) => bannersApi.setVisible(id, value), bannerKeys.all);
 }

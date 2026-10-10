@@ -1,4 +1,4 @@
-import { Switch, Table, type TableColumnsType } from "antd";
+import { Switch, Table, type TableColumnsType, type TableProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
 import { formatNumber } from "@/shared/lib/format";
@@ -6,6 +6,8 @@ import { DEFAULT_PAGE_SIZE, PAGE_SIZES } from "../model/constants";
 import type { Brand } from "../model/types";
 
 interface Props {
+  /** checkboxes in the first column (see useRowSelection) */
+  rowSelection?: TableProps<Brand>["rowSelection"];
   brands: Brand[];
   total: number;
   loading: boolean;
@@ -65,6 +67,7 @@ export function BrandsTable({
   onPageChange,
   onOpen,
   onToggleVisible,
+  rowSelection,
 }: Props) {
   const { t } = useTranslation();
 
@@ -126,6 +129,7 @@ export function BrandsTable({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <Table<Brand>
+        rowSelection={rowSelection}
         rowKey="id"
         size="middle"
         columns={columns}
@@ -134,7 +138,11 @@ export function BrandsTable({
         scroll={{ x: 820 }}
         onRow={(brand) => ({
           className: clsx("cursor-pointer", brand.id === selectedId && "bg-brand/5"),
-          onClick: () => onOpen(brand.id),
+          onClick: (event) => {
+            // a click on the checkbox must not open the record
+            if ((event.target as HTMLElement).closest(".ant-table-selection-column")) return;
+            onOpen(brand.id);
+          },
         })}
         locale={{ emptyText: <div className="py-10 text-slate-500">{t("common.noData")}</div> }}
         pagination={{

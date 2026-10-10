@@ -12,16 +12,19 @@ import {
   type AccessLevel,
   type StaffMember,
   type StaffStatus,
+  useBulkBlockStaff,
 } from "@/features/staff";
 import { getErrorMessage } from "@/shared/api";
 import { useConfirmIfDirty } from "@/shared/form";
 import { formatNumber } from "@/shared/lib/format";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
-import { RecordsTable, type RowMenuItem } from "@/shared/ui";
+import { RecordsTable, type RowMenuItem, BulkBar, useRowSelection } from "@/shared/ui";
 
 /** Sozlamalar → Xodimlar: accounts that sign in to the admin panel (Super admin only). */
 export function StaffPage() {
   const { t } = useTranslation();
+  const selection = useRowSelection<StaffMember>();
+  const bulk = useBulkBlockStaff();
   const { message, modal } = App.useApp();
   const { user } = useAuth();
 
@@ -148,7 +151,18 @@ export function StaffPage() {
         </Button>
       </div>
 
+      <BulkBar
+        ids={selection.ids}
+        mutation={bulk}
+        onClear={selection.clear}
+        options={[
+          { value: false, label: t("bulk.active") },
+          { value: true, label: t("bulk.blocked") },
+        ]}
+      />
+
       <RecordsTable<StaffMember>
+        rowSelection={selection.rowSelection}
         toolbar={
           <>
             <Input

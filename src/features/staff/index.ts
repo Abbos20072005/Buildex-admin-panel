@@ -5,5 +5,6 @@ export {
   useDeleteStaff,
   useResetStaffPassword,
   useStaffQuery,
+  useBulkBlockStaff,
 } from "./hooks/queries";
 export type { AccessLevel, StaffMember, StaffStatus } from "./model/types";

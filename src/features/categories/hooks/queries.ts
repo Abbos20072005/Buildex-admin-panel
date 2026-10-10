@@ -1,5 +1,6 @@
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Page } from "@/shared/api";
+import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 import { categoriesApi, MAX_PAGE_SIZE } from "../api/categories.api";
 import { parentOptions } from "../api/categories.mappers";
 import { categoryKeys } from "../api/query-keys";
@@ -192,6 +193,17 @@ export interface ReorderInput {
 }
 
 /** The list is reordered at once, then confirmed (or rolled back) by the server. */
+/**
+ * Makes every selected category active (true) or a draft (false). Rows are keyed by `nodeKey`
+ * ("level:id"), because ids repeat between the three levels.
+ */
+export function useBulkSetCategoryActive() {
+  return useBulkMutation<boolean, string>((key, isActive) => {
+    const [level, id] = key.split(":").map(Number);
+    return categoriesApi.setActive(level as CategoryLevel, id, isActive);
+  }, categoryKeys.all);
+}
+
 export function useReorderCategories() {
   const queryClient = useQueryClient();
   const invalidate = useInvalidateCategories();
