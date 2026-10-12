@@ -1,6 +1,6 @@
 import type { BannerPlacement, BannerStatus, BannerTab, LinkType } from "./types";
 
-export const PLACEMENTS: BannerPlacement[] = ["site_home", "app_home", "catalog"];
+export const PLACEMENTS: BannerPlacement[] = ["site_home", "app_home", "home_bottom", "catalog"];
 
 export const TABS: BannerTab[] = [...PLACEMENTS, "archive"];
 

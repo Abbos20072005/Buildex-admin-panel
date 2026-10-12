@@ -296,7 +296,13 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
               >
                 <Input maxLength={255} />
               </Form.Item>
-              <Form.Item name="placement" label={required(t("banners.placement"))}>
+              <Form.Item
+                name="placement"
+                label={required(t("banners.placement"))}
+                extra={t(
+                  `banners.placementHints.${values?.placement ?? banner?.placement ?? "site_home"}`,
+                )}
+              >
                 <Select
                   options={PLACEMENTS.map((value) => ({
                     value,

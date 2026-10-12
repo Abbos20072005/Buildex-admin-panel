@@ -26,6 +26,7 @@ const tabCount = (stats: BannerStats | undefined, tab: BannerTab) =>
   {
     site_home: stats.siteHome,
     app_home: stats.appHome,
+    home_bottom: stats.homeBottom,
     catalog: stats.catalog,
     archive: stats.archived,
   }[tab];

@@ -33,6 +33,7 @@ export interface BannerStatsDto {
   external: number;
   site_home: number;
   app_home: number;
+  home_bottom: number;
   catalog: number;
 }
 

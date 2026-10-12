@@ -1,5 +1,5 @@
 /** Where the banner is shown. */
-export type BannerPlacement = "site_home" | "app_home" | "catalog";
+export type BannerPlacement = "site_home" | "app_home" | "home_bottom" | "catalog";
 
 /** What a click on the banner opens. */
 export type LinkType = "category" | "product" | "badge" | "brand" | "page" | "url";
@@ -83,10 +83,11 @@ export interface BannerStats {
   external: number;
   siteHome: number;
   appHome: number;
+  homeBottom: number;
   catalog: number;
 }
 
-/** The tabs of the list: three placements and the archive. */
+/** The tabs of the list: the four placements and the archive. */
 export type BannerTab = BannerPlacement | "archive";
 
 /** An object a banner can lead to, found by the search of the "Manzil" field. */
