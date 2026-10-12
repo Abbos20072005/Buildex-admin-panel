@@ -1,15 +1,43 @@
 import { ChevronLeftIcon } from "@/shared/icons";
-import { Alert, App, Button, DatePicker, Form, Input, Popconfirm, Tag, TimePicker } from "antd";
+import {
+  Alert,
+  App,
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Popconfirm,
+  Select,
+  Switch,
+  Tag,
+  TimePicker,
+} from "antd";
 import dayjs, { type Dayjs } from "dayjs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "@/shared/api";
 import { useEditorForm } from "@/shared/form";
 import { clsx } from "@/shared/lib/clsx";
-import { useCreatePush, useDeletePush, useUpdatePush } from "../hooks/queries";
-import { PUSH_PATH, STATUS_COLOR, TITLE_MAX } from "../model/constants";
-import type { Push, PushInput } from "../model/types";
+import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
+import { ImageField } from "@/shared/ui";
+import {
+  useCreatePush,
+  useDeletePush,
+  useTargetOptionsQuery,
+  useUpdatePush,
+} from "../hooks/queries";
+import { LINK_TYPES, PLATFORMS, PUSH_PATH, STATUS_COLOR, TITLE_MAX } from "../model/constants";
+import type {
+  Push,
+  PushImage,
+  PushInput,
+  PushLinkType,
+  PushPlatform,
+  PushSegment,
+  PushTargetModel,
+} from "../model/types";
+import { AudienceField } from "./AudienceField";
 import { PushPreview } from "./PushPreview";
 
 type Lang = "uz" | "ru";
@@ -25,7 +53,14 @@ interface FormValues {
   titleRu: string;
   bodyUz: string;
   bodyRu: string;
+  linkType: PushLinkType;
+  /** "model:id" */
+  target: string | null;
+  page: string;
   deeplink: string;
+  segment: PushSegment;
+  platform: PushPlatform;
+  quietHours: boolean;
   date: Dayjs | null;
   time: Dayjs | null;
 }
@@ -41,7 +76,13 @@ const initialValues = (push: Push | null): FormValues => {
     titleRu: push?.titleRu ?? "",
     bodyUz: push?.bodyUz ?? "",
     bodyRu: push?.bodyRu ?? "",
-    deeplink: push?.deeplink ?? "",
+    linkType: push?.linkType ?? "",
+    target: push?.target ? `${push.target.model}:${push.target.id}` : null,
+    page: push?.page ?? "",
+    deeplink: push?.linkType ? "" : (push?.deeplink ?? ""),
+    segment: push?.segment ?? "all",
+    platform: push?.platform ?? "all",
+    quietHours: push?.quietHours ?? false,
     date: saved,
     time: saved ?? DEFAULT_TIME,
   };
@@ -62,15 +103,19 @@ const required = (label: string) => (
   </>
 );
 
-/** Create / edit page of a notification: the texts and the schedule on the left, a lock-screen preview on the right. */
+const card = "rounded-xl border border-slate-200 bg-white p-5";
+
+/** Create / edit page of a notification: texts, link, audience and schedule; a lock-screen preview. */
 export function PushForm({ push }: { push: Push | null }) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm<FormValues>();
   // the schedule is two form fields (date, time) but one API field
-  const guard = useEditorForm(form, { publish_at: "date" });
+  const guard = useEditorForm(form, { publish_at: "date", link_type: "linkType" });
   const [lang, setLang] = useState<Lang>("uz");
+  const [image, setImage] = useState<PushImage>({});
+  const [targetSearch, setTargetSearch] = useState("");
 
   const create = useCreatePush();
   const update = useUpdatePush();
@@ -81,6 +126,40 @@ export function PushForm({ push }: { push: Push | null }) {
   const at = combine(values?.date, values?.time);
   const scheduled = !!at && at.isAfter(dayjs());
   const isDraft = !push || push.status === "draft";
+  const linkType = values?.linkType ?? push?.linkType ?? "";
+  const platform = values?.platform ?? push?.platform ?? "all";
+  /** the push has gone out: the audience can't change any more */
+  const audienceLocked = !!push?.pushSentAt;
+
+  const targets = useTargetOptionsQuery(linkType, useDebouncedValue(targetSearch, 300));
+  const targetOptions = useMemo(() => {
+    const groups = new Map<PushTargetModel, { value: string; label: string }[]>();
+    for (const option of targets.data ?? []) {
+      const list = groups.get(option.model) ?? [];
+      list.push({ value: `${option.model}:${option.id}`, label: option.name });
+      groups.set(option.model, list);
+    }
+    // the saved target may be missing from the first page of the list
+    const saved = push?.target;
+    if (saved && saved.name && linkType === push?.linkType) {
+      const list = groups.get(saved.model) ?? [];
+      const value = `${saved.model}:${saved.id}`;
+      if (!list.some((option) => option.value === value)) {
+        groups.set(saved.model, [{ value, label: saved.name }, ...list]);
+      }
+    }
+    return [...groups.entries()].map(([model, options]) => ({
+      label: t(`push.targetModels.${model}`),
+      options,
+    }));
+  }, [targets.data, push, linkType, t]);
+
+  /** the picture shown in the preview: the new file, else the saved one (unless removed) */
+  const previewImage = useMemo(
+    () =>
+      image.file ? URL.createObjectURL(image.file) : image.clear ? null : (push?.image ?? null),
+    [image, push?.image],
+  );
 
   /** green — both texts are filled in; red — one is missing (Russian is required) */
   const langDone = (code: Lang) => {
@@ -101,12 +180,23 @@ export function PushForm({ push }: { push: Push | null }) {
       return;
     }
     const v = form.getFieldsValue(true) as FormValues;
+    let target: PushInput["target"] = null;
+    if (v.target) {
+      const [model, id] = v.target.split(":");
+      target = { model: model as PushTargetModel, id: Number(id) };
+    }
     const input: PushInput = {
       titleUz: v.titleUz,
       titleRu: v.titleRu,
       bodyUz: v.bodyUz,
       bodyRu: v.bodyRu,
-      deeplink: v.deeplink,
+      linkType: v.linkType,
+      target,
+      page: v.page ?? "",
+      deeplink: v.deeplink ?? "",
+      segment: audienceLocked ? null : v.segment,
+      platform: audienceLocked ? null : v.platform,
+      quietHours: v.quietHours,
       publishAt: combine(v.date, v.time)?.format(API_FORMAT) ?? null,
       isActive,
     };
@@ -118,8 +208,8 @@ export function PushForm({ push }: { push: Push | null }) {
       },
       onError: guard.showError,
     };
-    if (push) update.mutate({ id: push.id, input }, done);
-    else create.mutate(input, done);
+    if (push) update.mutate({ id: push.id, input, image }, done);
+    else create.mutate({ input, image }, done);
   };
 
   const handleDelete = () => {
@@ -135,6 +225,7 @@ export function PushForm({ push }: { push: Push | null }) {
   };
 
   const saving = create.isPending || update.isPending;
+  const hasSavedImage = !!push?.image && !image.clear;
 
   return (
     <>
@@ -154,6 +245,14 @@ export function PushForm({ push }: { push: Push | null }) {
               {t(`push.status.${push?.status ?? "draft"}`)}
             </Tag>
           </h1>
+          {push?.pushSentAt && (
+            <div className="mt-1 text-xs text-slate-500">
+              {t("push.sentInfo", {
+                devices: push.pushDevices,
+                opened: push.reads,
+              })}
+            </div>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
           {push && (
@@ -250,19 +349,119 @@ export function PushForm({ push }: { push: Push | null }) {
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-5">
+          <div className={card}>
+            <div className="mb-2 text-sm font-semibold">{t("push.fields.image")}</div>
+            <ImageField
+              url={hasSavedImage ? (push?.image ?? null) : null}
+              file={image.file}
+              onPick={(file) => {
+                setImage({ file });
+                guard.markDirty();
+              }}
+              hint={t("push.imageHint")}
+            />
+            {(hasSavedImage || image.file) && (
+              <Button
+                size="small"
+                className="mt-2"
+                onClick={() => {
+                  setImage({ clear: true });
+                  guard.markDirty();
+                }}
+              >
+                {t("push.removeImage")}
+              </Button>
+            )}
+          </div>
+
+          <div className={card}>
+            <div className="grid gap-x-4 sm:grid-cols-2">
+              <Form.Item name="linkType" label={t("push.fields.linkType")}>
+                <Select
+                  options={LINK_TYPES.map((value) => ({
+                    value,
+                    label: t(`push.linkTypes.${value || "none"}`),
+                  }))}
+                  onChange={() => form.setFieldsValue({ target: null })}
+                />
+              </Form.Item>
+
+              {linkType !== "" && linkType !== "page" && (
+                <Form.Item
+                  name="target"
+                  label={required(t("push.fields.target"))}
+                  rules={[{ required: true, message: t("push.targetRequired") }]}
+                >
+                  <Select
+                    showSearch={{ filterOption: false, onSearch: setTargetSearch }}
+                    loading={targets.isFetching}
+                    placeholder={t("push.chooseTarget")}
+                    options={targetOptions}
+                  />
+                </Form.Item>
+              )}
+
+              {linkType === "page" && (
+                <Form.Item
+                  name="page"
+                  label={required(t("push.fields.page"))}
+                  rules={[
+                    { required: true, message: t("push.pageRequired") },
+                    { pattern: /^\//, message: t("push.pageInvalid") },
+                  ]}
+                >
+                  <Input placeholder="/pro" className="font-mono" />
+                </Form.Item>
+              )}
+            </div>
+
+            {linkType === "" ? (
+              <Form.Item
+                name="deeplink"
+                label={t("push.fields.deeplink")}
+                extra={t("push.deeplinkHint")}
+                className="mb-0"
+              >
+                <Input
+                  maxLength={255}
+                  placeholder="buildex://category/sement"
+                  className="font-mono"
+                />
+              </Form.Item>
+            ) : (
+              <div className="text-xs text-slate-500">
+                {t("push.deeplinkAuto")}
+                {push?.deeplink && push.linkType === linkType && (
+                  <code className="ml-1 font-mono">{push.deeplink}</code>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className={card}>
+            <div className="mb-3 text-sm font-semibold">{t("push.fields.audience")}</div>
+            <Form.Item name="segment" noStyle>
+              <AudienceField platform={platform} disabled={audienceLocked} />
+            </Form.Item>
             <Form.Item
-              name="deeplink"
-              label={t("push.fields.deeplink")}
-              extra={t("push.deeplinkHint")}
+              name="platform"
+              label={t("push.fields.platform")}
+              className="mt-4 mb-0 max-w-xs"
             >
-              <Input
-                maxLength={255}
-                placeholder="buildex://category/sement"
-                className="font-mono"
+              <Select
+                disabled={audienceLocked}
+                options={PLATFORMS.map((value) => ({
+                  value,
+                  label: t(`push.platforms.${value}`),
+                }))}
               />
             </Form.Item>
+            <div className="mt-2 text-xs text-slate-500">
+              {audienceLocked ? t("push.audienceLocked") : t("push.platformHint")}
+            </div>
+          </div>
 
+          <div className={card}>
             <div className="grid gap-x-4 sm:grid-cols-[1fr_auto]">
               <Form.Item name="date" label={t("push.fields.date")} className="mb-2">
                 <DatePicker format="DD.MM.YYYY" className="w-full" />
@@ -274,11 +473,22 @@ export function PushForm({ push }: { push: Push | null }) {
             <div className="text-xs text-slate-500">
               {t(scheduled ? "push.scheduledHint" : "push.nowHint")}
             </div>
+
+            <label className="mt-4 flex items-center justify-between gap-4 border-t border-slate-100 pt-4">
+              <span>
+                <span className="block text-sm font-semibold">{t("push.fields.quietHours")}</span>
+                <span className="block text-xs text-slate-500">{t("push.quietHoursHint")}</span>
+              </span>
+              <Form.Item name="quietHours" valuePropName="checked" noStyle>
+                <Switch />
+              </Form.Item>
+            </label>
           </div>
         </div>
 
         <PushPreview
           at={at}
+          image={previewImage}
           texts={{
             uz: { title: values?.titleUz ?? "", body: values?.bodyUz ?? "" },
             ru: { title: values?.titleRu ?? "", body: values?.bodyRu ?? "" },

@@ -6,7 +6,7 @@ import type { Push } from "../model/types";
 
 const dash = <span className="text-slate-400">—</span>;
 
-/** Kampaniya · Deeplink · Vaqt · Holat · Ochildi (the "⋯" column is added by RecordsTable). */
+/** Kampaniya · Auditoriya · Deeplink · Vaqt · Holat · Yetkazildi · Ochildi ("⋯" is added by RecordsTable). */
 export const pushColumns = (t: TFunction): TableColumnsType<Push> => [
   {
     key: "campaign",
@@ -20,9 +20,20 @@ export const pushColumns = (t: TFunction): TableColumnsType<Push> => [
     ),
   },
   {
+    key: "audience",
+    title: t("push.columns.audience"),
+    width: 200,
+    render: (_, item) => (
+      <div>
+        <div className="font-medium">{t(`push.segments.${item.segment}`)}</div>
+        <div className="text-xs text-slate-500">{t(`push.platforms.${item.platform}`)}</div>
+      </div>
+    ),
+  },
+  {
     key: "deeplink",
     title: t("push.columns.deeplink"),
-    width: 240,
+    width: 220,
     ellipsis: true,
     render: (_, item) =>
       item.deeplink ? <span className="font-mono text-xs">{item.deeplink}</span> : dash,
@@ -43,6 +54,14 @@ export const pushColumns = (t: TFunction): TableColumnsType<Push> => [
         {t(`push.status.${item.status}`)}
       </Tag>
     ),
+  },
+  {
+    key: "delivered",
+    title: t("push.columns.delivered"),
+    width: 120,
+    align: "right",
+    // 0 until the push goes out (and for records from before push existed)
+    render: (_, item) => (item.pushSentAt ? formatNumber(item.pushDevices) : dash),
   },
   {
     key: "reads",

@@ -15,6 +15,8 @@ interface Props {
   texts: Record<Lang, PreviewTexts>;
   /** publish time; empty — now */
   at: Dayjs | null;
+  /** the picture of the notification; null — none */
+  image: string | null;
 }
 
 function Phone({
@@ -23,12 +25,14 @@ function Phone({
   date,
   title,
   body,
+  image,
 }: {
   platform: "ios" | "android";
   time: string;
   date: string;
   title: string;
   body: string;
+  image: string | null;
 }) {
   const { t } = useTranslation();
   const ios = platform === "ios";
@@ -57,6 +61,9 @@ function Phone({
           </div>
           <div className="line-clamp-2 text-[11px] leading-snug font-bold">{title}</div>
           <div className="line-clamp-3 text-[11px] leading-snug text-slate-700">{body}</div>
+          {image && (
+            <img src={image} alt="" className="mt-1.5 h-16 w-full rounded-lg object-cover" />
+          )}
         </div>
       </div>
     </div>
@@ -64,7 +71,7 @@ function Phone({
 }
 
 /** How the notification looks on a lock screen (iOS and Android), in the chosen language. */
-export function PushPreview({ texts, at }: Props) {
+export function PushPreview({ texts, at, image }: Props) {
   const { t } = useTranslation();
   const [lang, setLang] = useState<Lang>("uz");
 
@@ -79,6 +86,7 @@ export function PushPreview({ texts, at }: Props) {
     date: moment.format("dddd, DD.MM.YYYY"),
     title,
     body,
+    image,
   };
 
   return (

@@ -1,4 +1,4 @@
-import type { PushStatus, PushTab } from "./types";
+import type { PushLinkType, PushPlatform, PushSegment, PushStatus, PushTab } from "./types";
 
 export const PUSH_PATH = "/content/push";
 
@@ -12,3 +12,10 @@ export const STATUS_COLOR: Record<PushStatus, string> = {
 };
 
 export const TITLE_MAX = 150;
+
+export const SEGMENTS: PushSegment[] = ["all", "pro", "tashkent", "buyers_30d", "abandoned_cart"];
+
+export const PLATFORMS: PushPlatform[] = ["all", "ios", "android"];
+
+/** "" is "no link" (a free deeplink may be typed instead). */
+export const LINK_TYPES: PushLinkType[] = ["", "category", "product", "badge", "page", "banner"];
