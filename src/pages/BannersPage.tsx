@@ -24,8 +24,7 @@ import { clsx } from "@/shared/lib/clsx";
 const tabCount = (stats: BannerStats | undefined, tab: BannerTab) =>
   stats &&
   {
-    site_home: stats.siteHome,
-    app_home: stats.appHome,
+    home_top: stats.homeTop,
     home_bottom: stats.homeBottom,
     catalog: stats.catalog,
     archive: stats.archived,
@@ -37,7 +36,7 @@ export function BannersPage() {
   const bulk = useBulkSetBannerVisible();
   const { message } = App.useApp();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<BannerTab>("site_home");
+  const [tab, setTab] = useState<BannerTab>("home_top");
 
   const stats = useBannerStatsQuery();
   const banners = useBannersQuery(tab);

@@ -1,5 +1,5 @@
 /** Where the banner is shown. */
-export type BannerPlacement = "site_home" | "app_home" | "home_bottom" | "catalog";
+export type BannerPlacement = "home_top" | "home_bottom" | "catalog";
 
 /** What a click on the banner opens. */
 export type LinkType = "category" | "product" | "badge" | "brand" | "page" | "url";
@@ -81,8 +81,7 @@ export interface BannerStats {
   archived: number;
   /** non-archived banners with an external URL — "Tekshirish kerak" */
   external: number;
-  siteHome: number;
-  appHome: number;
+  homeTop: number;
   homeBottom: number;
   catalog: number;
 }

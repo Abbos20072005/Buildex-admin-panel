@@ -31,8 +31,7 @@ export interface BannerStatsDto {
   expired: number;
   archived: number;
   external: number;
-  site_home: number;
-  app_home: number;
+  home_top: number;
   home_bottom: number;
   catalog: number;
 }

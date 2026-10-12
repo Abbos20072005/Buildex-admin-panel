@@ -36,10 +36,8 @@ export const mapStats = (dto: BannerStatsDto): BannerStats => ({
   expired: dto.expired,
   archived: dto.archived,
   external: dto.external,
-  siteHome: dto.site_home,
-  appHome: dto.app_home,
-  // older backends don't send it yet
-  homeBottom: dto.home_bottom ?? 0,
+  homeTop: dto.home_top,
+  homeBottom: dto.home_bottom,
   catalog: dto.catalog,
 });
 

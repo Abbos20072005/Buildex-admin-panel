@@ -65,7 +65,7 @@ const MAX_SIZE_MB = 5;
 
 const initialValues = (banner: Banner | null): FormValues => ({
   name: banner?.nameRu || banner?.name || "",
-  placement: banner?.placement ?? "site_home",
+  placement: banner?.placement ?? "home_top",
   showOnSite: banner?.showOnSite ?? true,
   showOnIos: banner?.showOnIos ?? true,
   showOnAndroid: banner?.showOnAndroid ?? true,
@@ -300,7 +300,7 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
                 name="placement"
                 label={required(t("banners.placement"))}
                 extra={t(
-                  `banners.placementHints.${values?.placement ?? banner?.placement ?? "site_home"}`,
+                  `banners.placementHints.${values?.placement ?? banner?.placement ?? "home_top"}`,
                 )}
               >
                 <Select
