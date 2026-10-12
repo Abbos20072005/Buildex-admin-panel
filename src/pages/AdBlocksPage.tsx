@@ -1,5 +1,5 @@
 import { PlusIcon, SearchIcon } from "@/shared/icons";
-import { App, Button, Input, Select } from "antd";
+import { App, Button, Input, Segmented, Select } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -14,7 +14,9 @@ import { getErrorMessage } from "@/shared/api";
 import { formatNumber } from "@/shared/lib/format";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
 import { RecordsTable, BulkBar, useRowSelection } from "@/shared/ui";
+import { SalesSection } from "./SalesSection";
 
+type Tab = "carousels" | "sales";
 type Visibility = "visible" | "hidden";
 type BrandFilter = "with" | "without";
 
@@ -32,6 +34,9 @@ export function AdBlocksPage() {
   const [pageSize, setPageSize] = useState(20);
   /** "new" — the create form is open; a number — that block is being edited */
   const [selected, setSelected] = useState<number | "new" | null>(null);
+  /** Karusellar and Aksiyalar (sales) share the page: two lists, one switch */
+  const [tab, setTab] = useState<Tab>("carousels");
+  const [saleSelected, setSaleSelected] = useState<number | "new" | null>(null);
 
   const list = useAdBlocksQuery({
     filters: {
@@ -72,86 +77,120 @@ export function AdBlocksPage() {
             )}
           </h1>
         </div>
-        <Button type="primary" icon={<PlusIcon />} onClick={() => setSelected("new")}>
-          {t("adBlocks.add")}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            icon={<PlusIcon />}
+            onClick={() => {
+              setTab("sales");
+              setSaleSelected("new");
+            }}
+          >
+            {t("sales.add")}
+          </Button>
+          <Button
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={() => {
+              setTab("carousels");
+              setSelected("new");
+            }}
+          >
+            {t("adBlocks.add")}
+          </Button>
+        </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-3">
-        <Input
-          allowClear
-          className="w-72"
-          prefix={<SearchIcon className="text-slate-400" />}
-          placeholder={t("adBlocks.search")}
-          value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            resetPage();
-          }}
-        />
-        <Select<Visibility>
-          allowClear
-          className="w-44"
-          placeholder={t("adBlocks.columns.status")}
-          value={visibility}
-          onChange={(value) => {
-            setVisibility(value);
-            resetPage();
-          }}
-          options={[
-            { value: "visible", label: t("adBlocks.visible") },
-            { value: "hidden", label: t("adBlocks.hidden") },
-          ]}
-        />
-        <Select<BrandFilter>
-          allowClear
-          className="w-52"
-          placeholder={t("adBlocks.columns.brand")}
-          value={brand}
-          onChange={(value) => {
-            setBrand(value);
-            resetPage();
-          }}
-          options={[
-            { value: "with", label: t("adBlocks.withBrand") },
-            { value: "without", label: t("adBlocks.withoutBrand") },
-          ]}
-        />
-      </div>
-
-      <BulkBar
-        ids={selection.ids}
-        mutation={bulk}
-        onClear={selection.clear}
+      <Segmented<Tab>
+        className="mb-4"
+        value={tab}
+        onChange={setTab}
         options={[
-          { value: true, label: t("bulk.visible") },
-          { value: false, label: t("bulk.hidden") },
+          { value: "carousels", label: t("nav.adBlocks") },
+          { value: "sales", label: t("sales.tab") },
         ]}
       />
 
-      <RecordsTable<AdBlock>
-        rowSelection={selection.rowSelection}
-        columns={adBlockColumns(t)}
-        items={list.data?.items ?? []}
-        total={list.data?.total ?? 0}
-        loading={list.isFetching}
-        page={page}
-        pageSize={pageSize}
-        onPageChange={(nextPage, nextSize) => {
-          setPage(nextSize !== pageSize ? 1 : nextPage);
-          setPageSize(nextSize);
-        }}
-        onOpen={(item) => setSelected(item.id)}
-        onDelete={confirmDelete}
-      />
-      {list.error && (
-        <p className="mt-3 text-sm text-red-600">
-          {t("adBlocks.loadError")}: {list.error.message}
-        </p>
-      )}
+      {tab === "sales" ? (
+        <SalesSection selected={saleSelected} onSelect={setSaleSelected} />
+      ) : (
+        <>
+          <div className="mb-4 flex flex-wrap gap-3">
+            <Input
+              allowClear
+              className="w-72"
+              prefix={<SearchIcon className="text-slate-400" />}
+              placeholder={t("adBlocks.search")}
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                resetPage();
+              }}
+            />
+            <Select<Visibility>
+              allowClear
+              className="w-44"
+              placeholder={t("adBlocks.columns.status")}
+              value={visibility}
+              onChange={(value) => {
+                setVisibility(value);
+                resetPage();
+              }}
+              options={[
+                { value: "visible", label: t("adBlocks.visible") },
+                { value: "hidden", label: t("adBlocks.hidden") },
+              ]}
+            />
+            <Select<BrandFilter>
+              allowClear
+              className="w-52"
+              placeholder={t("adBlocks.columns.brand")}
+              value={brand}
+              onChange={(value) => {
+                setBrand(value);
+                resetPage();
+              }}
+              options={[
+                { value: "with", label: t("adBlocks.withBrand") },
+                { value: "without", label: t("adBlocks.withoutBrand") },
+              ]}
+            />
+          </div>
 
-      {selected !== null && (
-        <AdBlockEditor key={selected} id={selected} onClose={() => setSelected(null)} />
+          <BulkBar
+            ids={selection.ids}
+            mutation={bulk}
+            onClear={selection.clear}
+            options={[
+              { value: true, label: t("bulk.visible") },
+              { value: false, label: t("bulk.hidden") },
+            ]}
+          />
+
+          <RecordsTable<AdBlock>
+            rowSelection={selection.rowSelection}
+            columns={adBlockColumns(t)}
+            items={list.data?.items ?? []}
+            total={list.data?.total ?? 0}
+            loading={list.isFetching}
+            page={page}
+            pageSize={pageSize}
+            onPageChange={(nextPage, nextSize) => {
+              setPage(nextSize !== pageSize ? 1 : nextPage);
+              setPageSize(nextSize);
+            }}
+            onOpen={(item) => setSelected(item.id)}
+            onDelete={confirmDelete}
+          />
+          {list.error && (
+            <p className="mt-3 text-sm text-red-600">
+              {t("adBlocks.loadError")}: {list.error.message}
+            </p>
+          )}
+
+          {selected !== null && (
+            <AdBlockEditor key={selected} id={selected} onClose={() => setSelected(null)} />
+          )}
+        </>
       )}
     </>
   );
