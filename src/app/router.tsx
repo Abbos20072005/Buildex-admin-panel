@@ -58,6 +58,7 @@ const CustomersPage = lazy(() =>
 const ManagersPage = lazy(() =>
   import("@/pages/ManagersPage").then((m) => ({ default: m.ManagersPage })),
 );
+const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
 const StaffPage = lazy(() => import("@/pages/StaffPage").then((m) => ({ default: m.StaffPage })));
 const ChangePasswordPage = lazy(() =>
   import("@/pages/ChangePasswordPage").then((m) => ({ default: m.ChangePasswordPage })),
@@ -73,6 +74,7 @@ const PAGES: Record<string, ReactNode> = {
   "/content/news": <PublicationsPage />,
   "/content/ad-blocks": <AdBlocksPage />,
   "/content/push": <PushPage />,
+  "/content/home": <HomePage />,
   "/today": <TodayPage />,
   "/orders": <OrdersPage />,
   "/customers": <CustomersPage />,
