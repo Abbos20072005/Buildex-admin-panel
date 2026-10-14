@@ -1,0 +1,84 @@
+# admin.buildex.uz (Buildex-admin-panel) — main ga push -> dommaster serverga yoyish.
+# Repoda: .github/workflows/deploy.yml
+#
+# Runner: dommaster serverda `dommaster-admin-panel` (~/runners/admin-panel), User=dommaster.
+# nginx `root` to'g'ridan-to'g'ri ~/Buildex-admin-panel/dist ga qaragan, restart kerak emas.
+# Build joyida bo'ladi — .env (VITE_API_URL) shu yerda, git'da yo'q.
+#
+# Build `dist.new` ga yasaladi, tayyor bo'lgachgina `dist` bilan almashtiriladi:
+# build yiqilsa sayt umuman tegilmaydi. Tekshiruvdan o'tmasa — `dist.prev` ga qaytadi.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-buildex-admin
+  cancel-in-progress: false
+
+env:
+  APP_DIR: /home/dommaster/Buildex-admin-panel
+  SITE_URL: https://admin.buildex.uz
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, dommaster]
+    timeout-minutes: 20
+    steps:
+      - name: Yoyish
+        run: |
+          set -euo pipefail
+          cd "$APP_DIR"
+
+          # Serverda qo'lda o'zgartirilgan tracked fayl bo'lsa — to'xtaymiz, ustidan yozmaymiz.
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo "::error::serverda commit qilinmagan o'zgarishlar bor"; git status --short; exit 1
+          fi
+          [ "$(git branch --show-current)" = main ] || { echo "::error::serverdagi branch main emas"; exit 1; }
+
+          PREV=$(git rev-parse HEAD)
+          git fetch --prune origin main
+          git merge --ff-only "$GITHUB_SHA"
+          echo "$PREV -> $(git rev-parse --short HEAD)"
+
+          SWAPPED=0
+          rollback() {
+            echo "::error::xato — $PREV ga qaytarilmoqda"
+            git reset -q --hard "$PREV"
+            if [ "$SWAPPED" = 1 ] && [ -d dist.prev ]; then
+              rm -rf dist && mv dist.prev dist
+            fi
+            rm -rf dist.new
+            exit 1
+          }
+          trap rollback ERR
+
+          if ! git diff --quiet "$PREV" HEAD -- package.json package-lock.json; then
+            echo "== paketlar o'zgargan -> npm ci"
+            npm ci --no-audit --no-fund
+          fi
+
+          rm -rf dist.new
+          # `tsc -b && vite build` — argumentlar oxirgi buyruqqa (vite) tushadi
+          npm run build -- --outDir dist.new --emptyOutDir
+          test -f dist.new/index.html
+          ASSET=$(grep -o '/assets/index-[^"]*\.js' dist.new/index.html | head -1)
+          [ -n "$ASSET" ] || { echo "::error::index.html da asset topilmadi"; false; }
+
+          rm -rf dist.prev
+          mv dist dist.prev
+          mv dist.new dist
+          SWAPPED=1
+
+          # HTTP 200 yetarli emas — sahifa aynan yangi build'ning asset'ini ko'rsatishi kerak.
+          served=$(curl -fsS -m 10 "$SITE_URL/" | grep -o '/assets/index-[^"]*\.js' | head -1)
+          [ "$served" = "$ASSET" ] || { echo "::error::sayt '$served' ni beryapti, kutilgan '$ASSET'"; false; }
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE_URL$ASSET")
+          [ "$code" = 200 ] || { echo "::error::$ASSET -> $code"; false; }
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE_URL/orders")
+          [ "$code" = 200 ] || { echo "::error::/orders -> $code (SPA fallback)"; false; }
+
+          trap - ERR
+          echo "OK: $SITE_URL -> $ASSET ($(git rev-parse --short HEAD))"
