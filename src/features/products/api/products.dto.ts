@@ -80,7 +80,8 @@ export interface ProductDto extends ProductListDto {
   name_uz?: string | null;
   name_ru?: string | null;
   name_en?: string | null;
-  short_description?: string | null;
+  short_description_uz?: string | null;
+  short_description_ru?: string | null;
   description_uz?: string | null;
   description_ru?: string | null;
   description_en?: string | null;

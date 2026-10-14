@@ -15,7 +15,7 @@ import type {
 export interface ProductFormValues {
   names: Localized;
   descriptions: Localized;
-  shortDescription: string;
+  shortDescriptions: Localized;
   attributeValues: AttributeValue[];
   categoryId: number | null;
   brandId: number | null;
@@ -33,6 +33,8 @@ export const PRODUCT_ERROR_FIELDS: FieldMap = {
   description_uz: ["descriptions", "uz"],
   description_ru: ["descriptions", "ru"],
   description_en: ["descriptions", "en"],
+  short_description_uz: ["shortDescriptions", "uz"],
+  short_description_ru: ["shortDescriptions", "ru"],
   category: "categoryId",
   brand: "brandId",
   badge: "badgeId",
@@ -44,7 +46,7 @@ export function toFormValues(product: ProductDetail): ProductFormValues {
   return {
     names: { ...product.names },
     descriptions: { ...product.descriptions },
-    shortDescription: product.shortDescription,
+    shortDescriptions: { ...product.shortDescriptions },
     attributeValues: product.attributeValues.map((item) => ({ ...item })),
     categoryId: product.category?.id ?? null,
     brandId: product.brand?.id ?? null,
@@ -75,8 +77,7 @@ export function buildPatch(product: ProductDetail, values: ProductFormValues): P
 
   patch.names = changedTexts(initial.names, values.names);
   patch.descriptions = changedTexts(initial.descriptions, values.descriptions);
-  if ((values.shortDescription ?? "") !== initial.shortDescription)
-    patch.shortDescription = values.shortDescription ?? "";
+  patch.shortDescriptions = changedTexts(initial.shortDescriptions, values.shortDescriptions);
 
   // rows left without a value are not sent — the API doesn't accept empty values
   const attributeValues = (values.attributeValues ?? []).filter(hasValue);

@@ -25,7 +25,11 @@ export function ProductContentCard() {
         <Input showCount maxLength={500} />
       </Form.Item>
 
-      <Form.Item name="shortDescription" label={t("products.modal.shortDescription")}>
+      <Form.Item
+        key={`short-${lang}`}
+        name={["shortDescriptions", lang]}
+        label={t("products.modal.shortDescription")}
+      >
         <RichTextEditor minHeight={60} />
       </Form.Item>
 

@@ -98,7 +98,7 @@ export function mapProductDetail(dto: ProductDto): ProductDetail {
     ...base,
     names: { uz: text(dto.name_uz), ru: text(dto.name_ru) },
     descriptions: { uz: text(dto.description_uz), ru: text(dto.description_ru) },
-    shortDescription: text(dto.short_description),
+    shortDescriptions: { uz: text(dto.short_description_uz), ru: text(dto.short_description_ru) },
     category: categoryPath(dto.product_item_category),
     images: (dto.images ?? []).map((image) => ({ id: image.id, url: image.image })),
     attributeValues: (dto.attribute_values ?? []).map(mapAttributeValue),
@@ -159,8 +159,9 @@ export function patchToDto(patch: ProductPatch): Partial<Record<string, unknown>
     if (patch.names?.[lang] !== undefined) dto[`name_${lang}`] = patch.names[lang];
     if (patch.descriptions?.[lang] !== undefined)
       dto[`description_${lang}`] = patch.descriptions[lang];
+    if (patch.shortDescriptions?.[lang] !== undefined)
+      dto[`short_description_${lang}`] = patch.shortDescriptions[lang];
   }
-  if (patch.shortDescription !== undefined) dto.short_description = patch.shortDescription;
   if (patch.attributeValues) dto.attribute_values = patch.attributeValues.map(attributeValueToDto);
   if (patch.categoryId !== undefined)
     dto.product_item_category = patch.categoryId ? { id: patch.categoryId } : null;

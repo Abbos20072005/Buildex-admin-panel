@@ -21,9 +21,9 @@ export function useProductColumns(sort: ProductSort): TableColumnsType<Product> 
     () => [
       {
         key: "thumb",
-        width: 72,
+        width: 92,
         render: (_, product) => (
-          <ProductThumb src={product.image} alt={product.name} className="size-11" />
+          <ProductThumb src={product.image} alt={product.name} className="size-16" />
         ),
       },
       {

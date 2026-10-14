@@ -1,6 +1,7 @@
 import { Menu, type MenuProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useModerationStatsQuery } from "@/features/moderation";
 import { useOrderStatsQuery } from "@/features/orders";
 import { useProductsInReviewCount, useProductsTotalCount } from "@/features/products";
 import { isNavGroup, NAV_LEAVES, type NavBadge, type NavItem, type NavLeaf } from "./navigation";
@@ -30,11 +31,13 @@ export function SidebarMenu({ nav, onNavigate }: Props) {
       .sort((a, b) => b.length - a.length)[0] ?? pathname;
   const { data: orderStats } = useOrderStatsQuery();
   const { data: inReview } = useProductsInReviewCount();
+  const { data: moderation } = useModerationStatsQuery();
   const { data: total } = useProductsTotalCount();
 
   const badges: Record<NavBadge, number> = {
     newOrders: orderStats?.pending ?? 0,
-    productsInReview: inReview ?? 0,
+    // the queue the moderation page shows; products in "review" is the fallback
+    productsInReview: moderation?.pending ?? inReview ?? 0,
     productsTotal: total ?? 0,
   };
 

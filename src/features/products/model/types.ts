@@ -85,7 +85,7 @@ export interface ProductDetail extends Omit<
 > {
   names: Localized;
   descriptions: Localized;
-  shortDescription: string;
+  shortDescriptions: Localized;
   category: CategoryPath | null;
   images: ProductImage[];
   attributeValues: AttributeValue[];
@@ -101,7 +101,7 @@ export interface ProductDetail extends Omit<
 export interface ProductPatch {
   names?: Partial<Localized>;
   descriptions?: Partial<Localized>;
-  shortDescription?: string;
+  shortDescriptions?: Partial<Localized>;
   attributeValues?: AttributeValue[];
   categoryId?: number | null;
   brandId?: number | null;
