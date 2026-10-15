@@ -1,15 +1,7 @@
 import type { Query } from "@/shared/api";
 import { readLocalized, writeLocalized } from "@/shared/lib/localized";
-import type {
-  Article,
-  ArticleInput,
-  NewsInput,
-  NewsItem,
-  PublicationFilters,
-  Video,
-  VideoInput,
-} from "../model/types";
-import type { ArticleDto, NewsDto, VideoDto } from "./publications.dto";
+import type { NewsInput, NewsItem, PublicationFilters, Video, VideoInput } from "../model/types";
+import type { NewsDto, VideoDto } from "./publications.dto";
 
 export const mapNews = (dto: NewsDto): NewsItem => ({
   id: dto.id,
@@ -17,14 +9,6 @@ export const mapNews = (dto: NewsDto): NewsItem => ({
   title: readLocalized(dto, "title"),
   description: readLocalized(dto, "description"),
   image: dto.image || null,
-  createdAt: dto.created_at,
-});
-
-export const mapArticle = (dto: ArticleDto): Article => ({
-  id: dto.id,
-  title: dto.title,
-  shortDescription: dto.short_description,
-  description: dto.description ?? "",
   createdAt: dto.created_at,
 });
 
@@ -68,12 +52,6 @@ export const newsToBody = (input: NewsInput, editing: boolean): FormData | objec
         ...writeLocalized("title", input.title),
         ...writeLocalized("description", input.description),
       };
-
-export const articleToBody = (input: ArticleInput) => ({
-  title: input.title.trim(),
-  short_description: input.shortDescription.trim(),
-  description: input.description,
-});
 
 export const videoToBody = (input: VideoInput) => ({
   ...writeLocalized("name", input.title),

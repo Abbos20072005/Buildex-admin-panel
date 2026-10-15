@@ -7,15 +7,6 @@ export interface NewsDto {
   [key: string]: unknown;
 }
 
-export interface ArticleDto {
-  id: number;
-  title: string;
-  short_description: string;
-  /** not in the list */
-  description?: string;
-  created_at: string;
-}
-
 export interface VideoDto {
   id: number;
   name: string;

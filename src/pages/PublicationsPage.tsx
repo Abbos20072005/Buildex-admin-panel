@@ -6,7 +6,7 @@ import { clsx } from "@/shared/lib/clsx";
 const isKind = (value: string | null): value is PublicationKind =>
   PUBLICATION_KINDS.includes(value as PublicationKind);
 
-/** "Yangiliklar": news, articles and videos of the site, one tab each (`?tab=articles`). */
+/** "Maqolalar": the articles (news API) and videos of the site, one tab each (`?tab=videos`). */
 export function PublicationsPage() {
   const { t } = useTranslation();
   const [params, setParams] = useSearchParams();

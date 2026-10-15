@@ -1,23 +1,7 @@
 import { api, type Page, type Paginated } from "@/shared/api";
-import type {
-  Article,
-  ArticleInput,
-  NewsInput,
-  NewsItem,
-  PublicationListParams,
-  Video,
-  VideoInput,
-} from "../model/types";
-import type { ArticleDto, NewsDto, VideoDto } from "./publications.dto";
-import {
-  articleToBody,
-  filtersToQuery,
-  mapArticle,
-  mapNews,
-  mapVideo,
-  newsToBody,
-  videoToBody,
-} from "./publications.mappers";
+import type { NewsInput, NewsItem, PublicationListParams, Video, VideoInput } from "../model/types";
+import type { NewsDto, VideoDto } from "./publications.dto";
+import { filtersToQuery, mapNews, mapVideo, newsToBody, videoToBody } from "./publications.mappers";
 
 export interface ResourceApi<Item, Input> {
   list: (params: PublicationListParams) => Promise<Page<Item>>;
@@ -60,13 +44,6 @@ function resource<Dto, Item, Input>(
 
 /** /admin/news/ — multipart (the picture is required on create) */
 export const newsApi = resource<NewsDto, NewsItem, NewsInput>("news", mapNews, newsToBody);
-
-/** /admin/articles/ — JSON */
-export const articlesApi = resource<ArticleDto, Article, ArticleInput>(
-  "articles",
-  mapArticle,
-  (input) => articleToBody(input),
-);
 
 /** /admin/videos/ — JSON, a link only */
 export const videosApi = resource<VideoDto, Video, VideoInput>("videos", mapVideo, (input) =>

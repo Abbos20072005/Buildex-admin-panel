@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { articlesApi, newsApi, videosApi, type ResourceApi } from "../api/publications.api";
+import { newsApi, videosApi, type ResourceApi } from "../api/publications.api";
 import type { PublicationKind, PublicationListParams } from "../model/types";
 
 /** React Query hooks of one resource; every kind has its own cache branch. */
@@ -49,5 +49,4 @@ function createHooks<Item, Input>(kind: PublicationKind, api: ResourceApi<Item, 
 }
 
 export const newsHooks = createHooks("news", newsApi);
-export const articleHooks = createHooks("articles", articlesApi);
 export const videoHooks = createHooks("videos", videosApi);

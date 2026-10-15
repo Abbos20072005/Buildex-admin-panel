@@ -1,9 +1,9 @@
 import type { Localized } from "@/shared/lib/localized";
 
-/** The three kinds of site publications managed on one page. */
-export type PublicationKind = "news" | "articles" | "videos";
+/** The kinds of site publications managed on one page ("news" is shown as "Maqolalar"). */
+export type PublicationKind = "news" | "videos";
 
-export const PUBLICATION_KINDS: PublicationKind[] = ["news", "articles", "videos"];
+export const PUBLICATION_KINDS: PublicationKind[] = ["news", "videos"];
 
 export interface PublicationFilters {
   search?: string;
@@ -34,21 +34,6 @@ export interface NewsInput {
   description: Localized;
   /** required on create; a new file replaces the saved one */
   image?: File;
-}
-
-/** Maqola: one language-independent value per field, no picture. */
-export interface Article {
-  id: number;
-  title: string;
-  shortDescription: string;
-  description: string;
-  createdAt: string;
-}
-
-export interface ArticleInput {
-  title: string;
-  shortDescription: string;
-  description: string;
 }
 
 /** Video: only a link, nothing is uploaded. */

@@ -2,7 +2,7 @@ import { ImageIcon } from "@/shared/icons";
 import type { TableColumnsType } from "antd";
 import type { TFunction } from "i18next";
 import { formatDateTime } from "@/shared/lib/format";
-import type { Article, NewsItem, Video } from "../model/types";
+import type { NewsItem, Video } from "../model/types";
 
 const created = <T extends { createdAt: string }>(t: TFunction): TableColumnsType<T>[number] => ({
   key: "created",
@@ -31,22 +31,6 @@ export const newsColumns = (t: TFunction): TableColumnsType<NewsItem> => [
     render: (_, item) => <span className="font-bold">{item.name}</span>,
   },
   created<NewsItem>(t),
-];
-
-export const articleColumns = (t: TFunction): TableColumnsType<Article> => [
-  {
-    key: "title",
-    title: t("publications.columns.title"),
-    width: 320,
-    render: (_, item) => <span className="font-bold">{item.title}</span>,
-  },
-  {
-    key: "short",
-    title: t("publications.columns.shortDescription"),
-    ellipsis: true,
-    render: (_, item) => <span className="text-slate-600">{item.shortDescription}</span>,
-  },
-  created<Article>(t),
 ];
 
 export const videoColumns = (t: TFunction): TableColumnsType<Video> => [
