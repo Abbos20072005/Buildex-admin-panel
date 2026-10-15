@@ -218,3 +218,14 @@ export function useDeleteProductImage() {
     onSuccess: (_result, { id }) => invalidate(id),
   });
 }
+
+/** Products to pick from when linking products to each other (GET /admin/products/?search=). */
+export function useLinkableProductsQuery(search: string) {
+  const lang = useLang();
+  return useQuery({
+    queryKey: [...productKeys.lists(), "link-search", lang, search],
+    queryFn: () =>
+      productsApi.list({ filters: { search: search || undefined }, page: 1, pageSize: 20, lang }),
+    staleTime: 30_000,
+  });
+}

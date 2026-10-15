@@ -78,6 +78,28 @@ export interface CategoryPath extends NamedRef {
   path: string;
 }
 
+/** The three kinds of links between products (all one-way: A → B doesn't add B → A). */
+export const LINK_KINDS = ["related", "alternative", "crossSell"] as const;
+export type LinkKind = (typeof LINK_KINDS)[number];
+
+/** Most products one kind of link can hold. */
+export const MAX_LINKED_PRODUCTS = 20;
+
+/** A product linked to another one — enough to show it in a list and mark it when sold out. */
+export interface LinkedProduct {
+  id: number;
+  name: string;
+  image: string | null;
+  code: string | null;
+  articul: string | null;
+  price: number;
+  discountPrice: number | null;
+  quantity: number;
+  isActive: boolean;
+}
+
+export type ProductLinks = Record<LinkKind, LinkedProduct[]>;
+
 /** Full product (GET /admin/products/{id}/). */
 export interface ProductDetail extends Omit<
   Product,
@@ -86,6 +108,7 @@ export interface ProductDetail extends Omit<
   names: Localized;
   descriptions: Localized;
   shortDescriptions: Localized;
+  links: ProductLinks;
   category: CategoryPath | null;
   images: ProductImage[];
   attributeValues: AttributeValue[];
@@ -102,6 +125,8 @@ export interface ProductPatch {
   names?: Partial<Localized>;
   descriptions?: Partial<Localized>;
   shortDescriptions?: Partial<Localized>;
+  /** product ids in the wanted order; a kind that isn't here stays as it is */
+  links?: Partial<Record<LinkKind, number[]>>;
   attributeValues?: AttributeValue[];
   categoryId?: number | null;
   brandId?: number | null;

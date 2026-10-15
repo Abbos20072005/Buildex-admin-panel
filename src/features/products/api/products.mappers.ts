@@ -1,19 +1,24 @@
 import type { Query } from "@/shared/api";
-import type {
-  AttributeValue,
-  CategoryPath,
-  NamedRef,
-  Product,
-  ProductAttribute,
-  ProductDetail,
-  ProductFilters,
-  ProductPatch,
-  ProductStats,
+import {
+  LINK_KINDS,
+  type AttributeValue,
+  type CategoryPath,
+  type LinkedProduct,
+  type LinkKind,
+  type NamedRef,
+  type Product,
+  type ProductAttribute,
+  type ProductDetail,
+  type ProductFilters,
+  type ProductLinks,
+  type ProductPatch,
+  type ProductStats,
 } from "../model/types";
 import type {
   AttributeValueDto,
   AttributeValueWriteDto,
   ItemCategoryRefDto,
+  LinkedProductDto,
   NamedRefDto,
   ProductAttributeDto,
   ProductDto,
@@ -92,6 +97,49 @@ function mapAttributeValue(dto: AttributeValueDto): AttributeValue {
   };
 }
 
+function mapLinked(dto: LinkedProductDto): LinkedProduct {
+  return {
+    id: dto.id,
+    name: dto.name ?? "",
+    image: dto.image ?? null,
+    code: dto.product_code ?? null,
+    articul: dto.articul_code ?? null,
+    price: Number(dto.price ?? 0),
+    discountPrice: dto.discount_price != null ? Number(dto.discount_price) : null,
+    quantity: dto.quantity ?? 0,
+    isActive: dto.is_active ?? true,
+  };
+}
+
+/** Product → the shape of a link (the list rows have all of it). */
+export function toLinkedProduct(product: Product): LinkedProduct {
+  return {
+    id: product.id,
+    name: product.name,
+    image: product.image,
+    code: product.code,
+    articul: product.articul,
+    price: product.price,
+    discountPrice: product.discountPrice,
+    quantity: product.quantity,
+    isActive: product.isActive,
+  };
+}
+
+const LINK_FIELDS: Record<LinkKind, string> = {
+  related: "related_products",
+  alternative: "alternative_products",
+  crossSell: "cross_sell_products",
+};
+
+function mapLinks(dto: ProductDto): ProductLinks {
+  return {
+    related: (dto.related_products ?? []).map(mapLinked),
+    alternative: (dto.alternative_products ?? []).map(mapLinked),
+    crossSell: (dto.cross_sell_products ?? []).map(mapLinked),
+  };
+}
+
 export function mapProductDetail(dto: ProductDto): ProductDetail {
   const base = mapProduct(dto);
   return {
@@ -99,6 +147,7 @@ export function mapProductDetail(dto: ProductDto): ProductDetail {
     names: { uz: text(dto.name_uz), ru: text(dto.name_ru) },
     descriptions: { uz: text(dto.description_uz), ru: text(dto.description_ru) },
     shortDescriptions: { uz: text(dto.short_description_uz), ru: text(dto.short_description_ru) },
+    links: mapLinks(dto),
     category: categoryPath(dto.product_item_category),
     images: (dto.images ?? []).map((image) => ({ id: image.id, url: image.image })),
     attributeValues: (dto.attribute_values ?? []).map(mapAttributeValue),
@@ -161,6 +210,11 @@ export function patchToDto(patch: ProductPatch): Partial<Record<string, unknown>
       dto[`description_${lang}`] = patch.descriptions[lang];
     if (patch.shortDescriptions?.[lang] !== undefined)
       dto[`short_description_${lang}`] = patch.shortDescriptions[lang];
+  }
+  for (const kind of LINK_KINDS) {
+    const ids = patch.links?.[kind];
+    // the list replaces the whole kind, in this order; `[]` clears it
+    if (ids) dto[LINK_FIELDS[kind]] = ids.map((id) => ({ id }));
   }
   if (patch.attributeValues) dto.attribute_values = patch.attributeValues.map(attributeValueToDto);
   if (patch.categoryId !== undefined)

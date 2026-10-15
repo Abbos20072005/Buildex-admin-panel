@@ -332,7 +332,8 @@ export const uz = {
     approve: "Tasdiqlash",
     reject: "Qaytarish",
     rejectTitle: "Mahsulotni qaytarish",
-    reasonPlaceholder: "Nima to‘g‘rilanishi kerak? Kontent jamoasi buni mahsulot sahifasida o‘qiydi.",
+    reasonPlaceholder:
+      "Nima to‘g‘rilanishi kerak? Kontent jamoasi buni mahsulot sahifasida o‘qiydi.",
     search: "Nomi, 1C kodi, artikul yoki shtrixkod",
     emptyQueue: "Navbat bo‘sh",
     loadError: "Moderatsiya ro‘yxatini yuklab bo‘lmadi",
@@ -1456,6 +1457,27 @@ export const uz = {
       exported: "{{count}} ta mahsulot eksport qilindi",
       loadError: "Mahsulotlarni yuklab bo‘lmadi",
       saved: "Saqlandi",
+    },
+    links: {
+      title: "Bog‘liq mahsulotlar",
+      related: "Bog‘liq",
+      alternative: "Muqobil",
+      crossSell: "Cross-sell",
+      relatedHint: "Shu mahsulot bilan birga olinadiganlar (masalan, plitka uchun yelim).",
+      alternativeHint: "Shu mahsulot o‘rniga olinadiganlar (boshqa brendning shunday mahsuloti).",
+      crossSellHint:
+        "Mahsulot savatda turganda taklif qilinadiganlar (masalan, bo‘yoq uchun valik).",
+      oneWay:
+        "Bog‘lanish bir tomonlama: bu yerga qo‘shsangiz, ular ro‘yxatida bu mahsulot paydo bo‘lmaydi.",
+      search: "Mahsulot nomi, kodi yoki artikuli bo‘yicha qidiring",
+      limit: "{{count}} / {{max}}",
+      limitReached: "Eng ko‘pi bilan {{max}} ta mahsulot",
+      empty: "Hali mahsulot qo‘shilmagan",
+      inactive: "Nofaol",
+      soldOut: "Tugagan",
+      remove: "Olib tashlash",
+      dragHint: "Tartibni sudrab o‘zgartiring",
+      noResults: "Mahsulot topilmadi",
     },
     readiness: {
       nameUz: "UZ nomi",

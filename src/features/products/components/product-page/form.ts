@@ -1,11 +1,13 @@
 import type { FieldMap } from "@/shared/form";
 import { hasValue } from "../../lib/characteristics";
-import type {
-  AttributeValue,
-  Localized,
-  ProductDetail,
-  ProductPatch,
-  PublishStatus,
+import {
+  LINK_KINDS,
+  type AttributeValue,
+  type Localized,
+  type ProductDetail,
+  type ProductLinks,
+  type ProductPatch,
+  type PublishStatus,
 } from "../../model/types";
 
 /**
@@ -16,6 +18,7 @@ export interface ProductFormValues {
   names: Localized;
   descriptions: Localized;
   shortDescriptions: Localized;
+  links: ProductLinks;
   attributeValues: AttributeValue[];
   categoryId: number | null;
   brandId: number | null;
@@ -35,6 +38,9 @@ export const PRODUCT_ERROR_FIELDS: FieldMap = {
   description_en: ["descriptions", "en"],
   short_description_uz: ["shortDescriptions", "uz"],
   short_description_ru: ["shortDescriptions", "ru"],
+  related_products: ["links", "related"],
+  alternative_products: ["links", "alternative"],
+  cross_sell_products: ["links", "crossSell"],
   category: "categoryId",
   brand: "brandId",
   badge: "badgeId",
@@ -47,6 +53,11 @@ export function toFormValues(product: ProductDetail): ProductFormValues {
     names: { ...product.names },
     descriptions: { ...product.descriptions },
     shortDescriptions: { ...product.shortDescriptions },
+    links: {
+      related: [...product.links.related],
+      alternative: [...product.links.alternative],
+      crossSell: [...product.links.crossSell],
+    },
     attributeValues: product.attributeValues.map((item) => ({ ...item })),
     categoryId: product.category?.id ?? null,
     brandId: product.brand?.id ?? null,
@@ -78,6 +89,13 @@ export function buildPatch(product: ProductDetail, values: ProductFormValues): P
   patch.names = changedTexts(initial.names, values.names);
   patch.descriptions = changedTexts(initial.descriptions, values.descriptions);
   patch.shortDescriptions = changedTexts(initial.shortDescriptions, values.shortDescriptions);
+
+  // a kind of link is sent only when its ids or their order changed
+  for (const kind of LINK_KINDS) {
+    const ids = (values.links?.[kind] ?? initial.links[kind]).map((item) => item.id);
+    const before = initial.links[kind].map((item) => item.id);
+    if (ids.join() !== before.join()) patch.links = { ...patch.links, [kind]: ids };
+  }
 
   // rows left without a value are not sent — the API doesn't accept empty values
   const attributeValues = (values.attributeValues ?? []).filter(hasValue);

@@ -76,7 +76,23 @@ export interface AttributeValueWriteDto {
   value_ru: string;
 }
 
+/** Item of `related_products` / `alternative_products` / `cross_sell_products`. */
+export interface LinkedProductDto {
+  id: number;
+  name?: string | null;
+  image?: string | null;
+  product_code?: string | null;
+  articul_code?: string | null;
+  price?: number | string | null;
+  discount_price?: number | string | null;
+  quantity?: number | null;
+  is_active?: boolean | null;
+}
+
 export interface ProductDto extends ProductListDto {
+  related_products?: LinkedProductDto[];
+  alternative_products?: LinkedProductDto[];
+  cross_sell_products?: LinkedProductDto[];
   name_uz?: string | null;
   name_ru?: string | null;
   name_en?: string | null;
