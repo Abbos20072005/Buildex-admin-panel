@@ -160,7 +160,7 @@ export function SaleEditor({ id, onClose }: Props) {
           </div>
 
           <Form.Item name="products" label={t("sales.products")}>
-            <ProductPicker />
+            <ProductPicker sortable hint={t("sales.reorderHint")} />
           </Form.Item>
 
           <div className="space-y-4 border-t border-slate-100 pt-4">

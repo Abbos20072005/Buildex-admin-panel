@@ -646,6 +646,8 @@ export const uz = {
     products: "Mahsulotlar",
     isMain: "Asosiy aksiya",
     isMainHint: "Faqat bitta aksiya asosiy bo‘lishi mumkin: boshqasi asosiy bo‘lsa, xato chiqadi.",
+    reorderHint:
+      "Tartibni sudrab o‘zgartiring: mahsulotlar saytda va ilovada shu tartibda chiqadi.",
     visibleSwitch: "Sayt va ilovada ko‘rsatish",
   },
   bulk: {
