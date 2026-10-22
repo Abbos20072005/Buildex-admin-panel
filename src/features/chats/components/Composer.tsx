@@ -1,38 +1,32 @@
 import { CloseIcon, ImageIcon } from "@/shared/icons";
 import { App, Button, Input } from "antd";
-import { useRef, useState } from "react";
+import { useRef, useState, type ClipboardEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { getErrorMessage } from "@/shared/api";
-import { useReply } from "../hooks/queries";
 
 /** Pictures are compressed on upload, but a huge original is still refused up front. */
 const MAX_IMAGE_MB = 10;
 
-/** Reply box: text, an optional picture, Enter sends (Shift+Enter — a new line). */
-export function Composer({ chatId, onSent }: { chatId: number; onSent: () => void }) {
+interface Props {
+  /** the answer is handed over at once: the thread shows it with a clock until it is saved */
+  onSubmit: (text: string, image?: File) => void;
+}
+
+/** Reply box: text, an optional picture (also pasted), Enter sends (Shift+Enter — a new line). */
+export function Composer({ onSubmit }: Props) {
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const reply = useReply();
   const [text, setText] = useState("");
   const [image, setImage] = useState<File>();
   const fileInput = useRef<HTMLInputElement>(null);
 
   const trimmed = text.trim();
-  const canSend = (trimmed.length > 0 || image !== undefined) && !reply.isPending;
+  const canSend = trimmed.length > 0 || image !== undefined;
 
   const send = () => {
     if (!canSend) return;
-    reply.mutate(
-      { chatId, text: trimmed, image },
-      {
-        onSuccess: () => {
-          setText("");
-          setImage(undefined);
-          onSent();
-        },
-        onError: (error) => message.error(getErrorMessage(error)),
-      },
-    );
+    onSubmit(trimmed, image);
+    setText("");
+    setImage(undefined);
   };
 
   const pick = (file: File | undefined) => {
@@ -44,8 +38,16 @@ export function Composer({ chatId, onSent }: { chatId: number; onSent: () => voi
     setImage(file);
   };
 
+  // a screenshot pasted from the clipboard becomes the attached picture
+  const paste = (event: ClipboardEvent) => {
+    const file = [...event.clipboardData.files].find((item) => item.type.startsWith("image/"));
+    if (!file) return;
+    event.preventDefault();
+    pick(file);
+  };
+
   return (
-    <div className="border-t border-slate-200 p-3">
+    <div className="border-t border-slate-200 bg-white p-3">
       {image && (
         <div className="mb-2 inline-flex max-w-full items-center gap-2 rounded-lg bg-slate-100 px-2.5 py-1 text-xs">
           <ImageIcon />
@@ -82,6 +84,7 @@ export function Composer({ chatId, onSent }: { chatId: number; onSent: () => voi
           placeholder={t("chats.composer.placeholder")}
           value={text}
           onChange={(event) => setText(event.target.value)}
+          onPaste={paste}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
               event.preventDefault();
@@ -89,7 +92,7 @@ export function Composer({ chatId, onSent }: { chatId: number; onSent: () => voi
             }
           }}
         />
-        <Button type="primary" loading={reply.isPending} disabled={!canSend} onClick={send}>
+        <Button type="primary" disabled={!canSend} onClick={send}>
           {t("chats.composer.send")}
         </Button>
       </div>

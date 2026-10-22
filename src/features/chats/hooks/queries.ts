@@ -1,4 +1,10 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { chatsApi } from "../api/chats.api";
 import type { ChatListParams, ReplyInput } from "../model/types";
 
@@ -16,10 +22,20 @@ export function useChatStatsQuery() {
   });
 }
 
-export function useChatsQuery(params: ChatListParams) {
-  return useQuery({
+/** How many chats one request brings; the next ones load while the list is scrolled. */
+const LIST_PAGE_SIZE = 30;
+
+/** The list without pages: scrolling to its end loads the next chats. */
+export function useChatsQuery(params: Pick<ChatListParams, "filter" | "search">) {
+  return useInfiniteQuery({
     queryKey: [...ALL, "list", params],
-    queryFn: () => chatsApi.list(params),
+    queryFn: ({ pageParam }) =>
+      chatsApi.list({ ...params, page: pageParam, pageSize: LIST_PAGE_SIZE }),
+    initialPageParam: 1,
+    getNextPageParam: (last, pages) =>
+      pages.reduce((count, page) => count + page.items.length, 0) < last.total
+        ? pages.length + 1
+        : undefined,
     placeholderData: keepPreviousData,
     refetchInterval: LIST_POLL_MS,
   });
@@ -35,6 +51,16 @@ export function useChatQuery(id: number | null) {
   });
 }
 
+/** The customer's messages in a row at the end of a chat; reloaded only when the chat grows. */
+export function useUnansweredStreakQuery(chatId: number, messagesCount: number, enabled: boolean) {
+  return useQuery({
+    queryKey: [...ALL, "streak", chatId, messagesCount],
+    queryFn: () => chatsApi.unansweredStreak(chatId),
+    enabled,
+    staleTime: Infinity,
+  });
+}
+
 export function useChatMessagesQuery(chatId: number | null) {
   return useQuery({
     queryKey: [...ALL, "messages", chatId],
@@ -47,7 +73,8 @@ export function useChatMessagesQuery(chatId: number | null) {
 /** A new message changes the thread, the list order, the "unanswered" counters. */
 function useRefresh() {
   const queryClient = useQueryClient();
-  return () => void queryClient.invalidateQueries({ queryKey: ALL });
+  // returns the promise: a mutation waits for the reload before it counts as done
+  return () => queryClient.invalidateQueries({ queryKey: ALL });
 }
 
 export function useReply() {

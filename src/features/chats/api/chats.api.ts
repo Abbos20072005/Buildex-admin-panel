@@ -110,6 +110,20 @@ export const chatsApi = {
     return data.results.map(message).reverse();
   },
 
+  /**
+   * How many of the newest messages in a row are the customer's (nobody has answered them yet):
+   * the "new messages" number of a chat that was never opened in this browser.
+   */
+  async unansweredStreak(chatId: number): Promise<number> {
+    const data = await api.get<Paginated<MessageDto>>("/messages/", {
+      chat: chatId,
+      ordering: "-created_at",
+      page_size: 50,
+    });
+    const answered = data.results.findIndex((item) => item.is_answer);
+    return answered === -1 ? data.results.length : answered;
+  },
+
   /** POST /admin/messages/ — always an operator's answer; a text, a picture, or both */
   async reply({ chatId, text, image }: ReplyInput): Promise<ChatMessage> {
     if (image) {

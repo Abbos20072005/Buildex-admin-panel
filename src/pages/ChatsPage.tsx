@@ -16,10 +16,8 @@ import { getErrorMessage } from "@/shared/api";
 import { clsx } from "@/shared/lib/clsx";
 import { formatNumber } from "@/shared/lib/format";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
-import { StatCard } from "@/shared/ui";
 
 const FILTERS: ChatFilter[] = ["all", "unanswered", "guests"];
-const PAGE_SIZE = 20;
 
 const isFilter = (value: string | null): value is ChatFilter =>
   FILTERS.includes(value as ChatFilter);
@@ -34,7 +32,6 @@ export function ChatsPage() {
   const selectedId = Number(params.get("chat")) || null;
 
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
   const [creating, setCreating] = useState(false);
 
   const update = (next: { filter?: ChatFilter; chat?: number | null }) => {
@@ -54,14 +51,11 @@ export function ChatsPage() {
   const list = useChatsQuery({
     filter,
     search: useDebouncedValue(search.trim(), 300) || undefined,
-    page,
-    pageSize: PAGE_SIZE,
   });
+  const items = list.data?.pages.flatMap((page) => page.items) ?? [];
   const opened = useChatQuery(selectedId);
   const chat =
-    selectedId === null
-      ? undefined
-      : (opened.data ?? list.data?.items.find((item) => item.id === selectedId));
+    selectedId === null ? undefined : (opened.data ?? items.find((item) => item.id === selectedId));
 
   const counts: Record<ChatFilter, number | undefined> = {
     all: stats.data?.total,
@@ -86,26 +80,7 @@ export function ChatsPage() {
         </Button>
       </div>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3">
-        <StatCard
-          label={t("chats.stats.total")}
-          value={stats.data?.total}
-          note={t("chats.stats.totalNote")}
-        />
-        <StatCard
-          label={t("chats.stats.unanswered")}
-          value={stats.data?.unanswered}
-          note={t("chats.stats.unansweredNote")}
-          tone={stats.data?.unanswered ? "text-amber-700" : undefined}
-        />
-        <StatCard
-          label={t("chats.stats.guests")}
-          value={stats.data?.guests}
-          note={t("chats.stats.guestsNote")}
-        />
-      </div>
-
-      <div className="grid gap-4 lg:h-[calc(100vh-19rem)] lg:min-h-[480px] lg:grid-cols-[380px_minmax(0,1fr)]">
+      <div className="grid gap-4 lg:h-[calc(100vh-11rem)] lg:min-h-[480px] lg:grid-cols-[380px_minmax(0,1fr)]">
         {/* on small screens one pane at a time: the list, or the opened chat */}
         <section
           className={clsx(
@@ -119,18 +94,12 @@ export function ChatsPage() {
               prefix={<SearchIcon className="text-slate-400" />}
               placeholder={t("chats.search")}
               value={search}
-              onChange={(event) => {
-                setSearch(event.target.value);
-                setPage(1);
-              }}
+              onChange={(event) => setSearch(event.target.value)}
             />
             <Tabs
               size="small"
               activeKey={filter}
-              onChange={(key) => {
-                update({ filter: key as ChatFilter });
-                setPage(1);
-              }}
+              onChange={(key) => update({ filter: key as ChatFilter })}
               className="[&_.ant-tabs-nav]:mb-0"
               items={FILTERS.map((key) => ({
                 key,
@@ -156,12 +125,11 @@ export function ChatsPage() {
             </div>
           ) : (
             <ChatList
-              items={list.data?.items ?? []}
-              total={list.data?.total ?? 0}
+              items={items}
               loading={list.isPending}
-              page={page}
-              pageSize={PAGE_SIZE}
-              onPageChange={setPage}
+              hasMore={list.hasNextPage}
+              loadingMore={list.isFetchingNextPage}
+              onLoadMore={() => void list.fetchNextPage()}
               selectedId={selectedId}
               onSelect={(id) => update({ chat: id })}
             />

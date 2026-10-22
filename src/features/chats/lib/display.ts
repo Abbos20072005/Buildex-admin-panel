@@ -10,6 +10,14 @@ export function chatTitle(chat: Pick<Chat, "customer">, t: TFunction): string {
   return customer.fullName || maskPhone(customer.phone) || t("chats.guest");
 }
 
+/** "Bugun", "Kecha" or the date — the label of a day in the thread. */
+export function dayLabel(iso: string, t: TFunction): string {
+  const date = dayjs(iso);
+  if (date.isSame(dayjs(), "day")) return t("chats.today");
+  if (date.isSame(dayjs().subtract(1, "day"), "day")) return t("chats.yesterday");
+  return date.format(date.isSame(dayjs(), "year") ? "DD.MM" : "DD.MM.YYYY");
+}
+
 /** Time for today, "DD.MM HH:mm" for earlier days, with the year for other years. */
 export function chatTime(iso: string): string {
   const date = dayjs(iso);
