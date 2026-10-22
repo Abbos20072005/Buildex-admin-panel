@@ -53,6 +53,7 @@ const TARGET: Partial<Record<AttentionKey, string>> = {
   out_of_stock_products: "/products?tab=soldOut",
   no_price_products: "/products",
   review_products: "/products/moderation",
+  unanswered_chats: "/support/chat?filter=unanswered",
 };
 
 const GROUPS: AttentionGroup[] = ["orders", "catalog", "feedback", "content"];

@@ -63,6 +63,7 @@ export function AttentionCard({ data }: { data: Dashboard["attention"] }) {
       icon: <CommentIcon />,
       tone: "bg-brand-soft text-brand",
       title: t("dashboard.attention.chats", { count: data.unansweredChats }),
+      to: "/support/chat?filter=unanswered",
     });
   }
   if (data.moderationQueue > 0) {

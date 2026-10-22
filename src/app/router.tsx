@@ -58,6 +58,7 @@ const CustomersPage = lazy(() =>
 const ManagersPage = lazy(() =>
   import("@/pages/ManagersPage").then((m) => ({ default: m.ManagersPage })),
 );
+const ChatsPage = lazy(() => import("@/pages/ChatsPage").then((m) => ({ default: m.ChatsPage })));
 const ModerationPage = lazy(() =>
   import("@/pages/ModerationPage").then((m) => ({ default: m.ModerationPage })),
 );
@@ -89,6 +90,7 @@ const PAGES: Record<string, ReactNode> = {
   "/settings/staff": <StaffPage />,
   "/products": <ProductsPage />,
   "/products/moderation": <ModerationPage />,
+  "/support/chat": <ChatsPage />,
   "/attributes/categories": <CategoriesPage />,
   "/attributes/brands": <BrandsPage />,
   "/attributes/tags": <TagsPage />,
