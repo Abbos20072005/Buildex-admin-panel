@@ -1,5 +1,6 @@
 import { MoreIcon } from "@/shared/icons";
 import { App, Button, Dropdown, Image, Input } from "antd";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
@@ -24,7 +25,9 @@ export function MessageBubble({ message, grouped }: Props) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(message.text);
   const mine = message.isAnswer;
-  const edited = mine && message.updatedAt !== message.createdAt;
+  // the server stamps `created_at` and `updated_at` a few milliseconds apart on a new message,
+  // so only a clearly later `updated_at` means it was edited
+  const edited = mine && dayjs(message.updatedAt).diff(message.createdAt, "second") >= 2;
 
   const save = () => {
     const text = draft.trim();
