@@ -1,37 +1,57 @@
 import { Tag, type TableColumnsType } from "antd";
 import type { TFunction } from "i18next";
-import { formatDateTime, formatMoney, formatNumber, formatPhone } from "@/shared/lib/format";
+import { useTranslation } from "react-i18next";
+import { formatDate, formatNumber, maskPhone } from "@/shared/lib/format";
 import { InitialsAvatar } from "@/shared/ui";
+import { CUSTOMER_API } from "../model/capabilities";
 import type { Customer } from "../model/types";
 
 const dash = <span className="text-slate-400">—</span>;
 
-/** The state tag of a customer: blocked wins, then an unconfirmed phone. */
-function stateTag(item: Customer, t: TFunction) {
-  const [color, key] = item.isBlocked
-    ? ["red", "blocked"]
-    : !item.verified
-      ? ["gold", "unverified"]
-      : ["green", "verified"];
+const STATE_COLOR = { deleted: "default", blocked: "red", unverified: "gold", active: "green" };
+
+/** The state tag of a customer: deleted and blocked win, then an unconfirmed phone. */
+export function CustomerStateTag({ item }: { item: Customer }) {
+  const { t } = useTranslation();
+  const key = item.isDeleted
+    ? "deleted"
+    : item.isBlocked
+      ? "blocked"
+      : !item.verified
+        ? "unverified"
+        : "active";
   return (
-    <Tag color={color} variant="filled" className="m-0 font-semibold">
+    <Tag color={STATE_COLOR[key]} variant="filled" className="m-0 font-semibold">
       {t(`customers.state.${key}`)}
     </Tag>
   );
 }
 
-/** Mijoz · Telefon · Rol · Holat · Buyurtmalar · Xaridlar · Oxirgi kirish · Ro'yxatdan o'tgan. */
+/** "Kanal" cell: the site or an app. */
+export const channelLabel = (channel: Customer["channel"], t: TFunction) =>
+  channel ? t(`customers.channel.${channel}`) : soon(t);
+
+/** A cell whose data the backend does not send yet. */
+const soon = (t: TFunction) => (
+  <span className="text-xs text-slate-400" title={t("customers.soon")}>
+    {t("customers.soonShort")}
+  </span>
+);
+
+/** Mijoz · Telefon · Kanal · Ro'yxatdan o'tgan · Buyurtmalar · Jami xarid · Oxirgi buyurtma · Holat. */
 export const customerColumns = (t: TFunction): TableColumnsType<Customer> => [
   {
     key: "customer",
     title: t("customers.columns.customer"),
-    width: 280,
+    width: 240,
     render: (_, item) => (
       <div className="flex items-center gap-3">
-        <InitialsAvatar name={item.fullName || item.phone} src={item.avatar} />
+        <InitialsAvatar name={item.fullName || item.phone} src={item.avatar} size={32} />
         <div className="min-w-0">
-          <div className="truncate font-bold">{item.fullName || dash}</div>
-          <div className="truncate text-xs text-slate-500">{item.email || `ID ${item.id}`}</div>
+          <div className="truncate font-semibold">{item.fullName || dash}</div>
+          <div className="truncate font-mono text-[11px] text-slate-500">
+            ID {formatNumber(item.id)}
+          </div>
         </div>
       </div>
     ),
@@ -40,53 +60,50 @@ export const customerColumns = (t: TFunction): TableColumnsType<Customer> => [
     key: "phone",
     title: t("customers.columns.phone"),
     width: 170,
-    render: (_, item) => <span className="font-mono text-xs">{formatPhone(item.phone)}</span>,
+    render: (_, item) => <span className="font-mono text-xs">{maskPhone(item.phone)}</span>,
   },
   {
-    key: "role",
-    title: t("customers.columns.role"),
-    width: 120,
-    render: (_, item) => (
-      <Tag
-        color={item.role === "prorab" ? "blue" : "default"}
-        variant="filled"
-        className="m-0 font-semibold"
-      >
-        {t(`role.${item.role}`)}
-      </Tag>
-    ),
+    key: "channel",
+    title: t("customers.columns.channel"),
+    width: 100,
+    render: (_, item) => channelLabel(item.channel, t),
   },
   {
-    key: "state",
-    title: t("customers.columns.state"),
+    key: "created",
+    title: t("customers.columns.created"),
     width: 150,
-    render: (_, item) => stateTag(item, t),
+    render: (_, item) => formatDate(item.createdAt),
   },
   {
     key: "orders",
     title: t("customers.columns.orders"),
-    width: 110,
+    width: 120,
     align: "right",
     render: (_, item) => (item.ordersCount ? formatNumber(item.ordersCount) : dash),
   },
   {
     key: "purchase",
     title: t("customers.columns.purchase"),
-    width: 170,
+    width: 160,
     align: "right",
     render: (_, item) =>
-      item.totalPurchase ? formatMoney(item.totalPurchase, t("common.sum")) : dash,
+      item.totalPurchase ? (
+        <span className="font-semibold tabular-nums">{formatNumber(item.totalPurchase)}</span>
+      ) : (
+        dash
+      ),
   },
   {
-    key: "lastLogin",
-    title: t("customers.columns.lastLogin"),
-    width: 170,
-    render: (_, item) => (item.lastLogin ? formatDateTime(item.lastLogin) : dash),
+    key: "lastOrder",
+    title: t("customers.columns.lastOrder"),
+    width: 150,
+    render: (_, item) =>
+      item.lastOrderAt ? formatDate(item.lastOrderAt) : CUSTOMER_API.rangeFilters ? dash : soon(t),
   },
   {
-    key: "created",
-    title: t("customers.columns.created"),
-    width: 170,
-    render: (_, item) => formatDateTime(item.createdAt),
+    key: "state",
+    title: t("customers.columns.state"),
+    width: 140,
+    render: (_, item) => <CustomerStateTag item={item} />,
   },
 ];

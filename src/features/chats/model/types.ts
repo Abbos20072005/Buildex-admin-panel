@@ -38,6 +38,8 @@ export type ChatFilter = "all" | "unanswered" | "guests";
 export interface ChatListParams {
   filter: ChatFilter;
   search?: string;
+  /** only the chats of this customer */
+  customer?: number;
   page: number;
   pageSize: number;
 }

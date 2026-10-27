@@ -41,6 +41,14 @@ export function useChatsQuery(params: Pick<ChatListParams, "filter" | "search">)
   });
 }
 
+/** The chats of one customer (a customer has one chat, so one page is enough). */
+export function useCustomerChatsQuery(customerId: number) {
+  return useQuery({
+    queryKey: [...ALL, "customer", customerId],
+    queryFn: () => chatsApi.list({ filter: "all", customer: customerId, page: 1, pageSize: 20 }),
+  });
+}
+
 /** One chat by id: the opened chat may be on another page of the list, or filtered out of it. */
 export function useChatQuery(id: number | null) {
   return useQuery({

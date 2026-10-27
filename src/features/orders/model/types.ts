@@ -21,6 +21,8 @@ export interface Order {
   payStatus: PayStatus;
   payType: PayType | null;
   fulfillment: Fulfillment;
+  /** where it was placed: the site or a mobile app */
+  channel: "site" | "app" | null;
   itemsCount: number;
   total: number;
   subtotal: number;
@@ -90,6 +92,8 @@ export interface OrderStats {
 
 export interface OrderFilters {
   search?: string;
+  /** orders of one customer */
+  customer?: number;
   status?: OrderStatus[];
   payType?: PayType;
   payStatus?: PayStatus;

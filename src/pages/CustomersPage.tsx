@@ -1,82 +1,107 @@
-import { App, Button, DatePicker, Input, Select } from "antd";
-import type { Dayjs } from "dayjs";
+import { App, Button } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
-  CUSTOMER_ROLES,
-  customerColumns,
+  ActiveFilters,
+  clearChip,
+  countFilters,
+  CUSTOMER_API,
   CustomerEditor,
+  CustomerFilterPanel,
+  customerColumns,
+  CustomersToolbar,
   CustomerStatsCards,
+  mergeFilters,
+  newSince,
+  useCustomersCountQuery,
   useCustomersQuery,
   useCustomerStatsQuery,
   useDeleteCustomer,
+  useSetCustomerBlocked,
+  type ChipKey,
   type Customer,
   type CustomerFilters,
-  type CustomerRole,
-  useBulkSetCustomerBlocked,
+  type CustomerTab,
+  type SavedView,
 } from "@/features/customers";
 import { getErrorMessage } from "@/shared/api";
-import { PlusIcon, SearchIcon } from "@/shared/icons";
+import { PlusIcon } from "@/shared/icons";
 import { formatNumber } from "@/shared/lib/format";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
-import { RecordsTable, BulkBar, useRowSelection } from "@/shared/ui";
+import { RecordsTable } from "@/shared/ui";
 
-type RoleFilter = "all" | CustomerRole;
-type StateFilter = "all" | "active" | "verified" | "unverified" | "blocked";
-type OrdersFilter = "all" | "with" | "without";
-
-const STATES: StateFilter[] = ["all", "active", "verified", "unverified", "blocked"];
-const DATE_FORMAT = "YYYY-MM-DD";
-
-/** The server-side filters of the chosen state. */
-const stateToFilters = (state: StateFilter): CustomerFilters =>
-  ({
-    all: {},
-    active: { isActive: true },
-    verified: { verified: true },
-    unverified: { verified: false },
-    blocked: { isBlocked: true },
-  })[state];
-
-/** "Mijozlar": counters, then one card with the filters and the table. */
+/** "Mijozlar": four counters, then one card with the tabs, the filters and the table. */
 export function CustomersPage() {
   const { t } = useTranslation();
-  const selection = useRowSelection<Customer>();
-  const bulk = useBulkSetCustomerBlocked();
+  const navigate = useNavigate();
   const { message, modal } = App.useApp();
 
   const [search, setSearch] = useState("");
-  const [role, setRole] = useState<RoleFilter>("all");
-  const [state, setState] = useState<StateFilter>("all");
-  const [orders, setOrders] = useState<OrdersFilter>("all");
-  const [range, setRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
+  const [tab, setTab] = useState<CustomerTab>("all");
+  /** the filters of the panel in force (the search box and the tab are apart) */
+  const [filters, setFilters] = useState<CustomerFilters>({});
+  const [panelOpen, setPanelOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  /** "new" — the create form is open; a number — that customer is being edited */
-  const [selected, setSelected] = useState<number | "new" | null>(null);
+  /** "new" — the create form is open */
+  const [creating, setCreating] = useState(false);
 
+  const debouncedSearch = useDebouncedValue(search, 300);
   const stats = useCustomerStatsQuery();
-  const list = useCustomersQuery({
-    filters: {
-      search: useDebouncedValue(search, 300),
-      role: role === "all" ? undefined : role,
-      hasOrders: orders === "all" ? undefined : orders === "with",
-      from: range?.[0]?.format(DATE_FORMAT),
-      to: range?.[1]?.format(DATE_FORMAT),
-      ...stateToFilters(state),
+  const newCustomers = useCustomersCountQuery({ from: newSince() });
+  // without the backend's `is_deleted` the server would return everyone under this tab
+  const deletedWaits = tab === "deleted" && !CUSTOMER_API.deletedCustomers;
+  const list = useCustomersQuery(
+    {
+      filters: { ...mergeFilters(tab, filters), search: debouncedSearch },
+      page,
+      pageSize,
     },
-    page,
-    pageSize,
-  });
+    !deletedWaits,
+  );
   const remove = useDeleteCustomer();
+  const block = useSetCustomerBlocked();
 
-  /** every filter change goes back to the first page */
-  const filter =
-    <V,>(set: (value: V) => void) =>
-    (value: V) => {
-      set(value);
+  /** every change of the filters goes back to the first page */
+  const change = {
+    search: (value: string) => {
+      setSearch(value);
       setPage(1);
-    };
+    },
+    tab: (next: CustomerTab) => {
+      setTab(next);
+      setPage(1);
+    },
+    filters: (next: CustomerFilters) => {
+      setFilters(next);
+      setPage(1);
+    },
+  };
+
+  const clearAll = () => {
+    setSearch("");
+    change.tab("all");
+    change.filters({});
+  };
+
+  const applyView = (view: SavedView) => {
+    change.tab(view.tab);
+    change.filters(view.filters);
+  };
+
+  const clearChipOf = (key: ChipKey) => {
+    if (key === "search") setSearch("");
+    else change.filters(clearChip(filters, key));
+  };
+
+  const counts: Partial<Record<CustomerTab, number>> = {
+    all: stats.data?.total,
+    pro: stats.data?.b2b,
+    new: newCustomers.data,
+    blocked: stats.data?.blocked,
+    deleted: stats.data?.deleted,
+  };
 
   const confirmDelete = (item: Customer) =>
     modal.confirm({
@@ -92,84 +117,75 @@ export function CustomersPage() {
         ),
     });
 
+  const toggleBlocked = (item: Customer) =>
+    block.mutate(
+      { id: item.id, value: !item.isBlocked },
+      {
+        onSuccess: () => message.success(t("common.saved")),
+        onError: (error) => message.error(getErrorMessage(error)),
+      },
+    );
+
   return (
     <>
       <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
-        <h1 className="m-0 text-2xl font-bold tracking-tight">
-          {t("nav.customers")}{" "}
-          {list.data && (
-            <span className="font-medium text-slate-400">{formatNumber(list.data.total)}</span>
-          )}
-        </h1>
-        <Button type="primary" icon={<PlusIcon />} onClick={() => setSelected("new")}>
+        <div>
+          <div className="text-xs text-slate-500">{t("nav.customers")}</div>
+          <h1 className="m-0 text-2xl font-bold tracking-tight">
+            {t("nav.customers")}{" "}
+            {stats.data && (
+              <span className="font-medium text-slate-400">{formatNumber(stats.data.total)}</span>
+            )}
+          </h1>
+        </div>
+        <Button icon={<PlusIcon />} onClick={() => setCreating(true)}>
           {t("customers.add")}
         </Button>
       </div>
 
-      <CustomerStatsCards stats={stats.data} />
-
-      <BulkBar
-        ids={selection.ids}
-        mutation={bulk}
-        onClear={selection.clear}
-        options={[
-          { value: false, label: t("bulk.active") },
-          { value: true, label: t("bulk.blocked") },
-        ]}
-      />
+      <CustomerStatsCards stats={stats.data} newCustomers={newCustomers.data} />
 
       <RecordsTable<Customer>
-        rowSelection={selection.rowSelection}
+        toolbarClassName=""
         toolbar={
           <>
-            <Input
-              allowClear
-              className="w-72"
-              prefix={<SearchIcon className="text-slate-400" />}
-              placeholder={t("customers.search")}
-              value={search}
-              onChange={(event) => filter(setSearch)(event.target.value)}
+            <div className="p-4">
+              <CustomersToolbar
+                search={search}
+                onSearch={change.search}
+                tab={tab}
+                onTab={change.tab}
+                counts={counts}
+                panelOpen={panelOpen}
+                onTogglePanel={() => setPanelOpen((open) => !open)}
+                filterCount={countFilters(filters)}
+              />
+            </div>
+            {panelOpen && (
+              <CustomerFilterPanel
+                // restarts from the filters in force when a chip or a view changes them
+                key={JSON.stringify(filters)}
+                value={filters}
+                tab={tab}
+                onApply={change.filters}
+                onApplyView={applyView}
+                onReset={() => change.filters({})}
+              />
+            )}
+            <ActiveFilters
+              filters={{ ...filters, search: search || undefined }}
+              tab={tab}
+              total={list.data?.total}
+              onClearTab={() => change.tab("all")}
+              onClear={clearChipOf}
+              onClearAll={clearAll}
             />
-            <Select<RoleFilter>
-              className="w-44"
-              value={role}
-              onChange={filter(setRole)}
-              options={(["all", ...CUSTOMER_ROLES] as RoleFilter[]).map((value) => ({
-                value,
-                label: t("customers.filterRole", {
-                  value: value === "all" ? t("common.all") : t(`role.${value}`),
-                }),
-              }))}
-            />
-            <Select<StateFilter>
-              className="w-52"
-              value={state}
-              onChange={filter(setState)}
-              options={STATES.map((value) => ({
-                value,
-                label: t("customers.filterState", {
-                  value: value === "all" ? t("common.all") : t(`customers.stateFilter.${value}`),
-                }),
-              }))}
-            />
-            <Select<OrdersFilter>
-              className="w-52"
-              value={orders}
-              onChange={filter(setOrders)}
-              options={(["all", "with", "without"] as OrdersFilter[]).map((value) => ({
-                value,
-                label: t("customers.filterOrders", {
-                  value: value === "all" ? t("common.all") : t(`customers.ordersFilter.${value}`),
-                }),
-              }))}
-            />
-            <DatePicker.RangePicker allowClear value={range} onChange={filter(setRange)} />
           </>
         }
         totalLabel={(shown, total) => `${shown} / ${total} ${t("customers.unit")}`}
         columns={customerColumns(t)}
-        items={list.data?.items ?? []}
-        total={list.data?.total ?? 0}
+        items={deletedWaits ? [] : (list.data?.items ?? [])}
+        total={deletedWaits ? 0 : (list.data?.total ?? 0)}
         loading={list.isFetching}
         page={page}
         pageSize={pageSize}
@@ -177,18 +193,32 @@ export function CustomersPage() {
           setPage(nextSize !== pageSize ? 1 : nextPage);
           setPageSize(nextSize);
         }}
-        onOpen={(item) => setSelected(item.id)}
-        onDelete={confirmDelete}
+        onOpen={(item) => navigate(`/customers/${item.id}`)}
+        rowMenu={(item) => [
+          { key: "open", label: t("customers.open") },
+          {
+            key: "block",
+            label: t(item.isBlocked ? "customers.unblock" : "customers.block"),
+            danger: !item.isBlocked,
+          },
+          { key: "delete", label: t("common.delete"), danger: true, separated: true },
+        ]}
+        onMenuAction={(key, item) =>
+          key === "open"
+            ? navigate(`/customers/${item.id}`)
+            : key === "block"
+              ? toggleBlocked(item)
+              : confirmDelete(item)
+        }
       />
+      {deletedWaits && <p className="mt-3 text-sm text-slate-500">{t("customers.soon")}</p>}
       {list.error && (
         <p className="mt-3 text-sm text-red-600">
           {t("customers.loadError")}: {list.error.message}
         </p>
       )}
 
-      {selected !== null && (
-        <CustomerEditor key={selected} id={selected} onClose={() => setSelected(null)} />
-      )}
+      {creating && <CustomerEditor id="new" onClose={() => setCreating(false)} />}
     </>
   );
 }

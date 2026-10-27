@@ -70,10 +70,11 @@ const MESSAGES_LIMIT = 100;
 
 export const chatsApi = {
   /** GET /admin/chats/ — the newest activity first */
-  async list({ filter, search, page, pageSize }: ChatListParams): Promise<Page<Chat>> {
+  async list({ filter, search, customer, page, pageSize }: ChatListParams): Promise<Page<Chat>> {
     const data = await api.get<Paginated<ChatDto>>("/chats/", {
       ...filterToQuery(filter),
       search: search || undefined,
+      customer,
       page,
       page_size: pageSize,
     });

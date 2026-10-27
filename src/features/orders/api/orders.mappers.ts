@@ -102,6 +102,7 @@ export function mapOrder(dto: OrderListDto): Order {
     payStatus: PAY_STATUS_FROM_API[dto.payment_status ?? 0] ?? "pending",
     payType: payTypeFromApi(dto.payment_type, dto.payment_method),
     fulfillment,
+    channel: dto.channel ? (dto.channel === "site" ? "site" : "app") : null,
     itemsCount: dto.items_count ?? 0,
     total: num(dto.total_price),
     subtotal: num(dto.products_total_price),
@@ -209,6 +210,7 @@ export function mapCustomer(dto: CustomerDto): CustomerInfo {
 export function filtersToQuery(filters: OrderFilters): Query {
   return {
     search: filters.search?.trim() || undefined,
+    customer: filters.customer,
     status: filters.status?.length ? filters.status.map((s) => STATUS_TO_API[s]) : undefined,
     ...(filters.payType ? payTypeToQuery(filters.payType) : {}),
     payment_status: filters.payStatus ? PAY_STATUS_TO_API[filters.payStatus] : undefined,

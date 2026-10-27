@@ -34,6 +34,8 @@ interface Props<T> {
   onMenuAction?: (key: string, item: T) => void;
   /** search and filters shown inside the same card, above the table */
   toolbar?: ReactNode;
+  /** replaces the padding and the row layout of the toolbar box (a toolbar that brings its own) */
+  toolbarClassName?: string;
   /** text at the left of the footer; default "1–20 / 143" */
   totalLabel?: (shown: number, total: number) => string;
 }
@@ -53,6 +55,7 @@ export function RecordsTable<T extends { id: number }>({
   onMenuAction,
   rowSelection,
   toolbar,
+  toolbarClassName = "flex flex-wrap gap-3 p-4",
   totalLabel,
 }: Props<T>) {
   const { t } = useTranslation();
@@ -99,7 +102,7 @@ export function RecordsTable<T extends { id: number }>({
 
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      {toolbar && <div className="flex flex-wrap gap-3 p-4">{toolbar}</div>}
+      {toolbar && <div className={toolbarClassName}>{toolbar}</div>}
       <Table<T>
         rowKey="id"
         size="middle"

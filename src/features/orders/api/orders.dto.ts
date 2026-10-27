@@ -14,6 +14,8 @@ export interface OrderListDto {
   payment_type?: number | null;
   payment_method?: string | null;
   delivery_type?: number;
+  /** "site" | "ios" | "android" */
+  channel?: string | null;
   total_price?: number;
   products_total_price?: number;
   saved_price?: number;

@@ -55,6 +55,9 @@ const PushEditPage = lazy(() =>
 const CustomersPage = lazy(() =>
   import("@/pages/CustomersPage").then((m) => ({ default: m.CustomersPage })),
 );
+const CustomerPage = lazy(() =>
+  import("@/pages/CustomerPage").then((m) => ({ default: m.CustomerPage })),
+);
 const ManagersPage = lazy(() =>
   import("@/pages/ManagersPage").then((m) => ({ default: m.ManagersPage })),
 );
@@ -135,6 +138,7 @@ export function AppRouter() {
               element={PAGES[leaf.path] ?? <ComingSoonPage titleKey={leaf.label} />}
             />
           ))}
+          <Route path="/customers/:id" element={<CustomerPage />} />
           <Route path="/products/:id" element={<ProductPage />} />
           <Route path="/content/push/new" element={<PushEditPage />} />
           <Route path="/content/push/:id" element={<PushEditPage />} />

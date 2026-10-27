@@ -1,37 +1,33 @@
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "@/shared/lib/format";
-import { StatCard } from "@/shared/ui";
+import { CUSTOMER_API } from "../model/capabilities";
 import type { CustomerStats } from "../model/types";
+import { KpiCard } from "./KpiCard";
 
 const count = (value: number | undefined) =>
   value === undefined ? undefined : formatNumber(value);
 
-/** Total, active in the last 30 days, B2B (prorab) and blocked customers. */
-export function CustomerStatsCards({ stats }: { stats: CustomerStats | undefined }) {
+interface Props {
+  stats: CustomerStats | undefined;
+  /** registered in the last 7 days */
+  newCustomers: number | undefined;
+}
+
+/** Total, new in 7 days, ordered in 30 days, blocked. */
+export function CustomerStatsCards({ stats, newCustomers }: Props) {
   const { t } = useTranslation();
   return (
     <div className="mb-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <StatCard
-        label={t("customers.stats.total")}
-        value={count(stats?.total)}
-        note={t("customers.stats.totalNote")}
+      <KpiCard label={t("customers.stats.total")} value={count(stats?.total)} />
+      <KpiCard label={t("customers.stats.new")} value={count(newCustomers)} />
+      <KpiCard
+        label={t("customers.stats.ordered30d")}
+        soon={!CUSTOMER_API.orderedStat}
+        value={count(stats?.ordered30d)}
       />
-      <StatCard
-        label={t("customers.stats.active")}
-        value={count(stats?.active)}
-        note={t("customers.stats.activeNote")}
-        tone="text-emerald-700"
-      />
-      <StatCard
-        label={t("customers.stats.b2b")}
-        value={count(stats?.b2b)}
-        note={t("customers.stats.b2bNote")}
-        tone="text-blue-700"
-      />
-      <StatCard
+      <KpiCard
         label={t("customers.stats.blocked")}
         value={count(stats?.blocked)}
-        note={t("customers.stats.blockedNote")}
         tone="text-red-700"
       />
     </div>
