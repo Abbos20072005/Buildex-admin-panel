@@ -41,10 +41,12 @@ export function AddressesTab({ customer }: { customer: Customer }) {
               </div>
               <div className="text-sm">{address.locationName || "—"}</div>
               <div className="mt-1 text-xs text-slate-500">{detailsLine(address, t)}</div>
-              {/* the API has no recipient on an address: the customer's own name and phone */}
+              {/* the recipient of the order; empty on the address — the customer himself */}
               <div className="mt-2 flex gap-2 text-xs text-slate-500">
-                <span>{customer.fullName || "—"}</span>
-                <span className="font-mono">{maskPhone(customer.phone)}</span>
+                <span>{address.recipientName || customer.fullName || "—"}</span>
+                <span className="font-mono">
+                  {maskPhone(address.recipientPhone || customer.phone)}
+                </span>
               </div>
               {address.courierComment && (
                 <div className="mt-1 text-xs text-slate-500">{address.courierComment}</div>

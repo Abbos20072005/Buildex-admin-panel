@@ -66,8 +66,6 @@ export const ru: Translation = {
     push: "Push-уведомления",
     media: "Медиабиблиотека",
     settings: "Настройки приложения и сайта",
-    allOrders: "Все заказы",
-    returns: "Возвраты",
     support: "Поддержка",
     chat: "Чат",
     requests: "Обращения",
@@ -823,7 +821,8 @@ export const ru: Translation = {
     },
     unit: "клиентов",
     loadError: "Не удалось загрузить клиентов",
-    deleteConfirm: "Удалить клиента? Его данные не восстановить.",
+    deleteConfirm:
+      "Удалить клиента? Аккаунт закроется, клиент выйдет со всех устройств, восстановить нельзя. Заказы сохранятся.",
     stats: {
       total: "Всего клиентов",
       new: "Новые (7 дней)",
@@ -874,6 +873,9 @@ export const ru: Translation = {
     channel: {
       site: "Сайт",
       app: "Приложение",
+      ios: "iOS",
+      android: "Android",
+      admin: "Админ",
     },
     columns: {
       customer: "Клиент",
@@ -909,7 +911,8 @@ export const ru: Translation = {
     addresses: "Адреса",
     noAddresses: "Адреса не добавлены",
     defaultAddress: "Основной",
-    addressesHint: "Адресами управляет сам клиент в приложении или на сайте. Админ только просматривает.",
+    addressesHint:
+      "Адресами управляет сам клиент в приложении или на сайте. Админ только просматривает.",
     addressParts: {
       apartment: "кв. {{value}}",
       entrance: "подъезд {{value}}",
@@ -949,6 +952,7 @@ export const ru: Translation = {
       log: "Журнал",
     },
     profile: {
+      role: "Роль",
       title: "Профиль",
       name: "Имя",
       phone: "Телефон",
@@ -977,6 +981,8 @@ export const ru: Translation = {
       hint: "Видят только сотрудники. Клиенту не показываются.",
       empty: "Заметок нет",
       placeholder: "Напишите заметку…",
+      deleteConfirm: "Удалить заметку?",
+      deleteForbidden: "Заметку может удалить только её автор или суперадмин",
     },
     account: {
       title: "Аккаунт",
@@ -1018,12 +1024,8 @@ export const ru: Translation = {
       status: "Статус",
     },
     returns: {
-      soon: "Возвраты: ждём бэкенд",
-      number: "№",
-      order: "Заказ",
-      date: "Дата",
-      amount: "Сумма, UZS",
-      status: "Статус",
+      hint: "Модели возвратов пока нет: показаны отменённые заказы клиента.",
+      empty: "Отменённых заказов нет",
     },
     requests: {
       number: "№",
@@ -1038,7 +1040,7 @@ export const ru: Translation = {
       soon: "Тикеты (тема, канал, заказ, ответственный): ждём бэкенд. Пока показаны чаты клиента.",
     },
     log: {
-      soon: "Полный журнал: ждём бэкенд. Пока показаны только изменения роли.",
+      hint: "Журнал начинается с запуска бэкенда: более ранних событий нет (только смены роли).",
       empty: "Записей нет",
       roleChanged: "Роль изменена: {{from}} → {{to}}",
       reason: "Причина: {{reason}}",
@@ -1826,5 +1828,5 @@ export const ru: Translation = {
     cancelled: "Отменено",
   },
   fulfillment: { delivery: "Доставка", pickup: "Самовывоз" },
-  role: { user: "Обычный", prorab: "Прораб" },
+  role: { user: "Обычный", prorab: "PRO" },
 };

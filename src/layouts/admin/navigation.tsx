@@ -40,15 +40,7 @@ export const isNavGroup = (item: NavItem): item is NavGroup => "children" in ite
 export const NAVIGATION: NavItem[] = [
   { path: "/dashboard", label: "nav.dashboard", icon: <GaugeIcon /> },
   { path: "/today", label: "nav.today", icon: <FileIcon /> },
-  {
-    key: "orders",
-    label: "nav.orders",
-    icon: <CartIcon />,
-    children: [
-      { path: "/orders", label: "nav.allOrders", badge: "newOrders" },
-      { path: "/orders/returns", label: "nav.returns" },
-    ],
-  },
+  { path: "/orders", label: "nav.orders", icon: <CartIcon />, badge: "newOrders" },
   { path: "/customers", label: "nav.customers", icon: <UsersIcon /> },
   { path: "/managers", label: "nav.managers", icon: <UserCheckIcon /> },
   {

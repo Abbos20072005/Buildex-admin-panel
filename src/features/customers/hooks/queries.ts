@@ -50,6 +50,25 @@ export function useRoleHistoryQuery(id: number) {
   });
 }
 
+/** The journal of the account (from the deploy of the backend on; earlier role changes are in role-history). */
+export function useCustomerActivityQuery(id: number) {
+  return useQuery({
+    queryKey: [...ALL, "activity", id],
+    queryFn: () => customersApi.activity(id),
+  });
+}
+
+/** The whole phone number. Not cached: every call is written to the journal on the server. */
+export function useRevealCustomerPhone() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => customersApi.revealPhone(id),
+    // the journal now has a "phone shown" line
+    onSuccess: (_phone, id) =>
+      void queryClient.invalidateQueries({ queryKey: [...ALL, "activity", id] }),
+  });
+}
+
 export function useCustomerNotesQuery(id: number) {
   return useQuery({
     queryKey: [...ALL, "notes", id],
@@ -119,6 +138,14 @@ export function useAddCustomerNote(id: number) {
   const invalidate = useInvalidate();
   return useMutation({
     mutationFn: (text: string) => customersApi.addNote(id, text),
+    onSuccess: invalidate,
+  });
+}
+
+export function useRemoveCustomerNote(id: number) {
+  const invalidate = useInvalidate();
+  return useMutation({
+    mutationFn: (noteId: number) => customersApi.removeNote(id, noteId),
     onSuccess: invalidate,
   });
 }

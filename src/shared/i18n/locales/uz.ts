@@ -64,8 +64,6 @@ export const uz = {
     push: "Push xabarnomalar",
     media: "Media kutubxona",
     settings: "Ilova va sayt sozlamalari",
-    allOrders: "Barcha buyurtmalar",
-    returns: "Qaytarishlar",
     support: "Qo‘llab-quvvatlash",
     chat: "Chat",
     requests: "Murojaatlar",
@@ -826,7 +824,8 @@ export const uz = {
     },
     unit: "mijoz",
     loadError: "Mijozlarni yuklab bo‘lmadi",
-    deleteConfirm: "Mijoz o‘chirilsinmi? Uning ma’lumotlari qaytarilmaydi.",
+    deleteConfirm:
+      "Mijoz o‘chirilsinmi? Hisobi yopiladi, barcha qurilmalardan chiqariladi va tiklab bo‘lmaydi. Buyurtmalari saqlanadi.",
     stats: {
       total: "Jami mijozlar",
       new: "Yangi (7 kun)",
@@ -877,6 +876,9 @@ export const uz = {
     channel: {
       site: "Sayt",
       app: "Ilova",
+      ios: "iOS",
+      android: "Android",
+      admin: "Admin",
     },
     columns: {
       customer: "Mijoz",
@@ -955,6 +957,7 @@ export const uz = {
       title: "Profil",
       name: "Ism",
       phone: "Telefon",
+      role: "Rol",
       email: "Email",
       language: "Til",
       show: "Ko‘rsatish",
@@ -980,6 +983,8 @@ export const uz = {
       hint: "Faqat xodimlar ko‘radi. Mijozga ko‘rinmaydi.",
       empty: "Izohlar yo‘q",
       placeholder: "Izoh yozing…",
+      deleteConfirm: "Izoh o‘chirilsinmi?",
+      deleteForbidden: "Izohni faqat muallifi yoki superadmin o‘chira oladi",
     },
     account: {
       title: "Hisob",
@@ -1021,12 +1026,8 @@ export const uz = {
       status: "Holat",
     },
     returns: {
-      soon: "Qaytarishlar: backend kutilmoqda",
-      number: "№",
-      order: "Buyurtma",
-      date: "Sana",
-      amount: "Summa, UZS",
-      status: "Holat",
+      hint: "Qaytarish modeli hali yo‘q: mijozning bekor qilingan buyurtmalari ko‘rsatiladi.",
+      empty: "Bekor qilingan buyurtmalar yo‘q",
     },
     requests: {
       number: "№",
@@ -1041,7 +1042,7 @@ export const uz = {
       soon: "Tiketlar (mavzu, kanal, buyurtma, mas’ul): backend kutilmoqda. Hozircha mijozning chatlari ko‘rsatiladi.",
     },
     log: {
-      soon: "To‘liq jurnal: backend kutilmoqda. Hozircha faqat rol o‘zgarishlari ko‘rsatiladi.",
+      hint: "Jurnal backend ishga tushgandan boshlanadi: undan oldingi voqealar yo‘q (faqat rol o‘zgarishlari).",
       empty: "Yozuvlar yo‘q",
       roleChanged: "Rol o‘zgardi: {{from}} → {{to}}",
       reason: "Sabab: {{reason}}",
@@ -1834,7 +1835,7 @@ export const uz = {
     cancelled: "Bekor qilingan",
   },
   fulfillment: { delivery: "Yetkazish", pickup: "Olib ketish" },
-  role: { user: "Oddiy", prorab: "Prorab" },
+  role: { user: "Oddiy", prorab: "PRO" },
 };
 
 type DeepStringRecord<T> = {

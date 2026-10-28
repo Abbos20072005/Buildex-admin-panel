@@ -1,30 +1,54 @@
 import { Table } from "antd";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useOrdersQuery } from "@/features/orders";
+import { customerOrderColumns } from "./orderColumns";
+
+const PAGE_SIZE = 20;
 
 /**
- * Returns of the customer. The admin API has no returns yet (docs/customers-backend-request.md):
- * the table of the design (№ · Buyurtma · Sana · Summa · Holat) is shown empty, with the note.
+ * "Qaytarishlar": the backend has no returns model, so this is the customer's cancelled orders
+ * (the same number as `returns_count`).
  */
-export function ReturnsTab() {
+export function ReturnsTab({ customerId }: { customerId: number }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const orders = useOrdersQuery({
+    filters: { customer: customerId, status: ["cancelled"] },
+    page,
+    pageSize: PAGE_SIZE,
+  });
+
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <Table
-        rowKey="id"
-        size="middle"
-        dataSource={[]}
-        pagination={false}
-        columns={[
-          { key: "number", title: t("customers.returns.number") },
-          { key: "order", title: t("customers.returns.order") },
-          { key: "date", title: t("customers.returns.date") },
-          { key: "amount", title: t("customers.returns.amount"), align: "right" },
-          { key: "status", title: t("customers.returns.status") },
-        ]}
-        locale={{
-          emptyText: <div className="py-10 text-slate-400">{t("customers.returns.soon")}</div>,
-        }}
-      />
+    <div>
+      <p className="mt-0 mb-3 text-xs text-slate-500">{t("customers.returns.hint")}</p>
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+        <Table
+          rowKey="id"
+          size="middle"
+          columns={customerOrderColumns(t)}
+          dataSource={orders.data?.items ?? []}
+          loading={orders.isFetching}
+          scroll={{ x: 900 }}
+          onRow={(order) => ({
+            className: "cursor-pointer",
+            onClick: () => navigate(`/orders?order=${order.id}`),
+          })}
+          locale={{
+            emptyText: <div className="py-10 text-slate-400">{t("customers.returns.empty")}</div>,
+          }}
+          pagination={{
+            current: page,
+            pageSize: PAGE_SIZE,
+            total: orders.data?.total ?? 0,
+            showSizeChanger: false,
+            hideOnSinglePage: true,
+            onChange: setPage,
+          }}
+        />
+      </div>
     </div>
   );
 }

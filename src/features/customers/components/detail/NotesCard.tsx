@@ -1,20 +1,44 @@
 import { App, Button, Input, Skeleton } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getErrorMessage } from "@/shared/api";
+import { ApiError, getErrorMessage } from "@/shared/api";
 import { formatDateTime } from "@/shared/lib/format";
-import { useAddCustomerNote, useCustomerNotesQuery } from "../../hooks/queries";
+import {
+  useAddCustomerNote,
+  useCustomerNotesQuery,
+  useRemoveCustomerNote,
+} from "../../hooks/queries";
 import { CUSTOMER_API } from "../../model/capabilities";
 import { CardEmpty, SectionCard } from "./SectionCard";
 
 /** Internal notes of the staff about the customer (hidden from the customer). */
 export function NotesCard({ customerId }: { customerId: number }) {
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const notes = useCustomerNotesQuery(customerId);
   const add = useAddCustomerNote(customerId);
+  const remove = useRemoveCustomerNote(customerId);
   const [adding, setAdding] = useState(false);
   const [text, setText] = useState("");
+
+  /** only the author or a super admin may delete a note: anybody else gets a 403 */
+  const confirmRemove = (noteId: number) =>
+    modal.confirm({
+      title: t("customers.notes.deleteConfirm"),
+      okText: t("common.delete"),
+      okButtonProps: { danger: true },
+      cancelText: t("common.cancel"),
+      onOk: () =>
+        remove.mutateAsync(noteId).then(
+          () => message.success(t("common.deleted")),
+          (error: unknown) =>
+            message.error(
+              error instanceof ApiError && error.status === 403
+                ? t("customers.notes.deleteForbidden")
+                : getErrorMessage(error),
+            ),
+        ),
+    });
 
   const submit = () =>
     add.mutate(text.trim(), {
@@ -68,8 +92,17 @@ export function NotesCard({ customerId }: { customerId: number }) {
           {notes.data.map((note) => (
             <li key={note.id} className="rounded-lg bg-slate-50 px-3 py-2.5">
               <div className="text-sm whitespace-pre-wrap">{note.text}</div>
-              <div className="mt-1 text-xs text-slate-500">
-                {note.author} · {formatDateTime(note.createdAt)}
+              <div className="mt-1 flex items-center justify-between gap-2 text-xs text-slate-500">
+                <span>
+                  {note.author} · {formatDateTime(note.createdAt)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => confirmRemove(note.id)}
+                  className="cursor-pointer border-0 bg-transparent p-0 text-xs text-red-600"
+                >
+                  {t("common.delete")}
+                </button>
               </div>
             </li>
           ))}

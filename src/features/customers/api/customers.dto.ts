@@ -10,6 +10,9 @@ export interface CustomerAddressDto {
   floor?: string | null;
   intercom?: string | null;
   courier_comment?: string | null;
+  /** "" — the customer himself */
+  recipient_name?: string | null;
+  recipient_phone?: string | null;
 }
 
 export interface ConsentDto {
@@ -17,13 +20,11 @@ export interface ConsentDto {
   changed_at?: string | null;
 }
 
-/**
- * Schemas `Customer` (list) and `CustomerDetail` (adds `addresses`). The fields after
- * `addresses` are requested from the backend (docs/customers-backend-request.md): optional here.
- */
+/** Schemas `Customer` (list) and `CustomerDetail` (adds `addresses`). */
 export interface CustomerDto {
   id: number;
   full_name?: string | null;
+  /** masked: "+998 90 *** ** 67"; the whole number comes from POST reveal-phone/ */
   phone_number: string;
   email?: string | null;
   role?: CustomerRole;
@@ -44,9 +45,22 @@ export interface CustomerDto {
   last_order_at?: string | null;
   returns_count?: number | null;
   language?: string | null;
+  /** "site" | "ios" | "android" */
   last_login_platform?: string | null;
   active_devices?: number | null;
+  /** not stored by the backend */
   consents?: { push?: ConsentDto; sms?: ConsentDto; email?: ConsentDto };
+}
+
+/** GET /admin/customers/{id}/activity/ */
+export interface CustomerActivityDto {
+  id: number;
+  kind: string;
+  text: string;
+  /** "ios" | "android" | "site" | "admin" | null */
+  channel?: string | null;
+  actor?: { id: number; username?: string; full_name?: string | null } | null;
+  created_at: string;
 }
 
 export interface CustomerStatsDto {
@@ -56,6 +70,11 @@ export interface CustomerStatsDto {
   blocked: number;
   ordered_30d?: number;
   deleted?: number;
+}
+
+/** POST /admin/customers/{id}/reveal-phone/ */
+export interface RevealedPhoneDto {
+  phone_number: string;
 }
 
 /** GET /admin/customers/{id}/role-history/ */

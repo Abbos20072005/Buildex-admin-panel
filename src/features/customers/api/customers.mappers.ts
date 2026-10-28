@@ -3,24 +3,27 @@ import { CUSTOMER_API } from "../model/capabilities";
 import {
   CUSTOMER_SEGMENTS,
   type Customer,
-  type CustomerChannel,
+  type CustomerActivity,
   type CustomerFilters,
   type CustomerInput,
   type CustomerNote,
   type CustomerProfilePatch,
   type CustomerSegment,
   type CustomerStats,
+  type RegistrationChannel,
   type RoleHistoryEntry,
 } from "../model/types";
 import type {
+  CustomerActivityDto,
   CustomerDto,
   CustomerNoteDto,
   CustomerStatsDto,
   RoleHistoryDto,
 } from "./customers.dto";
 
-const channelOf = (value: string | null | undefined): CustomerChannel | null =>
-  !value ? null : value === "site" ? "site" : "app";
+/** "site", "ios" or "android"; anything else (an old customer, an unknown app) is unknown. */
+const channelOf = (value: string | null | undefined): RegistrationChannel | null =>
+  value === "site" || value === "ios" || value === "android" ? value : null;
 
 const segmentOf = (value: string | null | undefined): CustomerSegment | null =>
   CUSTOMER_SEGMENTS.find((segment) => segment === value) ?? null;
@@ -48,6 +51,8 @@ export const mapCustomer = (dto: CustomerDto): Customer => ({
     floor: address.floor ?? "",
     intercom: address.intercom ?? "",
     courierComment: address.courier_comment ?? "",
+    recipientName: address.recipient_name ?? "",
+    recipientPhone: address.recipient_phone ?? "",
   })),
   isDeleted: dto.is_deleted ?? false,
   segment: segmentOf(dto.segment),
@@ -56,7 +61,7 @@ export const mapCustomer = (dto: CustomerDto): Customer => ({
   lastOrderAt: dto.last_order_at ?? null,
   returnsCount: dto.returns_count ?? null,
   language: dto.language ?? null,
-  lastLoginPlatform: dto.last_login_platform ?? null,
+  lastLoginPlatform: channelOf(dto.last_login_platform),
   activeDevices: dto.active_devices ?? null,
   consents: Object.fromEntries(
     Object.entries(dto.consents ?? {}).map(([key, value]) => [
@@ -81,6 +86,16 @@ export const mapRoleHistory = (dto: RoleHistoryDto): RoleHistoryEntry => ({
   newRole: dto.new_value,
   changedBy: dto.changed_by?.full_name?.trim() || dto.changed_by?.username || "—",
   reason: dto.reason ?? "",
+  createdAt: dto.created_at,
+});
+
+/** A line of the journal; `actor` is filled only for what a staff member did. */
+export const mapActivity = (dto: CustomerActivityDto): CustomerActivity => ({
+  id: dto.id,
+  kind: dto.kind,
+  text: dto.text,
+  channel: dto.channel === "admin" ? "admin" : channelOf(dto.channel),
+  actor: dto.actor ? dto.actor.full_name?.trim() || dto.actor.username || null : null,
   createdAt: dto.created_at,
 });
 
@@ -126,17 +141,24 @@ export const filtersToQuery = (filters: CustomerFilters): Query => ({
   ...(CUSTOMER_API.returns ? { has_returns: filters.hasReturns } : {}),
 });
 
-/** An empty e-mail is sent as "" (the field accepts an empty string). */
-export const inputToDto = (input: CustomerInput) => ({
+/**
+ * An empty e-mail is sent as "" (the field accepts an empty string). The API shows a masked
+ * phone, so an edit sends the number only when a new one was typed; the role changes only
+ * through POST role/.
+ */
+export const inputToDto = (input: CustomerInput, editing = false) => ({
   full_name: input.fullName.trim(),
-  phone_number: input.phone.trim(),
+  ...(editing && !input.phone.trim() ? {} : { phone_number: input.phone.trim() }),
   email: input.email.trim(),
-  role: input.role,
+  ...(editing ? {} : { role: input.role }),
   verified: input.verified,
   is_blocked: input.isBlocked,
 });
 
+/** `segment: null` removes the segment; an empty e-mail clears the e-mail. */
 export const profilePatchToDto = (patch: CustomerProfilePatch) => ({
   full_name: patch.fullName?.trim(),
+  ...(patch.email !== undefined ? { email: patch.email.trim() || null } : {}),
+  ...(patch.language !== undefined ? { language: patch.language } : {}),
   ...(CUSTOMER_API.segments ? { segment: patch.segment, tags: patch.tags } : {}),
 });

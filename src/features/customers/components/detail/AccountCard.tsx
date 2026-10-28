@@ -27,7 +27,7 @@ export function AccountCard({ customer }: { customer: Customer }) {
           {customer.lastLogin ? formatDateTime(customer.lastLogin) : dash}
           {" · "}
           {CUSTOMER_API.devices && customer.lastLoginPlatform ? (
-            customer.lastLoginPlatform
+            channelLabel(customer.lastLoginPlatform, t)
           ) : (
             <span className="text-xs text-slate-400">{t("customers.soonShort")}</span>
           )}

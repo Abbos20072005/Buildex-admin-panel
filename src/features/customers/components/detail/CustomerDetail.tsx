@@ -93,7 +93,7 @@ export function CustomerDetail({ id }: { id: number }) {
               "returns",
               CUSTOMER_API.returns ? (customer.returnsCount ?? 0) : undefined,
             ),
-            children: <ReturnsTab />,
+            children: <ReturnsTab customerId={customer.id} />,
           },
           {
             key: "requests",
