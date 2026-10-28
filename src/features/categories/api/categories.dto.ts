@@ -15,6 +15,9 @@ export interface CategoryDto {
   meta_title_ru?: string | null;
   meta_description_uz?: string | null;
   meta_description_ru?: string | null;
+  /** the text under the products of the category page (HTML), one per language */
+  description_uz?: string | null;
+  description_ru?: string | null;
   show_on_site?: boolean;
   show_in_app?: boolean;
   is_active?: boolean;

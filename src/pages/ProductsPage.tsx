@@ -12,6 +12,7 @@ import {
   useBulkSetPublishStatus,
   useProductListState,
   useProductsExport,
+  useProductsTextsExport,
   useProductsQuery,
   useProductTabCountsQuery,
   type Product,
@@ -27,6 +28,7 @@ export function ProductsPage() {
   const products = useProductsQuery({ filters: listFilters, page, pageSize, sort });
   const tabCounts = useProductTabCountsQuery(filters);
   const exporter = useProductsExport();
+  const textsExporter = useProductsTextsExport();
   const selection = useRowSelection<Product>();
   const bulk = useBulkSetPublishStatus();
 
@@ -57,9 +59,11 @@ export function ProductsPage() {
               })
             : null
         }
+        textsLoading={textsExporter.loading}
         onViewChange={state.setView}
         onToggleFilters={() => setFiltersOpen((open) => !open)}
         onExport={() => exporter.run(listFilters)}
+        onExportTexts={(rawHtml) => void textsExporter.run(listFilters, rawHtml)}
       />
 
       <ProductTabs value={tab} counts={tabCounts.data} onChange={state.setTab} />

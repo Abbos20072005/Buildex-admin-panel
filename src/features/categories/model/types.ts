@@ -17,6 +17,8 @@ export interface CategoryItem {
   position: number;
   metaTitle: Localized;
   metaDescription: Localized;
+  /** the text under the products on the category page (HTML) */
+  description: Localized;
   showOnSite: boolean;
   showInApp: boolean;
   isActive: boolean;
@@ -61,6 +63,7 @@ export interface CategoryFormValues {
   code: string;
   metaTitle: Localized;
   metaDescription: Localized;
+  description: Localized;
   showOnSite: boolean;
   showInApp: boolean;
   isActive: boolean;

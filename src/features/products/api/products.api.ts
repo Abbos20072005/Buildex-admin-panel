@@ -1,4 +1,4 @@
-import { api, type Page, type Paginated } from "@/shared/api";
+import { api, type DownloadedFile, type Page, type Paginated } from "@/shared/api";
 import type {
   CategoryPath,
   NamedRef,
@@ -89,6 +89,18 @@ export const productsApi = {
   /** DELETE /admin/products/{id}/images/{image_id}/ */
   async deleteImage(id: number, imageId: number): Promise<void> {
     await api.delete(`/products/${id}/images/${imageId}/`);
+  },
+
+  /**
+   * GET /admin/products/i18n-export/ — an XLSX with the uz / ru texts of every product matching
+   * the filters (no pages; the whole catalog takes ~10 s). `rawHtml` keeps the descriptions as
+   * HTML instead of plain text. The file is for reading only, it can't be imported back.
+   */
+  async exportTexts(filters: ProductFilters, rawHtml: boolean): Promise<DownloadedFile> {
+    return api.download("/products/i18n-export/", {
+      ...filtersToQuery(filters),
+      raw_html: rawHtml ? true : undefined,
+    });
   },
 
   /** Every product matching the filters, page by page (CSV export). */

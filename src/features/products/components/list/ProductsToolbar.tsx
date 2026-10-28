@@ -1,5 +1,5 @@
 import { AppsIcon, DownloadIcon, FilterIcon, ListIcon } from "@/shared/icons";
-import { Badge, Button, Segmented } from "antd";
+import { Badge, Button, Dropdown, Segmented } from "antd";
 import { useTranslation } from "react-i18next";
 import { brand } from "@/theme";
 import { formatNumber } from "@/shared/lib/format";
@@ -11,9 +11,14 @@ interface Props {
   filtersOpen: boolean;
   activeFilterCount: number;
   exportLabel: string | null;
+  /** the uz / ru texts file is being prepared */
+  textsLoading: boolean;
   onViewChange: (view: ProductView) => void;
   onToggleFilters: () => void;
+  /** the table of products as CSV */
   onExport: () => void;
+  /** the uz / ru texts as XLSX; `rawHtml` — descriptions as HTML instead of plain text */
+  onExportTexts: (rawHtml: boolean) => void;
 }
 
 export function ProductsToolbar({
@@ -22,9 +27,11 @@ export function ProductsToolbar({
   filtersOpen,
   activeFilterCount,
   exportLabel,
+  textsLoading,
   onViewChange,
   onToggleFilters,
   onExport,
+  onExportTexts,
 }: Props) {
   const { t } = useTranslation();
 
@@ -59,14 +66,31 @@ export function ProductsToolbar({
             {t("products.filters")}
           </Button>
         </Badge>
-        <Button
-          icon={<DownloadIcon />}
-          loading={!!exportLabel}
+        <Dropdown
+          trigger={["click"]}
           disabled={!total}
-          onClick={onExport}
+          menu={{
+            items: [
+              { key: "table", label: t("products.exportMenu.table") },
+              {
+                key: "texts",
+                label: t("products.exportMenu.texts"),
+                children: [
+                  { key: "texts-plain", label: t("products.exportMenu.textsPlain") },
+                  { key: "texts-html", label: t("products.exportMenu.textsHtml") },
+                ],
+              },
+            ],
+            onClick: ({ key }) => {
+              if (key === "table") onExport();
+              else onExportTexts(key === "texts-html");
+            },
+          }}
         >
-          {exportLabel ?? t("products.export")}
-        </Button>
+          <Button icon={<DownloadIcon />} loading={!!exportLabel || textsLoading} disabled={!total}>
+            {exportLabel ?? t("products.export")}
+          </Button>
+        </Dropdown>
       </div>
     </div>
   );

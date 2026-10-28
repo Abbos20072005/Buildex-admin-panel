@@ -35,6 +35,7 @@ import type {
   CategoryParentOption,
 } from "../model/types";
 import { AttributeSetField } from "./AttributeSetField";
+import { CategoryDescription } from "./CategoryDescription";
 
 /** "create" — a new category; an item — that category is edited */
 export type CategoryEditorTarget = "create" | CategoryItem;
@@ -48,6 +49,7 @@ const emptyValues = (): CategoryFormValues => ({
   code: "",
   metaTitle: { uz: "", ru: "" },
   metaDescription: { uz: "", ru: "" },
+  description: { uz: "", ru: "" },
   showOnSite: true,
   showInApp: true,
   // a new category starts as a draft
@@ -62,6 +64,7 @@ const toValues = (item: CategoryItem, attributes: CategoryAttributeRef[]): Categ
   code: item.code ?? "",
   metaTitle: { ...item.metaTitle },
   metaDescription: { ...item.metaDescription },
+  description: { ...item.description },
   showOnSite: item.showOnSite,
   showInApp: item.showInApp,
   isActive: item.isActive,
@@ -136,7 +139,10 @@ function CategoryForm({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<CategoryFormValues>();
-  const guard = useEditorForm(form);
+  const guard = useEditorForm(form, {
+    description_uz: ["description", "uz"],
+    description_ru: ["description", "ru"],
+  });
   const [files, setFilesState] = useState<CategoryFiles>({});
   const setFiles: typeof setFilesState = (next) => {
     setFilesState(next);
@@ -349,6 +355,8 @@ function CategoryForm({
             <CountedInput limit={META_DESCRIPTION_LIMIT} multiline />
           </Form.Item>
         </div>
+
+        <CategoryDescription />
 
         <div className="mt-2 border-t border-slate-100 pt-4">
           <div className="mb-3 font-semibold">{t("categories.visibility")}</div>

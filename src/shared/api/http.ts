@@ -19,6 +19,21 @@ export interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
   /** retry once with a refreshed token on 401 (default: true) */
   retryOnUnauthorized?: boolean;
+  /** the answer is a file: resolves to `DownloadedFile` instead of JSON (errors stay JSON) */
+  file?: boolean;
+}
+
+/** A file the API sent (an Excel export…) and the name it suggested, when it was readable. */
+export interface DownloadedFile {
+  blob: Blob;
+  filename: string | null;
+}
+
+/** `Content-Disposition: attachment; filename="x.xlsx"` → `x.xlsx` (null when the header is hidden). */
+function filenameOf(response: Response): string | null {
+  const header = response.headers.get("Content-Disposition");
+  const match = header && /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(header);
+  return match ? decodeURIComponent(match[1]) : null;
 }
 
 export function buildQuery(query?: Query): string {
@@ -85,14 +100,14 @@ function refreshTokens(): Promise<boolean> {
 /* ---------- request ---------- */
 
 export async function http<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { query, retryOnUnauthorized = true, headers: initHeaders, ...init } = options;
+  const { query, retryOnUnauthorized = true, file, headers: initHeaders, ...init } = options;
 
   // photos in a multipart body are shrunk to ~100 KB before they leave the browser
   const body =
     options.body instanceof FormData ? await compressFormImages(options.body) : options.body;
   const isFormData = body instanceof FormData;
   const headers = new Headers(initHeaders);
-  headers.set("Accept", "application/json");
+  headers.set("Accept", file ? "*/*" : "application/json");
   // translated fields (`name`, category/brand names…) come back in the admin UI language
   headers.set("Accept-Language", document.documentElement.lang || "uz");
   // FormData sets its own multipart boundary
@@ -118,6 +133,10 @@ export async function http<T>(path: string, options: RequestOptions = {}): Promi
     window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
   }
 
+  if (file && response.ok) {
+    return { blob: await response.blob(), filename: filenameOf(response) } as T;
+  }
+
   const payload = await parseBody(response);
   if (!response.ok) {
     throw new ApiError(response.status, extractErrorMessage(payload, response.statusText), payload);
@@ -135,4 +154,6 @@ export const api = {
   /** multipart/form-data upload (files) */
   upload: <T>(path: string, form: FormData) => http<T>(path, { method: "POST", body: form }),
   delete: <T = void>(path: string) => http<T>(path, { method: "DELETE" }),
+  /** GET a file (xlsx…): the bytes with the name the server suggested */
+  download: (path: string, query?: Query) => http<DownloadedFile>(path, { query, file: true }),
 };

@@ -14,4 +14,5 @@ export {
 } from "./hooks/queries";
 export { useProductListState } from "./hooks/useProductListState";
 export { useProductsExport } from "./hooks/useProductsExport";
+export { useProductsTextsExport } from "./hooks/useProductsTextsExport";
 export type { Product } from "./model/types";

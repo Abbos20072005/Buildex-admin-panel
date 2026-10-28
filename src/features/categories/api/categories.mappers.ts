@@ -11,6 +11,13 @@ import type { CategoryAttributeDto, CategoryDto } from "./categories.dto";
 
 const text = (value: string | null | undefined) => value ?? "";
 
+/**
+ * An editor that was emptied still holds "<br>" or "<p></p>": that must reach the backend as an
+ * empty text, otherwise the category page would show an empty block.
+ */
+const emptyToBlank = (html: string | undefined) =>
+  html && html.replace(/<[^>]*>/g, "").trim() ? html : "";
+
 export function mapItem(dto: CategoryDto, level: CategoryLevel): CategoryItem {
   const sub = dto.product_sub_category;
   const parent = dto.product_category ?? sub;
@@ -24,6 +31,7 @@ export function mapItem(dto: CategoryDto, level: CategoryLevel): CategoryItem {
     position: dto.position ?? 0,
     metaTitle: { uz: text(dto.meta_title_uz), ru: text(dto.meta_title_ru) },
     metaDescription: { uz: text(dto.meta_description_uz), ru: text(dto.meta_description_ru) },
+    description: { uz: text(dto.description_uz), ru: text(dto.description_ru) },
     showOnSite: dto.show_on_site ?? true,
     showInApp: dto.show_in_app ?? true,
     isActive: dto.is_active ?? true,
@@ -93,6 +101,9 @@ export function toFormData(
   set("meta_title_ru", values.metaTitle.ru ?? "");
   set("meta_description_uz", values.metaDescription.uz ?? "");
   set("meta_description_ru", values.metaDescription.ru ?? "");
+  // each language is sent as it is in the form: saving one never touches the other
+  set("description_uz", emptyToBlank(values.description.uz));
+  set("description_ru", emptyToBlank(values.description.ru));
   set("show_on_site", values.showOnSite);
   set("show_in_app", values.showInApp);
   set("is_active", values.isActive);
