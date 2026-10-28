@@ -118,6 +118,7 @@ export function ModerationTable({
             <span className="flex gap-2" onClick={(event) => event.stopPropagation()}>
               <Button
                 type="primary"
+                className="btn-success"
                 size="small"
                 disabled={!item.readiness.ready || (busyId !== null && busyId !== item.id)}
                 loading={busyId === item.id}
@@ -125,7 +126,7 @@ export function ModerationTable({
               >
                 {t("moderation.approve")}
               </Button>
-              <Button size="small" disabled={busyId !== null} onClick={() => onReject(item)}>
+              <Button size="small" danger disabled={busyId !== null} onClick={() => onReject(item)}>
                 {t("moderation.reject")}
               </Button>
             </span>

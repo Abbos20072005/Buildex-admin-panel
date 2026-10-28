@@ -29,6 +29,8 @@ export interface Order {
   saved: number;
   deliveryCost: number;
   manager: { id: number; name: string } | null;
+  /** the pickup store (shown in the list); null - a delivery */
+  store: { names: { uz: string; ru: string }; expired: boolean } | null;
 }
 
 export interface OrderItem {
@@ -58,13 +60,29 @@ export interface OrderComment {
   createdAt: string;
 }
 
+/** The store of a pickup order: as it was when the order was placed, with the keeping deadline. */
+export interface PickupInfo {
+  names: { uz: string; ru: string };
+  addresses: { uz: string; ru: string };
+  landmarks: { uz: string; ru: string };
+  phone: string;
+  latitude: number | null;
+  longitude: number | null;
+  /** the store keeps the order until this moment */
+  deadline: string | null;
+  /** ready for pickup and the deadline has passed */
+  expired: boolean;
+  readyAt: string | null;
+}
+
 export interface OrderDetail extends Order {
   manager: Manager | null;
   /** newest first */
   comments: OrderComment[];
   items: OrderItem[];
   address: { name: string; location: string | null; lat: number; lng: number } | null;
-  branch: { name: string; address: string | null; phone: string | null } | null;
+  /** the store a pickup order is collected from; null — a delivery */
+  pickup: PickupInfo | null;
   promocode: {
     code: string;
     name: string;

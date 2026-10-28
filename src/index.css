@@ -61,6 +61,56 @@
   .rich-content p {
     margin: 0 0 0.6em;
   }
+  /* destructive buttons ("Bloklash", "O'chirish"): outlined at rest, filled red on hover and press */
+  .ant-btn-dangerous.ant-btn-variant-outlined:not(:disabled):hover {
+    background: var(--ant-color-error);
+    border-color: var(--ant-color-error);
+    color: var(--ant-color-text-light-solid);
+  }
+  .ant-btn-dangerous.ant-btn-variant-outlined:not(:disabled):active {
+    background: var(--ant-color-error-active);
+    border-color: var(--ant-color-error-active);
+    color: var(--ant-color-text-light-solid);
+  }
+  /*
+   * constructive buttons ("Blokdan chiqarish"): class "btn-success". Outlined green at rest and
+   * filled on hover / press; as a confirm button (primary) it is solid green.
+   */
+  .ant-btn.btn-success.ant-btn-variant-outlined:not(:disabled) {
+    color: var(--ant-color-success);
+    border-color: var(--ant-color-success);
+  }
+  .ant-btn.btn-success.ant-btn-variant-solid:not(:disabled) {
+    background: var(--ant-color-success);
+    border-color: var(--ant-color-success);
+    color: var(--ant-color-text-light-solid);
+  }
+  .ant-btn.btn-success.ant-btn-variant-outlined:not(:disabled):hover {
+    background: var(--ant-color-success);
+    border-color: var(--ant-color-success);
+    color: var(--ant-color-text-light-solid);
+  }
+  .ant-btn.btn-success.ant-btn-variant-solid:not(:disabled):hover {
+    background: var(--ant-color-success-hover);
+    border-color: var(--ant-color-success-hover);
+  }
+  .ant-btn.btn-success:not(:disabled):active {
+    background: var(--ant-color-success-active);
+    border-color: var(--ant-color-success-active);
+    color: var(--ant-color-text-light-solid);
+  }
+  /* pagination: the page-size picker ("20 / str.") sits at the left corner, the pages at the right */
+  .ant-pagination {
+    justify-content: flex-end;
+  }
+  /* a table's footer sits inside a bordered card: keep it off the card's edges */
+  .ant-pagination.ant-table-pagination {
+    padding-inline: 16px;
+  }
+  .ant-pagination .ant-pagination-options {
+    order: -1 !important;
+    margin-inline: 0 auto !important;
+  }
   .rich-content h2,
   .rich-content h3 {
     font-weight: 700;

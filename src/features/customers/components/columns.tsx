@@ -27,9 +27,9 @@ export function CustomerStateTag({ item }: { item: Customer }) {
   );
 }
 
-/** "Kanal" cell: the site or an app. */
+/** "Kanal" cell: the site, iOS or Android; a dash for an old customer whose channel is unknown. */
 export const channelLabel = (channel: Customer["channel"], t: TFunction) =>
-  channel ? t(`customers.channel.${channel}`) : soon(t);
+  channel ? t(`customers.channel.${channel}`) : dash;
 
 /** A cell whose data the backend does not send yet. */
 const soon = (t: TFunction) => (
@@ -48,7 +48,14 @@ export const customerColumns = (t: TFunction): TableColumnsType<Customer> => [
       <div className="flex items-center gap-3">
         <InitialsAvatar name={item.fullName || item.phone} src={item.avatar} size={32} />
         <div className="min-w-0">
-          <div className="truncate font-semibold">{item.fullName || dash}</div>
+          <div className="flex items-center gap-1.5">
+            <span className="truncate font-semibold">{item.fullName || dash}</span>
+            {item.role === "prorab" && (
+              <span className="shrink-0 rounded bg-brand-soft px-1.5 text-[10px] leading-4 font-bold text-brand">
+                {t("role.prorab")}
+              </span>
+            )}
+          </div>
           <div className="truncate font-mono text-[11px] text-slate-500">
             ID {formatNumber(item.id)}
           </div>

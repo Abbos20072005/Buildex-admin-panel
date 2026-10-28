@@ -1,4 +1,4 @@
-import { App, Button, Dropdown } from "antd";
+import { App, Button, Dropdown, Tag } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ export function CustomerHeader({ customer }: { customer: Customer }) {
       title: t(customer.isBlocked ? "customers.unblockConfirm" : "customers.blockConfirm"),
       content: customer.isBlocked ? undefined : t("customers.blockedHint"),
       okText: t(customer.isBlocked ? "customers.unblock" : "customers.block"),
-      okButtonProps: { danger: !customer.isBlocked },
+      okButtonProps: customer.isBlocked ? { className: "btn-success" } : { danger: true },
       cancelText: t("common.cancel"),
       onOk: () =>
         block.mutateAsync({ id: customer.id, value: !customer.isBlocked }).then(
@@ -59,6 +59,11 @@ export function CustomerHeader({ customer }: { customer: Customer }) {
                 {customer.fullName || customer.phone}
               </h1>
               <CustomerStateTag item={customer} />
+              {customer.role === "prorab" && (
+                <Tag color="blue" variant="filled" className="m-0 font-bold">
+                  {t("role.prorab")}
+                </Tag>
+              )}
             </div>
             <div className="text-sm text-slate-500">
               {t("customers.registeredAt", { date: formatDate(customer.createdAt) })}
@@ -68,7 +73,13 @@ export function CustomerHeader({ customer }: { customer: Customer }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button danger loading={block.isPending} onClick={toggleBlocked}>
+          {/* blocking is destructive (red), unblocking is constructive (green) */}
+          <Button
+            danger={!customer.isBlocked}
+            className={customer.isBlocked ? "btn-success" : undefined}
+            loading={block.isPending}
+            onClick={toggleBlocked}
+          >
             {t(customer.isBlocked ? "customers.unblock" : "customers.block")}
           </Button>
           <Dropdown

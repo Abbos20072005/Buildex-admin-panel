@@ -117,6 +117,7 @@ export function ModerationPage() {
             </span>
           )}
           <Button
+            className="btn-success"
             disabled={selection.ids.length === 0}
             loading={bulk.isPending}
             onClick={approveSelected}

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useOrdersQuery, useOrderStatsQuery } from "@/features/orders";
 import { getErrorMessage } from "@/shared/api";
 import { useCustomerChatsQuery } from "@/features/chats";
+import { CustomerProjects, useCustomerProjectsQuery } from "@/features/pro-projects";
 import { useCustomerQuery } from "../../hooks/queries";
 import { CUSTOMER_API } from "../../model/capabilities";
 import { AccountCard } from "./AccountCard";
@@ -20,7 +21,7 @@ import { RequestsTab } from "./RequestsTab";
 import { ReturnsTab } from "./ReturnsTab";
 import { SegmentCard } from "./SegmentCard";
 
-type TabKey = "overview" | "orders" | "addresses" | "returns" | "requests" | "log";
+type TabKey = "overview" | "orders" | "addresses" | "projects" | "returns" | "requests" | "log";
 
 /** The page of one customer: header, five counters and the tabs of the design. */
 export function CustomerDetail({ id }: { id: number }) {
@@ -30,6 +31,8 @@ export function CustomerDetail({ id }: { id: number }) {
   const recent = useOrdersQuery({ filters: { customer: id }, page: 1, pageSize: 4 });
   const orderStats = useOrderStatsQuery({ customer: id });
   const chats = useCustomerChatsQuery(id);
+  // the same request as the tab's first page: the count in the tab and the list share one answer
+  const projects = useCustomerProjectsQuery({ customer: id, page: 1, pageSize: 20 });
 
   if (detail.error) {
     return <Alert type="error" showIcon title={getErrorMessage(detail.error)} />;
@@ -87,6 +90,16 @@ export function CustomerDetail({ id }: { id: number }) {
             label: label("addresses", customer.addresses.length),
             children: <AddressesTab customer={customer} />,
           },
+          // projects are made by PRO customers: the tab is shown for them (or if any exist)
+          ...(customer.role === "prorab" || (projects.data?.total ?? 0) > 0
+            ? [
+                {
+                  key: "projects",
+                  label: label("projects", projects.data?.total),
+                  children: <CustomerProjects customerId={customer.id} />,
+                },
+              ]
+            : []),
           {
             key: "returns",
             label: label(

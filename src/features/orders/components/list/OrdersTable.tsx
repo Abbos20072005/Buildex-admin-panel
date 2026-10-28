@@ -79,7 +79,6 @@ export function OrdersTable({
         total,
         showSizeChanger: true,
         pageSizeOptions: PAGE_SIZES,
-        showTotal: (count, [from, to]) => `${from}–${to} / ${count}`,
       }}
     />
   );

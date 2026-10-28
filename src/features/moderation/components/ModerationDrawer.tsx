@@ -92,11 +92,12 @@ export function ModerationDrawer({ id, onClose, onApprove, onReject, busy }: Pro
               {missing > 0 ? t("moderation.missingFooter", { count: missing }) : ""}
             </span>
             <div className="flex gap-2">
-              <Button disabled={busy} onClick={() => onReject(item)}>
+              <Button danger disabled={busy} onClick={() => onReject(item)}>
                 {t("moderation.reject")}
               </Button>
               <Button
                 type="primary"
+                className="btn-success"
                 loading={busy}
                 disabled={!item.readiness.ready}
                 onClick={() => onApprove(item)}

@@ -12,6 +12,7 @@ export const theme: ThemeConfig = {
     colorLinkHover: brand.primaryHover,
     colorWarning: brand.yellow,
     colorError: brand.danger,
+    colorSuccess: brand.success,
     colorText: brand.text,
     colorTextPlaceholder: brand.mutedText,
     colorBorder: brand.border,
@@ -53,6 +54,12 @@ export const theme: ThemeConfig = {
     },
     Card: {
       headerFontSize: 15,
+    },
+    Button: {
+      // flat buttons: no outline-glow shadow under them
+      defaultShadow: "none",
+      primaryShadow: "none",
+      dangerShadow: "none",
     },
   },
 };

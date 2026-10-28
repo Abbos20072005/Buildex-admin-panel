@@ -178,7 +178,6 @@ export function BadgesTable({
                 total,
                 showSizeChanger: true,
                 pageSizeOptions: PAGE_SIZES,
-                showTotal: (count, [from, to]) => `${from}–${to} / ${count}`,
                 onChange: onPageChange,
               }
             : false

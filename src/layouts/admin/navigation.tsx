@@ -109,7 +109,10 @@ export const NAVIGATION_BOTTOM: NavItem[] = [
     key: "system",
     label: "nav.systemSettings",
     icon: <SettingsIcon />,
-    children: [{ path: "/settings/staff", label: "nav.staff" }],
+    children: [
+      { path: "/settings/stores", label: "nav.stores" },
+      { path: "/settings/staff", label: "nav.staff" },
+    ],
   },
 ];
 

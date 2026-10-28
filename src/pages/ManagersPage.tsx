@@ -115,7 +115,6 @@ export function ManagersPage() {
             />
           </>
         }
-        totalLabel={(shown, total) => `${shown} / ${total} ${t("managers.unit")}`}
         columns={managerColumns(t)}
         items={list.data?.items ?? []}
         total={list.data?.total ?? 0}

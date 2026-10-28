@@ -8,4 +8,6 @@ export const env = {
   apiUrl: import.meta.env.DEV
     ? ""
     : (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/$/, ""),
+  /** Key of the Yandex Maps JavaScript API (the store's point on the map). Empty — no map, only the coordinates. */
+  yandexMapsKey: import.meta.env.VITE_YANDEX_MAPS_KEY ?? "",
 } as const;

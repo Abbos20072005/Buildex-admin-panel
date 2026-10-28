@@ -36,8 +36,6 @@ interface Props<T> {
   toolbar?: ReactNode;
   /** replaces the padding and the row layout of the toolbar box (a toolbar that brings its own) */
   toolbarClassName?: string;
-  /** text at the left of the footer; default "1–20 / 143" */
-  totalLabel?: (shown: number, total: number) => string;
 }
 
 /** Paginated list of records: a click on a row opens it, the "⋯" menu edits or deletes. */
@@ -56,7 +54,6 @@ export function RecordsTable<T extends { id: number }>({
   rowSelection,
   toolbar,
   toolbarClassName = "flex flex-wrap gap-3 p-4",
-  totalLabel,
 }: Props<T>) {
   const { t } = useTranslation();
 
@@ -126,8 +123,6 @@ export function RecordsTable<T extends { id: number }>({
           total,
           showSizeChanger: true,
           pageSizeOptions: PAGE_SIZES,
-          showTotal: (count, [from, to]) =>
-            totalLabel ? totalLabel(to - from + 1, count) : `${from}–${to} / ${count}`,
           onChange: onPageChange,
         }}
       />

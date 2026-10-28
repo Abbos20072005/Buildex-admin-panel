@@ -54,7 +54,7 @@ export function StaffPage() {
       title: t(blocking ? "staff.blockConfirm" : "staff.unblockConfirm"),
       content: blocking ? t("staff.blockHint", { name: member.fullName }) : member.fullName,
       okText: t(blocking ? "staff.block" : "staff.unblock"),
-      okButtonProps: { danger: blocking },
+      okButtonProps: blocking ? { danger: true } : { className: "btn-success" },
       cancelText: t("common.cancel"),
       onOk: () =>
         block.mutateAsync({ id: member.id, block: blocking }).then(
@@ -216,7 +216,6 @@ export function StaffPage() {
             />
           </>
         }
-        totalLabel={(shown, total) => `${shown} / ${total} ${t("staff.unit")}`}
         columns={staffColumns({
           t,
           currentUserId: user?.id,

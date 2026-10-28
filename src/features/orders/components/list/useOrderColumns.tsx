@@ -1,4 +1,4 @@
-import type { TableColumnsType } from "antd";
+import { Tag, type TableColumnsType } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -15,7 +15,8 @@ const sortOrder = (sort: OrderSort, field: string) =>
   sort === field ? "ascend" : sort === `-${field}` ? "descend" : null;
 
 export function useOrderColumns(sort: OrderSort): TableColumnsType<Order> {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language === "ru" ? "ru" : "uz";
 
   return useMemo(
     () => [
@@ -61,6 +62,27 @@ export function useOrderColumns(sort: OrderSort): TableColumnsType<Order> {
         render: (value: Order["fulfillment"]) => t(`fulfillment.${value}`),
       },
       {
+        // a project order would show the project here; the API has no link between an order and a
+        // project yet, so a pickup order shows its store and a delivery has nothing to show
+        key: "store",
+        title: t("orders.columns.store"),
+        render: (_, order) =>
+          order.store ? (
+            <div className="max-w-56 leading-tight">
+              <div className="truncate font-medium">
+                {order.store.names[lang] || order.store.names.uz || order.store.names.ru}
+              </div>
+              {order.store.expired && (
+                <Tag color="red" variant="filled" className="mt-1 mb-0 font-semibold">
+                  {t("orders.modal.pickupExpired")}
+                </Tag>
+              )}
+            </div>
+          ) : (
+            <span className="text-slate-300">-</span>
+          ),
+      },
+      {
         key: "items",
         title: t("orders.columns.items"),
         dataIndex: "itemsCount",
@@ -97,6 +119,6 @@ export function useOrderColumns(sort: OrderSort): TableColumnsType<Order> {
         render: (status: Order["status"]) => <OrderStatusTag status={status} />,
       },
     ],
-    [t, sort],
+    [t, lang, sort],
   );
 }

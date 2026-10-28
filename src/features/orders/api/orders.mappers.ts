@@ -12,6 +12,7 @@ import type {
   OrderStatus,
   PayStatus,
   PayType,
+  PickupInfo,
 } from "../model/types";
 import type {
   CustomerDto,
@@ -109,6 +110,12 @@ export function mapOrder(dto: OrderListDto): Order {
     saved: num(dto.saved_price),
     deliveryCost: num(dto.delivery_price),
     manager: dto.manager ? { id: dto.manager.id, name: dto.manager.full_name } : null,
+    store: dto.pickup_store
+      ? {
+          names: { uz: dto.pickup_store.name_uz ?? "", ru: dto.pickup_store.name_ru ?? "" },
+          expired: dto.pickup_expired ?? false,
+        }
+      : null,
   };
 }
 
@@ -129,6 +136,36 @@ export function mapComment(dto: OrderCommentDto): OrderComment {
   };
 }
 
+/** "41.31" or 41.31 → 41.31; anything else is no coordinate. */
+const coordinate = (value: string | number | null | undefined) => {
+  if (value === null || value === undefined || value === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+};
+
+/**
+ * The pickup store: the snapshot taken when the order was placed (so a later edit of the store
+ * does not change an old order); an old order without one falls back to the store as it is now.
+ */
+function pickupOf(dto: OrderDto): PickupInfo | null {
+  const store = dto.pickup_store;
+  const branch = dto.pickup_branch;
+  if (!store && !branch) return null;
+  const name = branch?.name ?? "";
+  const address = branch?.address ?? "";
+  return {
+    names: { uz: store?.name_uz || name, ru: store?.name_ru || name },
+    addresses: { uz: store?.address_uz || address, ru: store?.address_ru || address },
+    landmarks: { uz: store?.landmark_uz ?? "", ru: store?.landmark_ru ?? "" },
+    phone: store?.phone || branch?.phone_number || "",
+    latitude: coordinate(store?.latitude),
+    longitude: coordinate(store?.longitude),
+    deadline: dto.pickup_deadline ?? null,
+    expired: dto.pickup_expired ?? false,
+    readyAt: dto.ready_for_pickup_at ?? null,
+  };
+}
+
 export function mapOrderDetail(dto: OrderDto): OrderDetail {
   const items = (dto.items ?? []).map((item) => ({
     id: item.id,
@@ -140,7 +177,6 @@ export function mapOrderDetail(dto: OrderDto): OrderDetail {
     qty: item.quantity ?? 1,
   }));
   const location = dto.order_location;
-  const branch = dto.pickup_branch;
   const promo = dto.promocode;
 
   return {
@@ -157,9 +193,7 @@ export function mapOrderDetail(dto: OrderDto): OrderDetail {
           lng: location.longitude,
         }
       : null,
-    branch: branch
-      ? { name: branch.name, address: branch.address, phone: branch.phone_number }
-      : null,
+    pickup: pickupOf(dto),
     promocode: promo
       ? {
           code: promo.code,

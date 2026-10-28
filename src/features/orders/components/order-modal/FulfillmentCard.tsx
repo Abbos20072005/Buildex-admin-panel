@@ -1,6 +1,6 @@
-import { Card, Descriptions, type DescriptionsProps } from "antd";
+import { Card, Descriptions, Tag, type DescriptionsProps } from "antd";
 import { useTranslation } from "react-i18next";
-import { maskPhone } from "@/shared/lib/format";
+import { formatDateTime, maskPhone } from "@/shared/lib/format";
 import type { OrderDetail } from "../../model/types";
 
 function MapPreview({ lat, lng }: { lat: number; lng: number }) {
@@ -51,8 +51,9 @@ function Place({
 }
 
 export function FulfillmentCard({ order }: { order: OrderDetail }) {
-  const { t } = useTranslation();
-  const { address, branch, receiver } = order;
+  const { t, i18n } = useTranslation();
+  const { address, pickup, receiver } = order;
+  const lang = i18n.language === "ru" ? "ru" : "uz";
 
   const items: DescriptionsProps["items"] = [];
   if (receiver.name || receiver.phone) {
@@ -65,6 +66,35 @@ export function FulfillmentCard({ order }: { order: OrderDetail }) {
           {receiver.phone && <span className="font-mono">{maskPhone(receiver.phone)}</span>}
         </span>
       ),
+    });
+  }
+  if (pickup?.deadline) {
+    items.push({
+      key: "deadline",
+      label: t("orders.modal.pickupDeadline"),
+      children: (
+        <span className="flex items-center gap-2">
+          {formatDateTime(pickup.deadline)}
+          {pickup.expired && (
+            <Tag color="red" variant="filled" className="m-0 font-semibold">
+              {t("orders.modal.pickupExpired")}
+            </Tag>
+          )}
+        </span>
+      ),
+    });
+  }
+  // the project of the order: the API has no link between an order and a project yet (BLD-292)
+  items.push({
+    key: "project",
+    label: t("orders.modal.project"),
+    children: <span className="text-slate-400">{t("customers.soon")}</span>,
+  });
+  if (pickup?.readyAt) {
+    items.push({
+      key: "readyAt",
+      label: t("orders.modal.readyAt"),
+      children: formatDateTime(pickup.readyAt),
     });
   }
   if (order.fulfillment === "delivery") {
@@ -83,7 +113,15 @@ export function FulfillmentCard({ order }: { order: OrderDetail }) {
   return (
     <Card
       title={t("orders.modal.fulfillment")}
-      extra={<b>{t(`fulfillment.${order.fulfillment}`)}</b>}
+      extra={
+        <b>
+          {t(
+            order.fulfillment === "pickup"
+              ? "orders.modal.pickupStore"
+              : `fulfillment.${order.fulfillment}`,
+          )}
+        </b>
+      }
     >
       {address && address.lat !== 0 && <MapPreview lat={address.lat} lng={address.lng} />}
       {address && (
@@ -92,7 +130,34 @@ export function FulfillmentCard({ order }: { order: OrderDetail }) {
           subtitle={address.location ? address.name : null}
         />
       )}
-      {branch && <Place title={branch.name} subtitle={branch.address} phone={branch.phone} />}
+      {pickup && (
+        <>
+          {pickup.latitude !== null && pickup.longitude !== null && (
+            <MapPreview lat={pickup.latitude} lng={pickup.longitude} />
+          )}
+          <Place
+            title={pickup.names[lang] || pickup.names.uz || pickup.names.ru}
+            subtitle={pickup.addresses[lang] || pickup.addresses.uz || pickup.addresses.ru}
+            phone={pickup.phone}
+          />
+          {(pickup.landmarks[lang] || pickup.landmarks.uz || pickup.landmarks.ru) && (
+            <div className="-mt-1 mb-2 text-xs text-slate-500">
+              {t("orders.modal.landmark")}:{" "}
+              {pickup.landmarks[lang] || pickup.landmarks.uz || pickup.landmarks.ru}
+            </div>
+          )}
+          {pickup.latitude !== null && pickup.longitude !== null && (
+            <a
+              href={`https://yandex.uz/maps/?pt=${pickup.longitude},${pickup.latitude}&z=17&l=map`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-2 inline-block text-sm"
+            >
+              {t("orders.modal.viewOnMap")} ↗
+            </a>
+          )}
+        </>
+      )}
       {items.length > 0 && (
         <Descriptions column={1} size="small" items={items} colon={false} className="info-list" />
       )}

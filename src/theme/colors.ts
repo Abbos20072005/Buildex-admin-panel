@@ -44,6 +44,8 @@ export const brand = {
   divider: "#e5e7eb",
   /** --destructive: hsl(0 84.2% 60.2%) */
   danger: "#ef4444",
+  /** the constructive action: "Blokdan chiqarish", "Faollashtirish" (green-600) */
+  success: "#16a34a",
 } as const;
 
 /**
@@ -66,4 +68,5 @@ export const tailwindColors = {
   border: brand.border,
   divider: brand.divider,
   danger: brand.danger,
+  success: brand.success,
 } as const;

@@ -18,10 +18,7 @@ export function dayLabel(iso: string, t: TFunction): string {
   return date.format(date.isSame(dayjs(), "year") ? "DD.MM" : "DD.MM.YYYY");
 }
 
-/** Time for today, "DD.MM HH:mm" for earlier days, with the year for other years. */
+/** Only the time: the thread shows the day on its own label above the messages. */
 export function chatTime(iso: string): string {
-  const date = dayjs(iso);
-  const now = dayjs();
-  if (date.isSame(now, "day")) return date.format("HH:mm");
-  return date.format(date.isSame(now, "year") ? "DD.MM HH:mm" : "DD.MM.YYYY HH:mm");
+  return dayjs(iso).format("HH:mm");
 }

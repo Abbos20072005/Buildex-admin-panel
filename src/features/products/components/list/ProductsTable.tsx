@@ -76,7 +76,6 @@ export function ProductsTable({
           total,
           showSizeChanger: true,
           pageSizeOptions: PAGE_SIZES,
-          showTotal: (count, [from, to]) => `${from}–${to} / ${count}`,
         }}
       />
     </div>

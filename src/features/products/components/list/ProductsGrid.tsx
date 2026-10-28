@@ -82,14 +82,14 @@ export function ProductsGrid({
         </div>
       )}
 
-      <div className="mt-4 flex justify-end">
+      <div className="mt-4">
         <Pagination
+          className="w-full"
           current={page}
           pageSize={pageSize}
           total={total}
           showSizeChanger
           pageSizeOptions={PAGE_SIZES}
-          showTotal={(count, [from, to]) => `${from}–${to} / ${count}`}
           onChange={onPageChange}
         />
       </div>

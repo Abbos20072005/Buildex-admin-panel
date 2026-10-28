@@ -15,9 +15,11 @@ import { useSavedViews, type SavedView } from "../hooks/useSavedViews";
 import { CUSTOMER_API } from "../model/capabilities";
 import {
   CUSTOMER_CHANNELS,
+  CUSTOMER_ROLES,
   CUSTOMER_SEGMENTS,
   type CustomerChannel,
   type CustomerFilters,
+  type CustomerRole,
   type CustomerSegment,
 } from "../model/types";
 
@@ -192,6 +194,17 @@ export function CustomerFilterPanel({ value, tab, onApply, onApplyView, onReset 
             onChange={(next) =>
               patch({ from: stamp(next?.[0] ?? null), to: stamp(next?.[1] ?? null) })
             }
+          />
+        </Field>
+        <Field label={t("customers.filters.role")}>
+          <Select<CustomerRole | "all">
+            className="w-full"
+            value={draft.role ?? "all"}
+            onChange={(next) => patch({ role: next === "all" ? undefined : next })}
+            options={[
+              { value: "all", label: t("common.all") },
+              ...CUSTOMER_ROLES.map((key) => ({ value: key, label: t(`role.${key}`) })),
+            ]}
           />
         </Field>
         <Field label={t("customers.filters.orders")} upper soon={!CUSTOMER_API.rangeFilters}>

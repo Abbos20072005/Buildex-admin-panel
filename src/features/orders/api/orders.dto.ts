@@ -23,6 +23,10 @@ export interface OrderListDto {
   receiver_name?: string | null;
   receiver_phone?: string | null;
   items_count?: number;
+  /** the pickup store of the order (name only is used in the list); null - a delivery */
+  pickup_store?: { id: number; name_uz?: string | null; name_ru?: string | null } | null;
+  /** ready for pickup and the deadline passed */
+  pickup_expired?: boolean;
   manager?: { id: number; full_name: string } | null;
   created_at: string;
   updated_at?: string;
@@ -67,6 +71,24 @@ export interface OrderDto extends OrderListDto {
     address: string | null;
     phone_number: string | null;
   } | null;
+  /** the pickup store as it was when the order was placed; null — a delivery */
+  pickup_store?: {
+    id: number;
+    name_uz?: string | null;
+    name_ru?: string | null;
+    address_uz?: string | null;
+    address_ru?: string | null;
+    landmark_uz?: string | null;
+    landmark_ru?: string | null;
+    phone?: string | null;
+    latitude?: number | string | null;
+    longitude?: number | string | null;
+  } | null;
+  /** "Забрать до": how long the store keeps the order */
+  pickup_deadline?: string | null;
+  /** ready for pickup and the deadline passed */
+  pickup_expired?: boolean;
+  ready_for_pickup_at?: string | null;
   promocode?: {
     id: number;
     name: string;

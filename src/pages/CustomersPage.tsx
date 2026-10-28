@@ -182,7 +182,6 @@ export function CustomersPage() {
             />
           </>
         }
-        totalLabel={(shown, total) => `${shown} / ${total} ${t("customers.unit")}`}
         columns={customerColumns(t)}
         items={deletedWaits ? [] : (list.data?.items ?? [])}
         total={deletedWaits ? 0 : (list.data?.total ?? 0)}
