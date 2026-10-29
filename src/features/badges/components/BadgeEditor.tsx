@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { clsx } from "@/shared/lib/clsx";
 import { badgeColors } from "@/theme";
 import { useCreateBadge, useDeleteBadge, useUpdateBadge } from "../hooks/queries";
@@ -111,7 +111,8 @@ export function BadgeEditor({ badge, onClose }: Props) {
   const handleSave = async () => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     const input = form.getFieldsValue(true) as BadgeInput;
@@ -176,7 +177,6 @@ export function BadgeEditor({ badge, onClose }: Props) {
         {...guard.formProps}
         disabled={saving}
         layout="vertical"
-        requiredMark={false}
         initialValues={badge ? toInput(badge) : emptyInput()}
         className="max-h-[calc(100vh-17rem)] overflow-y-auto px-5 py-4"
       >

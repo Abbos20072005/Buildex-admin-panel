@@ -2,7 +2,7 @@ import { Alert, App, Form, Input } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { emptyLocalized, failedLang, type ContentLang } from "@/shared/lib/localized";
 import { EditorDrawer, LangTabs, LocalizedField } from "@/shared/ui";
 import { videoHooks } from "../hooks/queries";
@@ -45,6 +45,7 @@ export function VideoEditor({ id, onClose }: Props) {
     } catch (error) {
       const failed = failedLang(error);
       if (failed) setLang(failed);
+      reportInvalid(error, message);
       return;
     }
     if (editing) update.mutate({ id, input }, done);
@@ -82,7 +83,6 @@ export function VideoEditor({ id, onClose }: Props) {
           {...guard.formProps}
           disabled={create.isPending || update.isPending}
           layout="vertical"
-          requiredMark={false}
           initialValues={{ title: item?.title ?? emptyLocalized(), url: item?.url ?? "" }}
         >
           <LangTabs value={lang} onChange={setLang} />

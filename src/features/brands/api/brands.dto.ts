@@ -12,6 +12,7 @@ export interface BrandDto {
   country?: string | null;
   image?: string | null;
   is_visible?: boolean;
+  show_on_home?: boolean;
   code?: string | null;
   products_count?: number;
   created_at?: string;

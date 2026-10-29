@@ -2,7 +2,7 @@ import { CloseIcon, PlusIcon } from "@/shared/icons";
 import { App, Button, Card, Form, Input, Popconfirm, Segmented, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { useCreateAttribute, useDeleteAttribute, useUpdateAttribute } from "../hooks/queries";
 import { VALUE_TYPES } from "../model/constants";
 import type { Attribute, AttributeInput } from "../model/types";
@@ -56,7 +56,8 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
   const handleSave = async () => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     const input = form.getFieldsValue(true) as AttributeInput;
@@ -117,7 +118,6 @@ export function AttributeEditor({ attribute, onClose, onSaved }: Props) {
         {...guard.formProps}
         disabled={saving}
         layout="vertical"
-        requiredMark={false}
         initialValues={attribute ? toInput(attribute) : emptyInput()}
         className="max-h-[calc(100vh-17rem)] overflow-y-auto px-5 py-4"
       >

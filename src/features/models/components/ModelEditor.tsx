@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useBrandsListQuery } from "@/features/brands";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
 import { useCreateModel, useDeleteModel, useUpdateModel } from "../hooks/queries";
 import type { ProductModel, ProductModelInput } from "../model/types";
@@ -67,7 +67,8 @@ export function ModelEditor({ model, onClose }: Props) {
   const handleSave = async () => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     const input = form.getFieldsValue(true) as ProductModelInput;
@@ -133,7 +134,6 @@ export function ModelEditor({ model, onClose }: Props) {
         {...guard.formProps}
         disabled={saving}
         layout="vertical"
-        requiredMark={false}
         initialValues={model ? toInput(model) : emptyInput()}
         className="px-5 py-4"
       >

@@ -12,8 +12,10 @@ export interface Brand {
   /** plain text, not translated */
   country: string;
   image: string | null;
-  /** shown on the home page */
+  /** shown on the site */
   isVisible: boolean;
+  /** shown in the "brands" block of the home page (only when also visible) */
+  showOnHome: boolean;
   /** 1C code */
   code: string | null;
   productsCount: number;
@@ -25,6 +27,7 @@ export interface BrandInput {
   descriptions: Localized;
   country: string;
   isVisible: boolean;
+  showOnHome: boolean;
   code: string;
 }
 

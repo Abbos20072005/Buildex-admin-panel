@@ -2,7 +2,7 @@ import { Alert, App, Breadcrumb, Card, Form, Skeleton } from "antd";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { useProductQuery, useUpdateProduct } from "../../hooks/queries";
 import type { PublishStatus } from "../../model/types";
 import { buildPatch, PRODUCT_ERROR_FIELDS, toFormValues, type ProductFormValues } from "./form";
@@ -72,7 +72,8 @@ export function ProductEditor({ productId, onBack }: Props) {
     if (!shown) return;
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     const values = form.getFieldsValue(true) as ProductFormValues;
@@ -135,7 +136,6 @@ export function ProductEditor({ productId, onBack }: Props) {
             {...guard.formProps}
             disabled={updateProduct.isPending}
             layout="vertical"
-            requiredMark={false}
             className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_380px]"
           >
             <div className="flex min-w-0 flex-col gap-4">

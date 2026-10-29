@@ -13,6 +13,7 @@ export function mapBrand(dto: BrandDto): Brand {
     country: text(dto.country),
     image: dto.image || null,
     isVisible: dto.is_visible ?? true,
+    showOnHome: dto.show_on_home ?? false,
     code: dto.code || null,
     productsCount: dto.products_count ?? 0,
   };
@@ -42,6 +43,7 @@ export function inputToFields(
     description_ru: input.descriptions.ru.trim(),
     country: input.country.trim(),
     is_visible: input.isVisible,
+    show_on_home: input.showOnHome,
     // an empty 1C code would collide with other brands (it is unique), so it is sent only when set
     ...(input.code.trim() ? { code: input.code.trim() } : {}),
   };

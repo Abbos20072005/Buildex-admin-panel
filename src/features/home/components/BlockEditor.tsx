@@ -2,7 +2,7 @@ import { CloseIcon, PlusIcon } from "@/shared/icons";
 import { App, Button, Form, Input, InputNumber, Select, Switch } from "antd";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { EditorDrawer } from "@/shared/ui";
 import { useCreateBlock, useSourceOptions, useUpdateBlock } from "../hooks/queries";
 import { SLIDER_PLACEMENTS } from "../model/constants";
@@ -98,7 +98,8 @@ export function BlockEditor({ block, type, onClose, onDraft }: Props) {
     let values: FormValues;
     try {
       values = await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     if (!values.showOnSite && !values.showInApp) {
@@ -144,7 +145,6 @@ export function BlockEditor({ block, type, onClose, onDraft }: Props) {
         {...guard.formProps}
         disabled={saving}
         layout="vertical"
-        requiredMark={false}
         initialValues={{
           titleRu: block?.titleRu ?? "",
           titleUz: block?.titleUz ?? "",

@@ -1,7 +1,7 @@
 import { Alert, App, Form, Input, Select, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { formatDateTime, formatMoney } from "@/shared/lib/format";
 import { EditorDrawer, InitialsAvatar } from "@/shared/ui";
 import {
@@ -51,7 +51,8 @@ export function CustomerEditor({ id, onClose }: Props) {
     let input: CustomerInput;
     try {
       input = await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     if (editing) update.mutate({ id, input }, done);
@@ -117,7 +118,6 @@ export function CustomerEditor({ id, onClose }: Props) {
             {...guard.formProps}
             disabled={create.isPending || update.isPending}
             layout="vertical"
-            requiredMark={false}
             initialValues={{
               fullName: item?.fullName ?? "",
               phone: item?.phone ?? "",

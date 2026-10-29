@@ -1,7 +1,7 @@
 import { App, Form, Input, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { EditorDrawer } from "@/shared/ui";
 import { useCreateManager, useDeleteManager, useUpdateManager } from "../hooks/queries";
 import type { Manager, ManagerInput } from "../model/types";
@@ -38,7 +38,8 @@ export function ManagerEditor({ item, onClose }: Props) {
     let input: ManagerInput;
     try {
       input = await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     if (item) update.mutate({ id: item.id, input }, done);
@@ -73,7 +74,6 @@ export function ManagerEditor({ item, onClose }: Props) {
         {...guard.formProps}
         disabled={saving}
         layout="vertical"
-        requiredMark={false}
         initialValues={{ fullName: item?.fullName ?? "", isActive: item?.isActive ?? true }}
       >
         <Form.Item

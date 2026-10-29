@@ -2,7 +2,7 @@ import { Alert, App, Form } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { emptyLocalized, failedLang, type ContentLang } from "@/shared/lib/localized";
 import { EditorDrawer, ImageField, LangTabs, LocalizedField } from "@/shared/ui";
 import { newsHooks } from "../hooks/queries";
@@ -49,6 +49,7 @@ export function NewsEditor({ id, onClose }: Props) {
     } catch (error) {
       const failed = failedLang(error);
       if (failed) setLang(failed);
+      reportInvalid(error, message);
       return;
     }
     if (!editing && !file) return setImageMissing(true);
@@ -89,7 +90,6 @@ export function NewsEditor({ id, onClose }: Props) {
           {...guard.formProps}
           disabled={create.isPending || update.isPending}
           layout="vertical"
-          requiredMark={false}
           initialValues={{
             title: item?.title ?? emptyLocalized(),
             description: item?.description ?? emptyLocalized(),

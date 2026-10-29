@@ -3,7 +3,7 @@ import { App, AutoComplete, Button, Card, Form, Input, Popconfirm, Switch } from
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { ImageField } from "@/shared/ui";
 import { useCreateBrand, useDeleteBrand, useUpdateBrand } from "../hooks/queries";
 import { COUNTRY_SUGGESTIONS } from "../model/constants";
@@ -21,6 +21,7 @@ const emptyInput = (): BrandInput => ({
   country: "",
   // a new brand starts hidden (saved as a draft)
   isVisible: false,
+  showOnHome: false,
   code: "",
 });
 
@@ -29,6 +30,7 @@ const toInput = (brand: Brand): BrandInput => ({
   descriptions: { ...brand.descriptions },
   country: brand.country,
   isVisible: brand.isVisible,
+  showOnHome: brand.showOnHome,
   code: brand.code ?? "",
 });
 
@@ -60,7 +62,8 @@ export function BrandEditor({ brand, onClose }: Props) {
   const handleSave = async () => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     if (!brand && !image) {
@@ -120,7 +123,6 @@ export function BrandEditor({ brand, onClose }: Props) {
       <Form
         form={form}
         layout="vertical"
-        requiredMark={false}
         initialValues={brand ? toInput(brand) : emptyInput()}
         {...guard.formProps}
         disabled={saving}
@@ -180,8 +182,14 @@ export function BrandEditor({ brand, onClose }: Props) {
         <div className="mt-2 border-t border-slate-100 pt-4">
           <div className="mb-3 font-semibold">{t("brands.visibility")}</div>
           <label className="flex items-center justify-between gap-3">
-            <span>{t("brands.showOnHome")}</span>
+            <span>{t("brands.visible")}</span>
             <Form.Item name="isVisible" valuePropName="checked" noStyle>
+              <Switch />
+            </Form.Item>
+          </label>
+          <label className="mt-3 flex items-center justify-between gap-3">
+            <span>{t("brands.showOnHome")}</span>
+            <Form.Item name="showOnHome" valuePropName="checked" noStyle>
               <Switch />
             </Form.Item>
           </label>

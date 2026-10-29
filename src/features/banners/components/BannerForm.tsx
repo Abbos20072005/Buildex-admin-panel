@@ -16,7 +16,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { WidgetCard } from "@/shared/ui";
 import { BannerContentCard } from "./BannerContentCard";
 import { BannerImageDrop } from "./BannerImageDrop";
@@ -140,7 +140,8 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
   const handleSave = async () => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     const v = form.getFieldsValue(true) as FormValues;
@@ -281,7 +282,6 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
         {...guard.formProps}
         disabled={create.isPending || update.isPending}
         layout="vertical"
-        requiredMark={false}
         initialValues={initialValues(banner)}
         className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_420px]"
       >

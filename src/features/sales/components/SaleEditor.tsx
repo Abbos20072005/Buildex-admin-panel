@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ProductPicker } from "@/features/ad-blocks";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { EditorDrawer, ImageField } from "@/shared/ui";
 import { useCreateSale, useDeleteSale, useSaleQuery, useUpdateSale } from "../hooks/queries";
 import type { SaleFiles, SaleProduct } from "../model/types";
@@ -59,7 +59,8 @@ export function SaleEditor({ id, onClose }: Props) {
     let values: FormValues;
     try {
       values = await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     const input = {
@@ -105,7 +106,6 @@ export function SaleEditor({ id, onClose }: Props) {
           {...guard.formProps}
           disabled={saving}
           layout="vertical"
-          requiredMark={false}
           initialValues={{
             name: sale?.name ?? "",
             period: sale ? [dayjs(sale.discountFrom), dayjs(sale.discountTo)] : undefined,

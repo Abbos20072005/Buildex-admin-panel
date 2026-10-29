@@ -1,7 +1,7 @@
 import { CheckIcon, LockIcon } from "@/shared/icons";
 import { App, Button, Form, Input, Switch } from "antd";
 import { useTranslation } from "react-i18next";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { clsx } from "@/shared/lib/clsx";
 import { generatePassword } from "@/shared/lib/password";
 import { EditorDrawer } from "@/shared/ui";
@@ -131,7 +131,8 @@ export function StaffEditor({ item, isSelf, onClose }: Props) {
     let values: FormValues;
     try {
       values = await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     if (item) {
@@ -177,7 +178,6 @@ export function StaffEditor({ item, isSelf, onClose }: Props) {
         {...guard.formProps}
         disabled={saving}
         layout="vertical"
-        requiredMark={false}
         initialValues={{
           fullName: item?.fullName ?? "",
           position: item?.position ?? "",

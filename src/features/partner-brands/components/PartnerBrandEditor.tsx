@@ -2,7 +2,7 @@ import { CloseIcon } from "@/shared/icons";
 import { App, Button, Card, Form, Input, Popconfirm, Select } from "antd";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import {
   useCreatePartnerBrand,
   useDeletePartnerBrand,
@@ -30,7 +30,8 @@ export function PartnerBrandEditor({ item, onClose }: Props) {
   const handleSave = async () => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     const input = form.getFieldsValue(true) as PartnerBrandInput;
@@ -81,7 +82,6 @@ export function PartnerBrandEditor({ item, onClose }: Props) {
         {...guard.formProps}
         disabled={create.isPending || update.isPending}
         layout="vertical"
-        requiredMark={false}
         initialValues={{ name: item?.name ?? "", isActive: item?.isActive ?? true }}
         className="px-5 py-4"
       >

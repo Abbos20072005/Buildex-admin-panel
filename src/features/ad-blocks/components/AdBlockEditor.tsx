@@ -2,7 +2,7 @@ import { Alert, App, Form, Switch } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
 import { emptyLocalized, failedLang, type ContentLang } from "@/shared/lib/localized";
 import { EditorDrawer, LangTabs, LocalizedField } from "@/shared/ui";
 import {
@@ -57,6 +57,7 @@ export function AdBlockEditor({ id, onClose }: Props) {
     } catch (error) {
       const failed = failedLang(error);
       if (failed) setLang(failed);
+      reportInvalid(error, message);
       return;
     }
     const { products, ...rest } = values;
@@ -96,7 +97,6 @@ export function AdBlockEditor({ id, onClose }: Props) {
           {...guard.formProps}
           disabled={create.isPending || update.isPending}
           layout="vertical"
-          requiredMark={false}
           initialValues={{
             name: item?.nameL ?? emptyLocalized(),
             title: item?.titleL ?? emptyLocalized(),

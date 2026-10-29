@@ -172,7 +172,17 @@ export function PushForm({ push }: { push: Push | null }) {
   const handleSave = async (isActive: boolean) => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      // the labels carry a character counter, so name the translated fields by hand
+      const fields = (error as { errorFields?: { name: (string | number)[]; errors: string[] }[] })
+        .errorFields;
+      const lines = (fields ?? []).map(({ name, errors }) => {
+        const match = /^(title|body)(Uz|Ru)$/.exec(String(name[0]));
+        if (!match) return errors[0] ?? "";
+        const label = t(match[1] === "title" ? "push.fields.title" : "push.fields.text");
+        return `${label} (${match[2].toUpperCase()}): ${errors[0] ?? ""}`;
+      });
+      if (lines.length) message.error(lines.join(" · "));
       // the error may be on the other language tab
       if (!form.getFieldValue("titleRu")?.trim() || !form.getFieldValue("bodyRu")?.trim()) {
         setLang("ru");
@@ -284,7 +294,6 @@ export function PushForm({ push }: { push: Push | null }) {
         {...guard.formProps}
         disabled={saving}
         layout="vertical"
-        requiredMark={false}
         initialValues={initialValues(push)}
         className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_460px]"
       >

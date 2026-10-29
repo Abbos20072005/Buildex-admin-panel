@@ -2,7 +2,8 @@ import { Alert, App, Form, Input, InputNumber, Segmented, Select, Switch } from 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useEditorForm } from "@/shared/form";
+import { reportInvalid, useEditorForm } from "@/shared/form";
+import { failedLang } from "@/shared/lib/localized";
 import { EditorDrawer, ImageField } from "@/shared/ui";
 import { defaultSchedule, scheduleError } from "../lib/schedule";
 import { useCreateStore, useDeleteStore, useUpdateStore } from "../hooks/queries";
@@ -34,7 +35,7 @@ const FIELD_MAP = {
   is_active: "isActive",
 } as const;
 
-const emptyInput = (): StoreInput => ({
+const emptyInput =(): StoreInput => ({
   names: { uz: "", ru: "" },
   addresses: { uz: "", ru: "" },
   landmarks: { uz: "", ru: "" },
@@ -76,6 +77,8 @@ export function StoreEditor({ store, onClose }: Props) {
   const [form] = Form.useForm<StoreInput>();
   const guard = useEditorForm(form, FIELD_MAP);
   const [lang, setLang] = useState<Lang>("uz");
+  /** the languages whose tab holds a field that failed the last save */
+  const [badLangs, setBadLangs] = useState<Lang[]>([]);
   const [files, setFiles] = useState<StoreFiles>({});
 
   const create = useCreateStore();
@@ -92,9 +95,16 @@ export function StoreEditor({ store, onClose }: Props) {
   const handleSave = async () => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      // the empty field can sit on the other language tab: say which one and open that tab
+      const failed = failedLang(error);
+      if (failed && LANGS.includes(failed as Lang)) setLang(failed as Lang);
+      const fields = (error as { errorFields?: { name: (string | number)[] }[] }).errorFields ?? [];
+      setBadLangs(LANGS.filter((code) => fields.some((field) => field.name[1] === code)));
+      reportInvalid(error, message);
       return;
     }
+    setBadLangs([]);
     const input = form.getFieldsValue(true) as StoreInput;
     const done = {
       onSuccess: () => {
@@ -151,14 +161,24 @@ export function StoreEditor({ store, onClose }: Props) {
         {...guard.formProps}
         disabled={saving}
         layout="vertical"
-        requiredMark={false}
         initialValues={store ? toInput(store) : emptyInput()}
       >
         <div className="mb-3 flex justify-end">
           <Segmented<Lang>
             value={lang}
-            onChange={setLang}
-            options={LANGS.map((code) => ({ value: code, label: code.toUpperCase() }))}
+            onChange={(code) => {
+              setLang(code);
+              setBadLangs((list) => list.filter((item) => item !== code));
+            }}
+            options={LANGS.map((code) => ({
+              value: code,
+              label: (
+                <span className={badLangs.includes(code) ? "font-semibold text-red-600" : undefined}>
+                  {code.toUpperCase()}
+                  {badLangs.includes(code) && " ●"}
+                </span>
+              ),
+            }))}
           />
         </div>
         {/* both languages stay in the form (so a hidden empty one still blocks the save) */}

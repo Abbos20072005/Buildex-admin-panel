@@ -15,7 +15,7 @@ import {
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
-import { useConfirmIfDirty, useEditorForm } from "@/shared/form";
+import { reportInvalid, useConfirmIfDirty, useEditorForm } from "@/shared/form";
 import { LANGUAGES, type LanguageCode } from "@/shared/i18n";
 import { ImageField } from "@/shared/ui";
 import { parentKey } from "../api/categories.mappers";
@@ -192,7 +192,8 @@ function CategoryForm({
   const submit = async () => {
     try {
       await form.validateFields();
-    } catch {
+    } catch (error) {
+      reportInvalid(error, message);
       return;
     }
     if (picturesMissing) {
@@ -251,7 +252,6 @@ function CategoryForm({
         {...guard.formProps}
         disabled={save.isPending}
         layout="vertical"
-        requiredMark={false}
         initialValues={initial}
         className="max-h-[calc(100vh-17rem)] overflow-y-auto px-5 py-4"
       >
