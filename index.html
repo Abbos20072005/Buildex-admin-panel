@@ -13,6 +13,19 @@
       href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <script>
+      // the saved (or system) theme is set before the first paint, so a dark admin does not flash white
+      (function () {
+        try {
+          var mode = localStorage.getItem("theme-mode");
+          var dark =
+            mode === "dark" ||
+            ((mode !== "light") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+        } catch (e) {}
+      })();
+    </script>
     <title>Buildex Admin</title>
   </head>
   <body>

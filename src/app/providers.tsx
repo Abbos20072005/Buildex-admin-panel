@@ -1,13 +1,13 @@
 import { StyleProvider } from "@ant-design/cssinjs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { App as AntApp, ConfigProvider } from "antd";
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "@/features/auth";
 import { ApiError } from "@/shared/api";
 import { getLanguage } from "@/shared/i18n";
-import { theme } from "@/theme";
+import { buildTheme, ThemeModeProvider, useThemeMode } from "@/theme";
 
 function createQueryClient() {
   return new QueryClient({
@@ -27,6 +27,8 @@ function createQueryClient() {
 /** antd follows the active i18next language (pagination, date picker texts…) */
 function LocalizedConfigProvider({ children }: { children: ReactNode }) {
   const { i18n } = useTranslation();
+  const { resolved } = useThemeMode();
+  const theme = useMemo(() => buildTheme(resolved), [resolved]);
   return (
     <ConfigProvider theme={theme} locale={getLanguage(i18n.language).antd}>
       {children}
@@ -45,13 +47,15 @@ export function AppProviders({ children }: { children: ReactNode }) {
   return (
     // antd styles go into @layer antd (see index.css) so Tailwind utilities can override them
     <StyleProvider layer>
-      <LocalizedConfigProvider>
-        <AntApp>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </AntApp>
-      </LocalizedConfigProvider>
+      <ThemeModeProvider>
+        <LocalizedConfigProvider>
+          <AntApp>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </AntApp>
+        </LocalizedConfigProvider>
+      </ThemeModeProvider>
     </StyleProvider>
   );
 }

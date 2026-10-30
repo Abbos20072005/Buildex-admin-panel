@@ -309,7 +309,7 @@ export function CustomerFilterPanel({ value, tab, onApply, onApplyView, onReset 
             <Button>{t("customers.filters.saveView")}</Button>
           </Popover>
           <Button
-            className="border-0 bg-slate-900 text-white hover:bg-slate-700!"
+            className="border-0 bg-slate-900 text-white dark:text-slate-50 hover:bg-slate-700!"
             onClick={() => onApply(draft)}
           >
             {t("customers.filters.apply")}

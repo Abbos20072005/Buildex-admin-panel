@@ -1,6 +1,5 @@
 import { useState, type MouseEvent } from "react";
 import { formatNumber } from "@/shared/lib/format";
-import { brand } from "@/theme";
 import { axisMoney, niceCeil } from "../../lib/format";
 
 interface Series {
@@ -129,7 +128,7 @@ export function LineChart({
                 cy={y(value)}
                 r={4}
                 fill={first.color}
-                stroke={brand.white}
+                stroke="var(--ant-color-bg-container)"
                 strokeWidth={2}
               />
               <text
@@ -149,7 +148,7 @@ export function LineChart({
             cy={y(first.values[peak])}
             r={4.5}
             fill={first.color}
-            stroke={brand.white}
+            stroke="var(--ant-color-bg-container)"
             strokeWidth={2}
           />
         )}
@@ -171,7 +170,7 @@ export function LineChart({
                 cy={y(line.values[active] ?? 0)}
                 r={5}
                 fill={line.color}
-                stroke={brand.white}
+                stroke="var(--ant-color-bg-container)"
                 strokeWidth={2}
               />
             ))}
@@ -180,7 +179,7 @@ export function LineChart({
       </svg>
       {active !== null && (
         <div
-          className="pointer-events-none absolute top-0 z-10 rounded-lg bg-slate-900 px-3 py-2 text-xs whitespace-nowrap text-white shadow-lg"
+          className="pointer-events-none absolute top-0 z-10 rounded-lg bg-slate-900 px-3 py-2 text-xs whitespace-nowrap text-white shadow-lg dark:text-slate-50"
           style={{
             left: `${(x(active) / WIDTH) * 100}%`,
             transform: `translateX(${active > labels.length / 2 ? "calc(-100% - 12px)" : "12px"})`,

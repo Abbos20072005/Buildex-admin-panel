@@ -24,6 +24,69 @@
   }
 }
 
+/*
+ * Dark look ("Buildex … Dark" design). The Tailwind colour variables are remapped, so every
+ * `bg-white`, `text-slate-500`, `border-slate-200`… in the code follows the theme with no change.
+ * The slate scale is inverted (light shades → dark surfaces, dark shades → light text).
+ */
+:root[data-theme="dark"] {
+  /* `--color-white` stays white: `text-white` on buttons and tooltips must not turn dark */
+  --color-slate-50: #1c222a;
+  --color-slate-100: #232a34;
+  --color-slate-200: #2a313b;
+  --color-slate-300: #343c48;
+  --color-slate-400: #6b7685;
+  --color-slate-500: #8c96a4;
+  --color-slate-600: #aeb6c2;
+  --color-slate-700: #cbd2db;
+  --color-slate-800: #e1e6ec;
+  --color-slate-900: #e8ecf1;
+
+  --color-red-50: #3a1719;
+  --color-red-300: #6b2a2a;
+  --color-red-600: #ff7b76;
+  --color-red-700: #ff7b76;
+  --color-green-50: #0f2e1e;
+  --color-green-600: #4cd68a;
+  --color-green-700: #4cd68a;
+  --color-emerald-50: #0f2e1e;
+  --color-emerald-700: #4cd68a;
+  --color-amber-50: #33270b;
+  --color-amber-600: #f2c14e;
+  --color-amber-700: #f2c14e;
+  --color-amber-800: #f2c14e;
+  --color-blue-50: #14254a;
+  --color-blue-700: #8ab0ff;
+  --color-sky-50: #14254a;
+  --color-sky-700: #8ab0ff;
+  --color-violet-50: #241a45;
+  --color-violet-700: #b9a6ff;
+  --color-rose-50: #3a1719;
+  --color-rose-700: #ff7b76;
+
+  --color-brand: #3d7bff;
+  --color-brand-hover: #5b8cff;
+  --color-brand-soft: #14254a;
+  --color-brand-tint: #14254a;
+  --color-navy: #8ab0ff;
+  --color-surface: #0e1217;
+  --color-surface-alt: #1c222a;
+  --color-panel: #11161c;
+  --color-border: #232a34;
+  --color-divider: #232a34;
+  --color-danger: #ff7b76;
+  --color-success: #4cd68a;
+}
+
+/* white surfaces (cards, panels) become the dark container colour; `dark:` utilities follow the same switch */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+:root[data-theme="dark"] .bg-white {
+  background-color: #161b22;
+}
+:root[data-theme="dark"] .border-white {
+  border-color: #161b22;
+}
+
 @layer base {
   html,
   body,

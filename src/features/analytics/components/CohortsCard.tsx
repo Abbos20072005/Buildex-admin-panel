@@ -43,7 +43,7 @@ export function CohortsCard({ cohorts }: { cohorts: SalesAnalytics["cohorts"] })
                       value === null
                         ? { background: "var(--color-surface)" }
                         : {
-                            background: `color-mix(in srgb, var(--color-brand) ${Math.round(15 + value * 1.6)}%, white)`,
+                            background: `color-mix(in srgb, var(--color-brand) ${Math.round(15 + value * 1.6)}%, var(--ant-color-bg-container))`,
                             color: value > 30 ? "white" : undefined,
                           }
                     }

@@ -40,7 +40,7 @@ function Phone({
   return (
     <div className="text-center">
       <div className="mb-2 text-xs font-semibold text-slate-500">{ios ? "iOS" : "Android"}</div>
-      <div className="relative mx-auto flex h-[370px] w-[190px] flex-col rounded-[34px] border-[7px] border-slate-900 bg-slate-700 px-3 pt-8 pb-4 text-white">
+      <div className="relative mx-auto flex h-[370px] w-[190px] flex-col rounded-[34px] border-[7px] border-slate-900 bg-slate-700 px-3 pt-8 pb-4 text-white dark:text-slate-50">
         <div className="text-4xl leading-none font-light tabular-nums">{time}</div>
         <div className="mt-1 text-[11px] text-slate-300 first-letter:uppercase">{date}</div>
 

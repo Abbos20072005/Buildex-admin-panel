@@ -68,7 +68,7 @@ export function DonutChart({
       </div>
       {hover && (
         <div
-          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs whitespace-nowrap text-white shadow-lg"
+          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs whitespace-nowrap text-white shadow-lg dark:text-slate-50"
           style={{ left: hover.x, top: hover.y - 10 }}
         >
           <div className="flex items-center gap-1.5">

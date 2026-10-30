@@ -61,7 +61,7 @@ export function BannerImageDrop({ label, wide, url, file, onPick }: Props) {
             </span>
           )}
           {src && (
-            <span className="absolute inset-x-0 bottom-0 bg-slate-900/60 py-1 text-[11px] font-bold text-white">
+            <span className="absolute inset-x-0 bottom-0 bg-slate-900/60 py-1 text-[11px] font-bold text-white dark:text-slate-50">
               {t("common.changeImage")}
             </span>
           )}

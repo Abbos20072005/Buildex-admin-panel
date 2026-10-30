@@ -1,7 +1,6 @@
 import { Drawer, Grid, Layout } from "antd";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth";
-import { brand } from "@/theme";
 import { Logo } from "@/shared/ui";
 import { NAVIGATION, NAVIGATION_BOTTOM } from "./navigation";
 import { SidebarMenu } from "./SidebarMenu";
@@ -56,7 +55,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: Props) {
         placement="left"
         size={SIDEBAR_WIDTH}
         closable={false}
-        styles={{ body: { padding: 0, background: brand.white } }}
+        styles={{ body: { padding: 0, background: "var(--ant-color-bg-container)" } }}
       >
         <SidebarContent onNavigate={onMobileClose} />
       </Drawer>

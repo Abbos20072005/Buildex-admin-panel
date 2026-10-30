@@ -1,6 +1,8 @@
 export const uz = {
   common: {
     logout: "Chiqish",
+    themeToLight: "Yorug‘ rejim",
+    themeToDark: "Qorong‘i rejim",
     unsavedTitle: "Saqlanmagan o‘zgarishlar bor",
     unsavedText: "Chiqsangiz, kiritilgan o‘zgarishlar yo‘qoladi.",
     discard: "O‘zgarishlarsiz chiqish",

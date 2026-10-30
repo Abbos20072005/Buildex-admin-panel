@@ -49,6 +49,31 @@ export const brand = {
 } as const;
 
 /**
+ * The dark look (from the "Buildex … Dark" design). Same roles as in `brand`; the Tailwind side
+ * (slate scale, white, surface…) is remapped in src/index.css under `[data-theme="dark"]`.
+ */
+export const darkBrand = {
+  primary: "#3d7bff",
+  primaryHover: "#5b8cff",
+  primarySoft: "#14254a",
+  primarySoftHover: "#1b2f5c",
+  text: "#e8ecf1",
+  textSecondary: "#aeb6c2",
+  mutedText: "#6b7685",
+  border: "#232a34",
+  divider: "#232a34",
+  surface: "#0e1217",
+  surfaceAlt: "#1c222a",
+  panel: "#11161c",
+  container: "#161b22",
+  elevated: "#1c222a",
+  sidebarHover: "#1f252e",
+  sidebarSelected: "#232a34",
+  danger: "#ff7b76",
+  success: "#4cd68a",
+} as const;
+
+/**
  * Colours offered for product badges (teglar). The API stores any `#RRGGBB`; the first one
  * is its default (`#2563EB`).
  */

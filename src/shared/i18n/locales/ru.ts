@@ -3,6 +3,8 @@ import type { Translation } from "./uz";
 export const ru: Translation = {
   common: {
     logout: "Выйти",
+    themeToLight: "Светлая тема",
+    themeToDark: "Тёмная тема",
     unsavedTitle: "Есть несохранённые изменения",
     unsavedText: "Если выйти, внесённые изменения будут потеряны.",
     discard: "Выйти без сохранения",
