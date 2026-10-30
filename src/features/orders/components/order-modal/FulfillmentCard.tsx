@@ -20,7 +20,7 @@ function MapPreview({ lat, lng }: { lat: number; lng: number }) {
         target="_blank"
         rel="noopener noreferrer"
         title={t("orders.modal.openMap")}
-        className="absolute right-2 bottom-2 rounded-md bg-white/90 px-2 py-0.5 font-mono text-xs text-slate-600 hover:text-brand"
+        className="absolute right-2 bottom-2 rounded-md bg-white/90 dark:bg-slate-100/90 px-2 py-0.5 font-mono text-xs text-slate-600 hover:text-brand"
       >
         {lat.toFixed(4)}, {lng.toFixed(4)} ↗
       </a>

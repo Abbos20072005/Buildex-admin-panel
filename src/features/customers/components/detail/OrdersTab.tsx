@@ -61,7 +61,7 @@ export function OrdersTab({ customerId }: { customerId: number }) {
           >
             {t(`customers.orderGroups.${key}`)}
             {counts[key] !== undefined && (
-              <span className="rounded-full bg-white px-2 text-xs text-slate-500 tabular-nums">
+              <span className="rounded-full bg-white px-2 text-xs text-slate-500 tabular-nums dark:bg-slate-300 dark:text-slate-700">
                 {counts[key]}
               </span>
             )}

@@ -71,7 +71,7 @@ export function BulkBar<V extends string | number | boolean, K extends string | 
         type="text"
         icon={<CloseIcon />}
         onClick={onClear}
-        className="ml-auto text-slate-300! hover:text-white!"
+        className="ml-auto text-slate-300! hover:text-white! dark:text-white/70!"
       >
         {t("bulk.clear")}
       </Button>

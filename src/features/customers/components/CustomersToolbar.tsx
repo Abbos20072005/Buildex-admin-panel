@@ -60,7 +60,9 @@ export function CustomersToolbar({
                 <span
                   className={clsx(
                     "rounded-full px-2 text-xs tabular-nums",
-                    active ? "bg-white text-brand" : "bg-white/70 text-slate-500",
+                    active
+                      ? "bg-white text-brand dark:bg-brand/30 dark:text-slate-900"
+                      : "bg-white/70 text-slate-500 dark:bg-slate-300 dark:text-slate-700",
                   )}
                 >
                   {formatNumber(count)}

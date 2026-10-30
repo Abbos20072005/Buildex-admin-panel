@@ -30,7 +30,7 @@ export function BulkActionsBar({ count, loading, onChangeStatus, onClear }: Prop
         type="text"
         icon={<CloseIcon />}
         onClick={onClear}
-        className="ml-auto text-slate-300! hover:text-white!"
+        className="ml-auto text-slate-300! hover:text-white! dark:text-white/70!"
       >
         {t("orders.bulk.clear")}
       </Button>

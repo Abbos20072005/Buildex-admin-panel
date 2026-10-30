@@ -34,7 +34,8 @@
   --color-slate-50: #1c222a;
   --color-slate-100: #232a34;
   --color-slate-200: #2a313b;
-  --color-slate-300: #343c48;
+  /* also used for faint text ("—", grip icons) and dashed borders, so lighter than the surfaces */
+  --color-slate-300: #4f5967;
   --color-slate-400: #6b7685;
   --color-slate-500: #8c96a4;
   --color-slate-600: #aeb6c2;
@@ -68,7 +69,6 @@
   --color-brand-hover: #5b8cff;
   --color-brand-soft: #14254a;
   --color-brand-tint: #14254a;
-  --color-navy: #8ab0ff;
   --color-surface: #0e1217;
   --color-surface-alt: #1c222a;
   --color-panel: #11161c;
