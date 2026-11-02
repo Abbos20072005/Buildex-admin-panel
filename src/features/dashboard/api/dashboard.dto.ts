@@ -17,6 +17,15 @@ export interface DashboardDto {
     average_check: KpiDto;
     new_customers: KpiDto;
   };
+  /** the same four numbers for the whole history; independent of the chosen window */
+  all_time?: {
+    date_from: string | null;
+    date_to: string;
+    orders: number;
+    revenue: number;
+    average_check: number;
+    new_customers: number;
+  };
   delivered_orders: {
     period: "week" | "month" | "year";
     step: "day" | "month";

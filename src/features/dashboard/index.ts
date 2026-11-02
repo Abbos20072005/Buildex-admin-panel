@@ -1,4 +1,6 @@
 export { DashboardSkeleton, DashboardView } from "./components/DashboardView";
+export { BarChart } from "./components/charts/BarChart";
+export { ChartTooltip, pointTitle } from "./components/charts/ChartTooltip";
 export { LineChart } from "./components/charts/LineChart";
 export { DateRangeButton } from "./components/DateRangeButton";
 export { useDashboardQuery } from "./hooks/queries";
@@ -7,7 +9,9 @@ export { Change } from "./components/Widgets";
 export {
   axisMoney,
   compactMoney,
+  formatDuration,
   niceCeil,
+  oneDecimal,
   percent,
   rangeLabel,
   weekdayLabel,

@@ -5,7 +5,7 @@ import { AttentionCard } from "./AttentionCard";
 import { CatalogCard } from "./CatalogCard";
 import { CustomersCard } from "./CustomersCard";
 import { DeliveredOrdersCard } from "./DeliveredOrdersCard";
-import { KpiCards } from "./KpiCards";
+import { KpiCards, KpiTotals } from "./KpiCards";
 import { ManagersCard } from "./ManagersCard";
 import { RecentOrdersCard } from "./RecentOrdersCard";
 import { RegistrationsCard } from "./RegistrationsCard";
@@ -28,6 +28,8 @@ interface Props {
   onMonthsChange: (months: number) => void;
   /** the received-orders chart (it lives in the analytics feature, which imports this one) */
   receivedOrders?: ReactNode;
+  /** the order-stage time charts (analytics feature too) */
+  stageTimes?: ReactNode;
 }
 
 /** All widgets of the dashboard in their grid. */
@@ -38,9 +40,11 @@ export function DashboardView({
   months,
   onMonthsChange,
   receivedOrders,
+  stageTimes,
 }: Props) {
   return (
     <div className="flex flex-col gap-4">
+      {data.allTime && <KpiTotals allTime={data.allTime} />}
       <KpiCards summary={data.summary} />
 
       {receivedOrders}
@@ -57,6 +61,8 @@ export function DashboardView({
           onPeriodChange={registrations.onPeriodChange}
         />
       </div>
+
+      {stageTimes && <div className="grid gap-4 xl:grid-cols-2">{stageTimes}</div>}
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <RecentOrdersCard orders={data.recentOrders} />

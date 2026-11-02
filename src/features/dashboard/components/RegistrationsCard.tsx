@@ -4,6 +4,7 @@ import { formatNumber } from "@/shared/lib/format";
 import { brand } from "@/theme";
 import { percent, weekdayLabel } from "../lib/format";
 import type { Dashboard, Period } from "../model/types";
+import { ChartTooltip, pointTitle } from "./charts/ChartTooltip";
 import { LineChart } from "./charts/LineChart";
 import { PeriodSwitch } from "./PeriodSwitch";
 import { ProgressBar, WidgetCard } from "./Widgets";
@@ -49,6 +50,21 @@ export function RegistrationsCard({ data, period, onPeriodChange }: Props) {
             values: data.points.map((point) => point.count),
           },
         ]}
+        renderTooltip={(index) => {
+          const point = data.points[index];
+          return (
+            <ChartTooltip
+              title={pointTitle(point.date, data.step)}
+              rows={[
+                [t("dashboard.tip.registered"), formatNumber(point.count)],
+                [
+                  t("dashboard.tip.share"),
+                  percent(data.total > 0 ? (point.count / data.total) * 100 : 0),
+                ],
+              ]}
+            />
+          );
+        }}
       />
 
       {data.hasSplit && (

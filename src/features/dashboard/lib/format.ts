@@ -3,11 +3,11 @@ import dayjs from "dayjs";
 import type { DateRange } from "../model/types";
 
 /** "12.50" → "12,5": decimal comma, no trailing zeros */
-const decimal = (value: number, digits: number) =>
-  value
-    .toFixed(digits)
-    .replace(/\.?0+$/, "")
-    .replace(".", ",");
+const decimal = (value: number, digits: number) => {
+  const text = value.toFixed(digits);
+  // zeros are cut only after the decimal point: "100" stays "100", "0" stays "0"
+  return (text.includes(".") ? text.replace(/\.?0+$/, "") : text).replace(".", ",");
+};
 
 /**
  * A large amount in short form: 1_970_000_000 → { amount: "1,97", unit: "mlrd" },
@@ -34,6 +34,17 @@ export function niceCeil(value: number): number {
   const magnitude = 10 ** Math.floor(Math.log10(value));
   const step = [1, 2, 3, 5, 10].map((n) => n * magnitude).find((n) => n >= value);
   return step ?? magnitude * 10;
+}
+
+/** "13.40" → "13,4", "3.00" → "3": one decimal, comma, no trailing ",0" */
+export const oneDecimal = (value: number) => value.toFixed(1).replace(/\.0$/, "").replace(".", ",");
+
+/** A duration for people: under 24 hours in hours, longer in days, one decimal ("13,4 soat", "1,2 kun"). */
+export function formatDuration(seconds: number, t: TFunction): string {
+  const hours = seconds / 3600;
+  return hours < 24
+    ? `${oneDecimal(hours)} ${t("dashboard.stages.hour")}`
+    : `${oneDecimal(hours / 24)} ${t("dashboard.stages.day")}`;
 }
 
 /** "+12,4%" text without the sign: 12.4 → "12,4%" */

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { axisMoney, niceCeil } from "@/features/dashboard";
+import { axisMoney, niceCeil, oneDecimal } from "@/features/dashboard";
 import { formatMoney, formatNumber } from "@/shared/lib/format";
 import { brand } from "@/theme";
 import type { ChartPoint } from "../model/types";
@@ -159,9 +159,25 @@ export function RevenueChart({ points, compare }: { points: ChartPoint[]; compar
           <div className="text-slate-600">
             {t("analytics.chart.orders")}: <b>{formatNumber(current.orders)}</b>
           </div>
+          <div className="text-slate-600">
+            {t("analytics.chart.average")}:{" "}
+            <b>{formatMoney(current.orders > 0 ? current.revenue / current.orders : 0)}</b>
+          </div>
           {compare && current.previousRevenue !== null && (
             <div className="text-slate-500">
               {t("analytics.chart.previous")}: {formatMoney(current.previousRevenue)}
+              {current.previousRevenue > 0 && (
+                <>
+                  {" "}
+                  (
+                  {`${current.revenue >= current.previousRevenue ? "+" : "−"}${oneDecimal(
+                    (Math.abs(current.revenue - current.previousRevenue) /
+                      current.previousRevenue) *
+                      100,
+                  )}%`}
+                  )
+                </>
+              )}
             </div>
           )}
         </div>

@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { LineChart } from "@/features/dashboard";
+import { ChartTooltip, LineChart, oneDecimal } from "@/features/dashboard";
 import { formatNumber } from "@/shared/lib/format";
 import { WidgetCard } from "@/shared/ui";
 import { brand } from "@/theme";
@@ -38,6 +38,21 @@ export function OrdersChart({ data, now }: { data: Today["ordersChart"]; now: st
         series={[
           { key: "orders", color: brand.primary, values: data.points.map((point) => point.count) },
         ]}
+        renderTooltip={(index) => {
+          const point = data.points[index];
+          return (
+            <ChartTooltip
+              title={dayjs(point.date).format("D MMMM")}
+              rows={[
+                [t("today.chart.orders"), formatNumber(point.count)],
+                [
+                  t("today.chart.share"),
+                  `${oneDecimal(data.count > 0 ? (point.count / data.count) * 100 : 0)}%`,
+                ],
+              ]}
+            />
+          );
+        }}
       />
 
       <div className="mt-4 flex gap-8 border-t border-slate-100 pt-3">

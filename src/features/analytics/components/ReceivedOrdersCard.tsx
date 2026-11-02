@@ -71,6 +71,26 @@ export function ReceivedOrdersCard() {
                   values: data.chart.map((point) => point.orders),
                 },
               ]}
+              renderTooltip={(index) => {
+                const point = data.chart[index];
+                const average = point.orders > 0 ? point.revenue / point.orders : 0;
+                const rows: [string, string][] = [
+                  [t("dashboard.received.count"), formatNumber(point.orders)],
+                  [t("dashboard.received.total"), formatNumber(point.revenue)],
+                  [t("dashboard.received.average"), formatNumber(Math.round(average))],
+                ];
+                return (
+                  <>
+                    <div className="mb-1 text-slate-300">{dayjs(point.date).format("D MMMM")}</div>
+                    {rows.map(([name, value]) => (
+                      <div key={name} className="flex items-center gap-1.5">
+                        <span className="text-slate-300">{name}</span>
+                        <b className="ml-6 flex-1 text-right tabular-nums">{value}</b>
+                      </div>
+                    ))}
+                  </>
+                );
+              }}
             />
           </div>
         </>

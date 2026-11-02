@@ -64,6 +64,15 @@ export interface Dashboard {
     averageCheck: Kpi;
     newCustomers: Kpi;
   };
+  /** the same four numbers since the first order (no change, no window); null if the API did not send it */
+  allTime: {
+    /** date of the first order */
+    dateFrom: string | null;
+    orders: number;
+    revenue: number;
+    averageCheck: number;
+    newCustomers: number;
+  } | null;
   delivered: {
     period: Period;
     /** one point is a day or a month */

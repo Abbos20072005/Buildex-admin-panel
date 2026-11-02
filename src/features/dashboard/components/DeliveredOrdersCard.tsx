@@ -4,6 +4,7 @@ import { formatNumber } from "@/shared/lib/format";
 import { brand } from "@/theme";
 import { weekdayLabel } from "../lib/format";
 import type { Dashboard, Period } from "../model/types";
+import { ChartTooltip, pointTitle } from "./charts/ChartTooltip";
 import { LineChart } from "./charts/LineChart";
 import { PeriodSwitch } from "./PeriodSwitch";
 import { Change, WidgetCard } from "./Widgets";
@@ -53,6 +54,19 @@ export function DeliveredOrdersCard({ data, period, onPeriodChange }: Props) {
               values: data.points.map((p) => p.averageCheck),
             },
           ]}
+          renderTooltip={(index) => {
+            const point = data.points[index];
+            return (
+              <ChartTooltip
+                title={pointTitle(point.date, data.step)}
+                rows={[
+                  [t("dashboard.tip.count"), formatNumber(point.count)],
+                  [t("dashboard.tip.sum"), formatNumber(point.revenue)],
+                  [t("dashboard.tip.average"), formatNumber(Math.round(point.averageCheck))],
+                ]}
+              />
+            );
+          }}
         />
       </div>
 

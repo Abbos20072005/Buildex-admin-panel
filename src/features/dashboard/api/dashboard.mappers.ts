@@ -34,6 +34,15 @@ export function mapDashboard(dto: DashboardDto): Dashboard {
       averageCheck: kpi(summary.average_check),
       newCustomers: kpi(summary.new_customers),
     },
+    allTime: dto.all_time
+      ? {
+          dateFrom: dto.all_time.date_from,
+          orders: dto.all_time.orders,
+          revenue: dto.all_time.revenue,
+          averageCheck: dto.all_time.average_check,
+          newCustomers: dto.all_time.new_customers,
+        }
+      : null,
     delivered: {
       period: delivered.period,
       step: delivered.step,

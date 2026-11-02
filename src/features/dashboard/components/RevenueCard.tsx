@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { brand } from "@/theme";
 import { compactMoney, percent } from "../lib/format";
 import type { Dashboard } from "../model/types";
+import { formatNumber } from "@/shared/lib/format";
+import { ChartTooltip } from "./charts/ChartTooltip";
 import { LineChart } from "./charts/LineChart";
 import { WidgetCard } from "./Widgets";
 
@@ -57,6 +59,21 @@ export function RevenueCard({ data, months, onMonthsChange }: Props) {
             values: data.months.map((month) => month.individual),
           },
         ]}
+        renderTooltip={(index) => {
+          const month = data.months[index];
+          const sum = month.b2b + month.individual;
+          return (
+            <ChartTooltip
+              title={dayjs(month.month).format("MMMM YYYY")}
+              rows={[
+                ["B2B", formatNumber(month.b2b)],
+                [t("dashboard.revenue.individual"), formatNumber(month.individual)],
+                [t("dashboard.tip.total"), formatNumber(sum)],
+                [t("dashboard.revenue.share"), percent(sum > 0 ? (month.b2b / sum) * 100 : 0)],
+              ]}
+            />
+          );
+        }}
       />
 
       <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-slate-100 pt-3 text-xs text-slate-600">
