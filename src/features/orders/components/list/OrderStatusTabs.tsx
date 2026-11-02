@@ -29,7 +29,7 @@ export function OrderStatusTabs({ value, stats, onChange }: Props) {
                 tab === value ? "bg-brand text-white" : "bg-slate-100 text-slate-600"
               }`}
             >
-              {stats ? formatNumber(stats[TAB_STAT_FIELD[tab]]) : "…"}
+              {TAB_STAT_FIELD[tab] ? (stats ? formatNumber(stats[TAB_STAT_FIELD[tab]!]) : "…") : "·"}
             </span>
           </span>
         ),

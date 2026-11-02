@@ -2,7 +2,7 @@ import { CheckCircleIcon } from "@/shared/icons";
 import { Button, Popconfirm } from "antd";
 import { useTranslation } from "react-i18next";
 import { formatDateTime, formatOrderId } from "@/shared/lib/format";
-import { NEXT_STATUS } from "../../model/constants";
+import { nextStatus } from "../../model/constants";
 import type { OrderDetail, OrderPatch } from "../../model/types";
 import { OrderStatusTag, PayStatusTag } from "../OrderTags";
 
@@ -15,7 +15,7 @@ interface Props {
 
 export function OrderModalHeader({ orderId, order, saving, onUpdate }: Props) {
   const { t } = useTranslation();
-  const next = order ? NEXT_STATUS[order.status] : undefined;
+  const next = order ? nextStatus(order.status, order.fulfillment) : undefined;
   const isClosed = order?.status === "delivered" || order?.status === "cancelled";
 
   return (

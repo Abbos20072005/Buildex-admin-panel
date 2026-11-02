@@ -1361,6 +1361,11 @@ export const uz = {
       averageCheck: "O‘rtacha buyurtma",
       newCustomers: "Yangi foydalanuvchilar",
     },
+    received: {
+      title: "Tushgan buyurtmalar",
+      orders: "Buyurtmalar",
+      unit: "ta buyurtma",
+    },
     delivered: {
       title: "Yetkazib berilgan buyurtmalar",
       week: "Hafta",
@@ -1628,8 +1633,10 @@ export const uz = {
     tabs: {
       all: "Hammasi",
       new: "Yangi",
+      confirmed: "Tasdiqlangan",
       assembling: "Yig‘ilmoqda",
       onTheWay: "Yo‘lda",
+      readyForPickup: "Olib ketishga tayyor",
       delivered: "Yakunlandi",
       cancelled: "Bekor qilindi / Qaytarildi",
     },
@@ -1678,7 +1685,13 @@ export const uz = {
       fulfillment: "Olish usuli",
       cancel: "Bekor qilish",
       cancelConfirm: "Buyurtma bekor qilinsinmi?",
-      next: { new: "Tasdiqlash", assembling: "Yo‘lga chiqarish", onTheWay: "Yakunlash" },
+      next: {
+        new: "Tasdiqlash",
+        confirmed: "Yig‘ishga o‘tkazish",
+        assembling: "Yo‘lga chiqarish",
+        onTheWay: "Yakunlash",
+        readyForPickup: "Topshirildi",
+      },
       composition: "Tarkib",
       positions: "{{count}} pozitsiya",
       product: "Mahsulot",
@@ -1922,8 +1935,10 @@ export const uz = {
   },
   status: {
     new: "Yangi",
+    confirmed: "Tasdiqlangan",
     assembling: "Yig‘ilmoqda",
     onTheWay: "Yo‘lda",
+    readyForPickup: "Olib ketishga tayyor",
     delivered: "Yakunlandi",
     cancelled: "Bekor qilindi",
   },

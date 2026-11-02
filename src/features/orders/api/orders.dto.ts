@@ -118,6 +118,7 @@ export type OrderStatsDto = Partial<
   Record<
     | "total"
     | "pending"
+    | "confirmed"
     | "collecting"
     | "delivering"
     | "completed"

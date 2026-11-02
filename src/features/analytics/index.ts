@@ -1,3 +1,4 @@
+export { ReceivedOrdersCard } from "./components/ReceivedOrdersCard";
 export { SalesView } from "./components/SalesView";
 export { useSalesAnalyticsQuery } from "./hooks/queries";
 export { exportSalesCsv } from "./lib/export";

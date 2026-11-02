@@ -14,6 +14,7 @@ import {
   type DateRange,
   type Period,
 } from "@/features/dashboard";
+import { ReceivedOrdersCard } from "@/features/analytics";
 import { getErrorMessage } from "@/shared/api";
 
 export function DashboardPage() {
@@ -82,6 +83,7 @@ export function DashboardPage() {
           }}
           months={months}
           onMonthsChange={setMonths}
+          receivedOrders={<ReceivedOrdersCard />}
         />
       ) : (
         <DashboardSkeleton />

@@ -27,17 +27,21 @@ import type {
 
 const STATUS_FROM_API: Record<number, OrderStatus> = {
   0: "new",
-  1: "assembling",
-  2: "onTheWay",
-  3: "delivered",
-  4: "cancelled",
+  1: "confirmed",
+  2: "assembling",
+  3: "onTheWay",
+  4: "readyForPickup",
+  5: "delivered",
+  6: "cancelled",
 };
 const STATUS_TO_API: Record<OrderStatus, number> = {
   new: 0,
-  assembling: 1,
-  onTheWay: 2,
-  delivered: 3,
-  cancelled: 4,
+  confirmed: 1,
+  assembling: 2,
+  onTheWay: 3,
+  readyForPickup: 4,
+  delivered: 5,
+  cancelled: 6,
 };
 
 const PAY_STATUS_FROM_API: Record<number, PayStatus> = {
@@ -214,6 +218,7 @@ export function mapOrderStats(dto: OrderStatsDto): OrderStats {
   return {
     total: num(dto.total),
     pending: num(dto.pending),
+    confirmed: num(dto.confirmed),
     collecting: num(dto.collecting),
     delivering: num(dto.delivering),
     completed: num(dto.completed),

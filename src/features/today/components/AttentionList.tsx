@@ -48,7 +48,7 @@ const LEVEL_TONE: Record<AttentionLevel, string> = {
 /** Where "Ochish" leads; only for lists that exist in the panel (undefined — no button). */
 const TARGET: Partial<Record<AttentionKey, string>> = {
   stale_pending_orders: "/orders?tab=new",
-  refund_pending_orders: "/orders",
+  refund_pending_orders: "/orders?tab=cancelled",
   unassigned_orders: "/orders?tab=new",
   out_of_stock_products: "/products?tab=soldOut",
   no_price_products: "/products",

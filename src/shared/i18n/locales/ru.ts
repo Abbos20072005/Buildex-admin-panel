@@ -1359,6 +1359,11 @@ export const ru: Translation = {
       averageCheck: "Средний заказ",
       newCustomers: "Новые пользователи",
     },
+    received: {
+      title: "Поступившие заказы",
+      orders: "Заказы",
+      unit: "заказов",
+    },
     delivered: {
       title: "Доставленные заказы",
       week: "Неделя",
@@ -1624,8 +1629,10 @@ export const ru: Translation = {
     tabs: {
       all: "Все",
       new: "Новые",
+      confirmed: "Подтверждены",
       assembling: "Собираются",
       onTheWay: "В пути",
+      readyForPickup: "Готовы к выдаче",
       delivered: "Завершены",
       cancelled: "Отменены / Возвраты",
     },
@@ -1674,7 +1681,13 @@ export const ru: Translation = {
       fulfillment: "Получение",
       cancel: "Отменить",
       cancelConfirm: "Отменить заказ?",
-      next: { new: "Подтвердить", assembling: "Отправить в путь", onTheWay: "Завершить" },
+      next: {
+        new: "Подтвердить",
+        confirmed: "В сборку",
+        assembling: "Отправить в путь",
+        onTheWay: "Завершить",
+        readyForPickup: "Выдан",
+      },
       composition: "Состав",
       positions: "{{count}} позиций",
       product: "Товар",
@@ -1915,8 +1928,10 @@ export const ru: Translation = {
   },
   status: {
     new: "Новый",
+    confirmed: "Подтверждён",
     assembling: "Собирается",
     onTheWay: "В пути",
+    readyForPickup: "Готов к выдаче",
     delivered: "Завершён",
     cancelled: "Отменён",
   },

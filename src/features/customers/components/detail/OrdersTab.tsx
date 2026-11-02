@@ -13,7 +13,7 @@ const GROUPS: Group[] = ["all", "progress", "done", "cancelled"];
 /** The order statuses each group of the pills holds. */
 const GROUP_STATUSES: Record<Group, OrderStatus[] | undefined> = {
   all: undefined,
-  progress: ["new", "assembling", "onTheWay"],
+  progress: ["new", "confirmed", "assembling", "onTheWay", "readyForPickup"],
   done: ["delivered"],
   cancelled: ["cancelled"],
 };
@@ -36,7 +36,9 @@ export function OrdersTab({ customerId }: { customerId: number }) {
 
   const counts: Record<Group, number | undefined> = {
     all: stats.data?.total,
-    progress: stats.data && stats.data.pending + stats.data.collecting + stats.data.delivering,
+    progress:
+      stats.data &&
+      stats.data.pending + stats.data.confirmed + stats.data.collecting + stats.data.delivering,
     done: stats.data?.completed,
     cancelled: stats.data?.canceled,
   };

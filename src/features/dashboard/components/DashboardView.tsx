@@ -1,4 +1,5 @@
 import { Card, Skeleton } from "antd";
+import type { ReactNode } from "react";
 import type { Dashboard, Period } from "../model/types";
 import { AttentionCard } from "./AttentionCard";
 import { CatalogCard } from "./CatalogCard";
@@ -25,13 +26,24 @@ interface Props {
   registrations: Span<Dashboard["registrations"]>;
   months: number;
   onMonthsChange: (months: number) => void;
+  /** the received-orders chart (it lives in the analytics feature, which imports this one) */
+  receivedOrders?: ReactNode;
 }
 
 /** All widgets of the dashboard in their grid. */
-export function DashboardView({ data, delivered, registrations, months, onMonthsChange }: Props) {
+export function DashboardView({
+  data,
+  delivered,
+  registrations,
+  months,
+  onMonthsChange,
+  receivedOrders,
+}: Props) {
   return (
     <div className="flex flex-col gap-4">
       <KpiCards summary={data.summary} />
+
+      {receivedOrders}
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <DeliveredOrdersCard

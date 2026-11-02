@@ -1,7 +1,13 @@
 /** UI-side order models — mapped from the Dommaster Admin API in ../api/orders.mappers.ts */
 
-/** StatusEnum: 0 Pending · 1 Collecting · 2 Delivering · 3 Completed · 4 Canceled */
-export type OrderStatus = "new" | "assembling" | "onTheWay" | "delivered" | "cancelled";
+/**
+ * StatusEnum (since 02.11.2026): 0 Pending · 1 Confirmed · 2 Collecting · 3 Delivering ·
+ * 4 Ready for pickup · 5 Completed · 6 Canceled. Delivery: 0 → 1 → 2 → 3 → 5, pickup:
+ * 0 → 1 → 2 → 4 → 5. Only the admin panel sets Confirmed: an online payment or a pay-in-store
+ * pickup moves the order from 0 straight to 2.
+ */
+export type OrderStatus =
+  "new" | "confirmed" | "assembling" | "onTheWay" | "readyForPickup" | "delivered" | "cancelled";
 
 /** PaymentStatusEnum: 0 Pending · 1 Hold · 2 Paid · 3 Cancelled */
 export type PayStatus = "pending" | "hold" | "paid" | "cancelled";
@@ -99,6 +105,7 @@ export interface OrderDetail extends Order {
 export interface OrderStats {
   total: number;
   pending: number;
+  confirmed: number;
   collecting: number;
   delivering: number;
   completed: number;

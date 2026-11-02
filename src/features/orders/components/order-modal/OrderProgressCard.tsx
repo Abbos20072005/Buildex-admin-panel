@@ -1,7 +1,7 @@
 import { Alert, Card, Form, Select, Steps } from "antd";
 import { useTranslation } from "react-i18next";
 import { formatDateTime } from "@/shared/lib/format";
-import { ORDER_FLOW, ORDER_STATUSES } from "../../model/constants";
+import { orderFlow, statusesFor } from "../../model/constants";
 import type { OrderDetail, OrderPatch, OrderStatus } from "../../model/types";
 
 interface Props {
@@ -12,7 +12,8 @@ interface Props {
 
 export function OrderProgressCard({ order, saving, onUpdate }: Props) {
   const { t } = useTranslation();
-  const current = ORDER_FLOW.indexOf(order.status);
+  const flow = orderFlow(order.fulfillment);
+  const current = flow.indexOf(order.status);
 
   return (
     <Card title={t("orders.modal.progress")}>
@@ -27,7 +28,7 @@ export function OrderProgressCard({ order, saving, onUpdate }: Props) {
           orientation="vertical"
           size="small"
           current={current}
-          items={ORDER_FLOW.map((status, index) => ({
+          items={flow.map((status, index) => ({
             title: t(`status.${status}`),
             content:
               index === 0
@@ -44,7 +45,7 @@ export function OrderProgressCard({ order, saving, onUpdate }: Props) {
           <Select<OrderStatus>
             value={order.status}
             disabled={saving}
-            options={ORDER_STATUSES.map((status) => ({
+            options={statusesFor(order.fulfillment).map((status) => ({
               value: status,
               label: t(`status.${status}`),
             }))}
