@@ -2,6 +2,7 @@ export { DashboardSkeleton, DashboardView } from "./components/DashboardView";
 export { BarChart } from "./components/charts/BarChart";
 export { ChartTooltip, pointTitle } from "./components/charts/ChartTooltip";
 export { LineChart } from "./components/charts/LineChart";
+export { DonutChart } from "./components/charts/DonutChart";
 export { DateRangeButton } from "./components/DateRangeButton";
 export { useDashboardQuery } from "./hooks/queries";
 export { exportDashboardCsv } from "./lib/export";

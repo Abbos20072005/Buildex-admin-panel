@@ -30,6 +30,8 @@ interface Props {
   receivedOrders?: ReactNode;
   /** the order-stage time charts (analytics feature too) */
   stageTimes?: ReactNode;
+  /** the order-status and product-status pies (analytics feature too) */
+  statusPies?: ReactNode;
 }
 
 /** All widgets of the dashboard in their grid. */
@@ -41,6 +43,7 @@ export function DashboardView({
   onMonthsChange,
   receivedOrders,
   stageTimes,
+  statusPies,
 }: Props) {
   return (
     <div className="flex flex-col gap-4">
@@ -63,6 +66,8 @@ export function DashboardView({
       </div>
 
       {stageTimes && <div className="grid gap-4 xl:grid-cols-2">{stageTimes}</div>}
+
+      {statusPies && <div className="grid gap-4 xl:grid-cols-2">{statusPies}</div>}
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <RecentOrdersCard orders={data.recentOrders} />

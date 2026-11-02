@@ -1,12 +1,26 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import {
-  orderStagesApi,
-  type StageDelivery,
-  type StagePeriod,
-} from "../api/orderStages.api";
+import { orderStagesApi, type StageDelivery, type StagePeriod } from "../api/orderStages.api";
 import { salesAnalyticsApi } from "../api/sales.api";
+import { statusesApi, type OrderStatusPeriod } from "../api/statuses.api";
 import type { SalesFilters } from "../model/types";
+
+export function useOrderStatusesQuery(period: OrderStatusPeriod) {
+  return useQuery({
+    queryKey: ["analytics", "order-statuses", period],
+    queryFn: () => statusesApi.orders(period),
+    placeholderData: keepPreviousData,
+    staleTime: 60_000,
+  });
+}
+
+export function useProductStatusesQuery() {
+  return useQuery({
+    queryKey: ["analytics", "product-statuses"],
+    queryFn: () => statusesApi.products(),
+    staleTime: 60_000,
+  });
+}
 
 export function useOrderStagesQuery(period: StagePeriod, deliveryMethod: StageDelivery = "all") {
   return useQuery({
