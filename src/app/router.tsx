@@ -71,6 +71,9 @@ const ModerationPage = lazy(() =>
 const SalesAnalyticsPage = lazy(() =>
   import("@/pages/SalesAnalyticsPage").then((m) => ({ default: m.SalesAnalyticsPage })),
 );
+const ProductFunnelPage = lazy(() =>
+  import("@/pages/ProductFunnelPage").then((m) => ({ default: m.ProductFunnelPage })),
+);
 const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
 const StaffPage = lazy(() => import("@/pages/StaffPage").then((m) => ({ default: m.StaffPage })));
 const ChangePasswordPage = lazy(() =>
@@ -89,6 +92,7 @@ const PAGES: Record<string, ReactNode> = {
   "/content/push": <PushPage />,
   "/content/home": <HomePage />,
   "/analytics/sales": <SalesAnalyticsPage />,
+  "/analytics/funnel": <ProductFunnelPage />,
   "/today": <TodayPage />,
   "/orders": <OrdersPage />,
   "/customers": <CustomersPage />,

@@ -3,10 +3,11 @@ export { BarChart } from "./components/charts/BarChart";
 export { ChartTooltip, pointTitle } from "./components/charts/ChartTooltip";
 export { LineChart } from "./components/charts/LineChart";
 export { DonutChart } from "./components/charts/DonutChart";
+export { PeriodSwitch } from "./components/PeriodSwitch";
 export { DateRangeButton } from "./components/DateRangeButton";
 export { useDashboardQuery } from "./hooks/queries";
 export { exportDashboardCsv } from "./lib/export";
-export { Change } from "./components/Widgets";
+export { Change, ProgressBar } from "./components/Widgets";
 export {
   axisMoney,
   compactMoney,

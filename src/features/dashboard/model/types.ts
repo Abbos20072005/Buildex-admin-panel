@@ -79,9 +79,14 @@ export interface Dashboard {
     step: Step;
     count: number;
     revenue: number;
+    /** change of the sum against the previous period */
     change: number | null;
+    /** change of the order count against the previous period */
+    countChange: number | null;
     points: DeliveredPoint[];
   };
+  /** every order that came in (the same shape as `delivered`); null if the API did not send it */
+  received: Dashboard["delivered"] | null;
   registrations: {
     step: Step;
     days: number;

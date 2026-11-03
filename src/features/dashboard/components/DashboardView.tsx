@@ -8,7 +8,6 @@ import { DeliveredOrdersCard } from "./DeliveredOrdersCard";
 import { KpiCards, KpiTotals } from "./KpiCards";
 import { ManagersCard } from "./ManagersCard";
 import { RecentOrdersCard } from "./RecentOrdersCard";
-import { RegistrationsCard } from "./RegistrationsCard";
 import { RevenueCard } from "./RevenueCard";
 
 /** A chart card with its own time span: the data of that span and how to change it. */
@@ -22,8 +21,6 @@ interface Props {
   data: Dashboard;
   /** delivered orders chart */
   delivered: Span<Dashboard["delivered"]>;
-  /** registrations chart */
-  registrations: Span<Dashboard["registrations"]>;
   months: number;
   onMonthsChange: (months: number) => void;
   /** the received-orders chart (it lives in the analytics feature, which imports this one) */
@@ -34,44 +31,37 @@ interface Props {
   statusPies?: ReactNode;
   /** top categories, brands and customers (analytics feature too) */
   topSales?: ReactNode;
-  /** new customers per month (analytics feature too) */
-  monthlyCustomers?: ReactNode;
+  /** registered customers: days, months, split app / site (analytics feature too) */
+  registrationsChart?: ReactNode;
 }
 
 /** All widgets of the dashboard in their grid. */
 export function DashboardView({
   data,
   delivered,
-  registrations,
   months,
   onMonthsChange,
   receivedOrders,
   stageTimes,
   statusPies,
   topSales,
-  monthlyCustomers,
+  registrationsChart,
 }: Props) {
   return (
     <div className="flex flex-col gap-4">
       {data.allTime && <KpiTotals allTime={data.allTime} />}
       <KpiCards summary={data.summary} />
 
-      {receivedOrders}
-
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+      <div className="grid gap-4 xl:grid-cols-2">
         <DeliveredOrdersCard
           data={delivered.data}
           period={delivered.period}
           onPeriodChange={delivered.onPeriodChange}
         />
-        <RegistrationsCard
-          data={registrations.data}
-          period={registrations.period}
-          onPeriodChange={registrations.onPeriodChange}
-        />
+        {receivedOrders}
       </div>
 
-      {monthlyCustomers}
+      {registrationsChart}
 
       {stageTimes && <div className="grid gap-4 xl:grid-cols-2">{stageTimes}</div>}
 

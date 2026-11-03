@@ -7,6 +7,18 @@ export interface KpiDto {
   change: number | null;
 }
 
+/** `delivered_orders` and `received_orders`: orders per day / month with their sums */
+export interface OrdersBlockDto {
+  period: "week" | "month" | "year";
+  step: "day" | "month";
+  count: number;
+  revenue: number;
+  change: number | null;
+  /** change of the order count against the previous period (the sum is `change`) */
+  count_change?: number | null;
+  points: { date: string; count: number; revenue: number; average_check: number }[];
+}
+
 export interface DashboardDto {
   summary: {
     days: number;
@@ -26,14 +38,9 @@ export interface DashboardDto {
     average_check: number;
     new_customers: number;
   };
-  delivered_orders: {
-    period: "week" | "month" | "year";
-    step: "day" | "month";
-    count: number;
-    revenue: number;
-    change: number | null;
-    points: { date: string; count: number; revenue: number; average_check: number }[];
-  };
+  delivered_orders: OrdersBlockDto;
+  /** every order that came in (any status, cancelled too); the same shape as `delivered_orders` */
+  received_orders?: OrdersBlockDto;
   registrations: {
     step: "day" | "month";
     days: number;

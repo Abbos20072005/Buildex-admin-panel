@@ -97,6 +97,7 @@ export const NAVIGATION: NavItem[] = [
     icon: <TrendIcon />,
     children: [
       { path: "/analytics/sales", label: "nav.sales" },
+      { path: "/analytics/funnel", label: "nav.productFunnel" },
       { path: "/analytics/launch", label: "nav.launchMetrics" },
     ],
   },

@@ -1,7 +1,7 @@
 import type { Query } from "@/shared/api";
 import { mapOrder } from "@/features/orders";
 import type { Dashboard, DashboardParams, Kpi } from "../model/types";
-import type { DashboardDto, KpiDto } from "./dashboard.dto";
+import type { DashboardDto, KpiDto, OrdersBlockDto } from "./dashboard.dto";
 
 const kpi = (dto: KpiDto): Kpi => ({ value: dto.value ?? 0, change: dto.change ?? null });
 
@@ -14,6 +14,21 @@ export function paramsToQuery(params: DashboardParams): Query {
     low_stock: params.lowStock,
   };
 }
+
+const mapOrdersBlock = (block: OrdersBlockDto): Dashboard["delivered"] => ({
+  period: block.period,
+  step: block.step,
+  count: block.count,
+  revenue: block.revenue,
+  change: block.change ?? null,
+  countChange: block.count_change ?? null,
+  points: block.points.map((point) => ({
+    date: point.date,
+    count: point.count,
+    revenue: point.revenue,
+    averageCheck: point.average_check,
+  })),
+});
 
 export function mapDashboard(dto: DashboardDto): Dashboard {
   const {
@@ -43,19 +58,8 @@ export function mapDashboard(dto: DashboardDto): Dashboard {
           newCustomers: dto.all_time.new_customers,
         }
       : null,
-    delivered: {
-      period: delivered.period,
-      step: delivered.step,
-      count: delivered.count,
-      revenue: delivered.revenue,
-      change: delivered.change ?? null,
-      points: delivered.points.map((point) => ({
-        date: point.date,
-        count: point.count,
-        revenue: point.revenue,
-        averageCheck: point.average_check,
-      })),
-    },
+    delivered: mapOrdersBlock(delivered),
+    received: dto.received_orders ? mapOrdersBlock(dto.received_orders) : null,
     registrations: {
       step: registrations.step,
       days: registrations.days,

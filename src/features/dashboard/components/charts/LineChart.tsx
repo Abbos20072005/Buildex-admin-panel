@@ -7,6 +7,8 @@ interface Series {
   /** shown in the hover tooltip */
   name?: string;
   color: string;
+  /** line thickness (default 2.5): lines that run on top of each other get different ones */
+  width?: number;
   /** `null` is a gap (no data): nothing is drawn, the line breaks */
   values: (number | null)[];
 }
@@ -140,7 +142,7 @@ export function LineChart({
                 key={`${line.key}-${run[0].index}`}
                 fill="none"
                 stroke={line.color}
-                strokeWidth={2.5}
+                strokeWidth={line.width ?? 2.5}
                 strokeLinejoin="round"
                 strokeLinecap="round"
                 points={run.map((p) => `${x(p.index)},${y(p.value)}`).join(" ")}

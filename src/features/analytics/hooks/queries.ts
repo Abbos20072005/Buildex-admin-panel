@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { productFunnelApi, type FunnelFilters } from "../api/productFunnel.api";
 import { newCustomersApi, type NewCustomersPeriod } from "../api/newCustomers.api";
 import { orderStagesApi, type StageDelivery, type StagePeriod } from "../api/orderStages.api";
 import { salesAnalyticsApi } from "../api/sales.api";
@@ -7,10 +8,21 @@ import { statusesApi, type OrderStatusPeriod } from "../api/statuses.api";
 import { topSalesApi, type TopPeriod } from "../api/topSales.api";
 import type { SalesFilters } from "../model/types";
 
-export function useNewCustomersQuery(period: NewCustomersPeriod) {
+export function useProductFunnelQuery(filters: FunnelFilters, page: number, pageSize: number) {
+  return useQuery({
+    queryKey: ["analytics", "product-funnel", filters, page, pageSize],
+    queryFn: () => productFunnelApi.list(filters, page, pageSize),
+    // keep the rows on screen while the next page or filter loads
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
+  });
+}
+
+export function useNewCustomersQuery(period: NewCustomersPeriod, enabled = true) {
   return useQuery({
     queryKey: ["analytics", "new-customers", period],
     queryFn: () => newCustomersApi.get(period),
+    enabled,
     placeholderData: keepPreviousData,
     staleTime: 60_000,
   });

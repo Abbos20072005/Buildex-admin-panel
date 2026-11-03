@@ -1,5 +1,6 @@
 export { DeliveryTimeCard, OrderStageTimeCard } from "./components/OrderStageCards";
-export { NewCustomersCard } from "./components/NewCustomersCard";
+export { ProductFunnelView } from "./components/ProductFunnelView";
+export { RegistrationsTrendCard } from "./components/RegistrationsTrendCard";
 export { OrderStatusesCard, ProductStatusesCard } from "./components/StatusPieCards";
 export { TopSalesSection } from "./components/TopSalesSection";
 export { ReceivedOrdersCard } from "./components/ReceivedOrdersCard";

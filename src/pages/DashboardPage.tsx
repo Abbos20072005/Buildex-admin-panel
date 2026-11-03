@@ -16,11 +16,11 @@ import {
 } from "@/features/dashboard";
 import {
   DeliveryTimeCard,
-  NewCustomersCard,
   OrderStageTimeCard,
   OrderStatusesCard,
   ProductStatusesCard,
   ReceivedOrdersCard,
+  RegistrationsTrendCard,
   TopSalesSection,
 } from "@/features/analytics";
 import { getErrorMessage } from "@/shared/api";
@@ -30,19 +30,15 @@ export function DashboardPage() {
   const [range, setRange] = useState<DateRange>({ days: 30 });
   // every chart card has its own time span
   const [deliveredPeriod, setDeliveredPeriod] = useState<Period>("week");
-  const [registrationsPeriod, setRegistrationsPeriod] = useState<Period>("week");
   const [months, setMonths] = useState(6);
 
-  const base = { range, months, lowStock: 10 };
-  const params: DashboardParams = { ...base, period: toApiPeriod(deliveredPeriod) };
+  const params: DashboardParams = {
+    range,
+    months,
+    lowStock: 10,
+    period: toApiPeriod(deliveredPeriod),
+  };
   const dashboard = useDashboardQuery(params);
-  // the API has one `period` per response: a second request only when the two cards differ
-  // (with equal periods both share the same cached response)
-  const registrationsQuery = useDashboardQuery({
-    ...base,
-    period: toApiPeriod(registrationsPeriod),
-  });
-  const registrationsData = registrationsQuery.data?.registrations ?? dashboard.data?.registrations;
 
   return (
     <>
@@ -76,7 +72,7 @@ export function DashboardPage() {
             </Button>
           }
         />
-      ) : dashboard.data && registrationsData ? (
+      ) : dashboard.data ? (
         <DashboardView
           data={dashboard.data}
           delivered={{
@@ -84,16 +80,11 @@ export function DashboardPage() {
             period: deliveredPeriod,
             onPeriodChange: setDeliveredPeriod,
           }}
-          registrations={{
-            data: spans.registrations(registrationsData, registrationsPeriod),
-            period: registrationsPeriod,
-            onPeriodChange: setRegistrationsPeriod,
-          }}
           months={months}
           onMonthsChange={setMonths}
           receivedOrders={<ReceivedOrdersCard />}
           topSales={<TopSalesSection />}
-          monthlyCustomers={<NewCustomersCard />}
+          registrationsChart={<RegistrationsTrendCard />}
           statusPies={
             <>
               <OrderStatusesCard />

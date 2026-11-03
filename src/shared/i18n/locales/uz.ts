@@ -73,6 +73,7 @@ export const uz = {
     analytics: "Tahlil",
     sales: "Savdo",
     launchMetrics: "Launch metrikalari",
+    productFunnel: "Tovar voronkasi",
     sync: "1C sinxronizatsiya",
     systemSettings: "Sozlamalar",
     stores: "Do‘konlar",
@@ -1362,7 +1363,7 @@ export const uz = {
       orders: "Buyurtmalar soni",
       revenue: "Umumiy daromad",
       averageCheck: "O‘rtacha buyurtma",
-      newCustomers: "Yangi foydalanuvchilar",
+      newCustomers: "Foydalanuvchilar",
     },
     allTime: { label: "Barcha vaqt", since: "{{date}} dan" },
     monthly: {
@@ -2035,6 +2036,26 @@ export const uz = {
     cancelled: "Bekor qilingan",
   },
   fulfillment: { delivery: "Yetkazish", pickup: "Olib ketish" },
+  funnel: {
+    subtitle: "Ko‘rish → savatga qo‘shish → rasmiylashtirish → xarid, har bir tovar bo‘yicha",
+    export: "Excel yuklab olish",
+    exportError: "Faylni yuklab bo‘lmadi",
+    loadError: "Voronka ma’lumotlarini yuklab bo‘lmadi",
+    searchPlaceholder: "Nom yoki artikul bo‘yicha qidirish",
+    empty: "Bu davrda ma’lumot yo‘q",
+    periods: { 90: "90 kun" },
+    channels: { all: "Kanal: hammasi", site: "Kanal: sayt", app: "Kanal: ilova" },
+    columns: {
+      product: "Mahsulot",
+      views: "Ko‘rishlar",
+      addToCart: "Savatga qo‘shish",
+      checkoutStart: "Rasmiylashtirishni boshlash",
+      purchases: "Xaridlar",
+      incomplete: "Yakunlanmagan",
+      completionRate: "Yakunlangan ulushi",
+    },
+    otherPurchases: "Kanalsiz xaridlar (operator yaratgan): {{count}} ta",
+  },
   role: { user: "Oddiy", prorab: "PRO" },
 };
 

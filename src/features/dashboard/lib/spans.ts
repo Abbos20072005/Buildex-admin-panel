@@ -23,21 +23,6 @@ export function delivered(data: Dashboard["delivered"], period: Period): Dashboa
     revenue: points.reduce((sum, point) => sum + point.revenue, 0),
     // the API compares only whole periods
     change: null,
-  };
-}
-
-/** The registrations chart for a span. */
-export function registrations(
-  data: Dashboard["registrations"],
-  period: Period,
-): Dashboard["registrations"] {
-  const size = MONTHS[period];
-  if (!size) return data;
-  const points = data.points.slice(-size);
-  return {
-    ...data,
-    points,
-    total: points.reduce((sum, point) => sum + point.count, 0),
-    hasSplit: false,
+    countChange: null,
   };
 }
