@@ -1,9 +1,38 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { newCustomersApi, type NewCustomersPeriod } from "../api/newCustomers.api";
 import { orderStagesApi, type StageDelivery, type StagePeriod } from "../api/orderStages.api";
 import { salesAnalyticsApi } from "../api/sales.api";
 import { statusesApi, type OrderStatusPeriod } from "../api/statuses.api";
+import { topSalesApi, type TopPeriod } from "../api/topSales.api";
 import type { SalesFilters } from "../model/types";
+
+export function useNewCustomersQuery(period: NewCustomersPeriod) {
+  return useQuery({
+    queryKey: ["analytics", "new-customers", period],
+    queryFn: () => newCustomersApi.get(period),
+    placeholderData: keepPreviousData,
+    staleTime: 60_000,
+  });
+}
+
+export function useTopSalesQuery(period: TopPeriod) {
+  return useQuery({
+    queryKey: ["analytics", "top-sales", period],
+    queryFn: () => topSalesApi.sales(period),
+    placeholderData: keepPreviousData,
+    staleTime: 60_000,
+  });
+}
+
+export function useTopCustomersQuery(period: TopPeriod) {
+  return useQuery({
+    queryKey: ["analytics", "top-customers", period],
+    queryFn: () => topSalesApi.customers(period),
+    placeholderData: keepPreviousData,
+    staleTime: 60_000,
+  });
+}
 
 export function useOrderStatusesQuery(period: OrderStatusPeriod) {
   return useQuery({

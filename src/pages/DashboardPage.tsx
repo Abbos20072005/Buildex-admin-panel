@@ -16,10 +16,12 @@ import {
 } from "@/features/dashboard";
 import {
   DeliveryTimeCard,
+  NewCustomersCard,
   OrderStageTimeCard,
   OrderStatusesCard,
   ProductStatusesCard,
   ReceivedOrdersCard,
+  TopSalesSection,
 } from "@/features/analytics";
 import { getErrorMessage } from "@/shared/api";
 
@@ -90,6 +92,8 @@ export function DashboardPage() {
           months={months}
           onMonthsChange={setMonths}
           receivedOrders={<ReceivedOrdersCard />}
+          topSales={<TopSalesSection />}
+          monthlyCustomers={<NewCustomersCard />}
           statusPies={
             <>
               <OrderStatusesCard />
