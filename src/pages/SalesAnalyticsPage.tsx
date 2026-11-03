@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   exportSalesCsv,
-  ProductFunnelView,
   SalesView,
   useSalesAnalyticsQuery,
   type SalesChannel,
@@ -147,12 +146,7 @@ export function SalesAnalyticsPage() {
           }
         />
       ) : data ? (
-        <>
-          <SalesView data={data} compare={compare} />
-          <div className="mt-8">
-            <ProductFunnelView embedded />
-          </div>
-        </>
+        <SalesView data={data} compare={compare} />
       ) : (
         <Skeleton active paragraph={{ rows: 10 }} />
       )}

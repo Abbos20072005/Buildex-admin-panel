@@ -46,11 +46,8 @@ function RateCell({ value }: { value: number | null }) {
   );
 }
 
-/**
- * Tovar voronkasi: per product, views → cart → checkout → purchases. A page of its own, or
- * `embedded` under the other blocks of the Savdo page (a smaller title, its own filters).
- */
-export function ProductFunnelView({ embedded = false }: { embedded?: boolean }) {
+/** Tahlil → Tovar voronkasi: per product, views → cart → checkout → purchases. */
+export function ProductFunnelView() {
   const { t, i18n } = useTranslation();
   const [periodKey, setPeriodKey] = useState<PeriodKey>("30");
   const [range, setRange] = useState<[string, string] | null>(null);
@@ -205,14 +202,8 @@ export function ProductFunnelView({ embedded = false }: { embedded?: boolean }) 
     <>
       <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
         <div>
-          {embedded ? (
-            <h2 className="m-0 text-lg font-bold tracking-tight">{t("nav.productFunnel")}</h2>
-          ) : (
-            <>
-              <div className="text-xs text-slate-500">{t("nav.analytics")}</div>
-              <h1 className="m-0 text-2xl font-bold tracking-tight">{t("nav.productFunnel")}</h1>
-            </>
-          )}
+          <div className="text-xs text-slate-500">{t("nav.analytics")}</div>
+          <h1 className="m-0 text-2xl font-bold tracking-tight">{t("nav.productFunnel")}</h1>
           <div className="mt-1 text-xs text-slate-500">{t("funnel.subtitle")}</div>
         </div>
         <Button
