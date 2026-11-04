@@ -1,10 +1,10 @@
-import { Alert, Segmented, Skeleton } from "antd";
+import { Alert, Segmented } from "antd";
 import dayjs from "dayjs";
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { BarChart, formatDuration, LineChart, oneDecimal } from "@/features/dashboard";
 import { getErrorMessage } from "@/shared/api";
-import { WidgetCard } from "@/shared/ui";
+import { ChartSkeleton, WidgetCard } from "@/shared/ui";
 import { brand } from "@/theme";
 import type { StageDelivery, StageKey, StageMonth, StagePeriod } from "../api/orderStages.api";
 import { useOrderStagesQuery } from "../hooks/queries";
@@ -95,7 +95,7 @@ function Body({
 }) {
   const { t } = useTranslation();
   if (error && !months) return <Alert type="error" showIcon title={getErrorMessage(error)} />;
-  if (!months) return <Skeleton active paragraph={{ rows: 5 }} />;
+  if (!months) return <ChartSkeleton height={200} legend={2} />;
   return (
     <>
       {children(months)}

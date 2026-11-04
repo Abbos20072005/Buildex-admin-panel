@@ -1,4 +1,4 @@
-import { Alert, Segmented, Skeleton } from "antd";
+import { Alert, Segmented } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,7 @@ import {
 } from "@/features/dashboard";
 import { getErrorMessage } from "@/shared/api";
 import { formatNumber } from "@/shared/lib/format";
-import { WidgetCard } from "@/shared/ui";
+import { ChartSkeleton, WidgetCard } from "@/shared/ui";
 import { brand } from "@/theme";
 import type { NewCustomersMonth, NewCustomersPeriod } from "../api/newCustomers.api";
 import { useNewCustomersQuery } from "../hooks/queries";
@@ -126,7 +126,7 @@ export function RegistrationsTrendCard() {
       {query.error && !ready ? (
         <Alert type="error" showIcon title={getErrorMessage(query.error)} />
       ) : !ready ? (
-        <Skeleton active paragraph={{ rows: 5 }} />
+        <ChartSkeleton height={240} />
       ) : (
         <>
           <div className="flex items-baseline gap-2">

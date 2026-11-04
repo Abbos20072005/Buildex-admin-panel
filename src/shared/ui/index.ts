@@ -11,3 +11,4 @@ export { useRowSelection } from "./useRowSelection";
 export { RichTextEditor } from "./RichTextEditor";
 export { StatCard } from "./StatCard";
 export { CardLink, WidgetCard } from "./WidgetCard";
+export { BarListSkeleton, Bone, ChartSkeleton, DonutSkeleton, TableSkeleton } from "./skeletons";

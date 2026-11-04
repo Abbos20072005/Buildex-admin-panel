@@ -1,5 +1,6 @@
-import { Card, Skeleton } from "antd";
+﻿import { Card } from "antd";
 import type { ReactNode } from "react";
+import { Bone, ChartSkeleton, DonutSkeleton } from "@/shared/ui";
 import type { Dashboard, Period } from "../model/types";
 import { AttentionCard } from "./AttentionCard";
 import { CatalogCard } from "./CatalogCard";
@@ -85,24 +86,66 @@ export function DashboardView({
   );
 }
 
-/** Grey placeholders while the first response is on its way. */
+/** A card with a title bar and a chart like the real widgets (the header height matches `WidgetCard`). */
+function CardSkeleton({ children }: { children: ReactNode }) {
+  return (
+    <Card title={<Bone className="h-5 w-48" />} extra={<Bone className="h-6 w-40" />}>
+      {children}
+    </Card>
+  );
+}
+
+/** Placeholders in the shape of the dashboard while the first response is on its way. */
 export function DashboardSkeleton() {
   return (
     <div className="flex flex-col gap-4">
+      {/* all-time numbers */}
+      <div className="rounded-xl border border-slate-200 bg-white px-5 py-4">
+        <Bone className="mb-3 h-3 w-40" />
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3 xl:grid-cols-4">
+          {[0, 1, 2, 3].map((key) => (
+            <div key={key} className="space-y-2">
+              <Bone className="h-3 w-24" />
+              <Bone className="h-6 w-28" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* the four KPI cards: an icon, a label, the number, the change */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[0, 1, 2, 3].map((key) => (
-          <Card key={key}>
-            <Skeleton active paragraph={{ rows: 1 }} />
-          </Card>
+          <div key={key} className="rounded-xl border border-slate-200 bg-white p-5">
+            <div className="flex items-center gap-2.5">
+              <Bone className="size-8 rounded-lg" />
+              <Bone className="h-3.5 w-28" />
+            </div>
+            <Bone className="mt-3 h-8 w-32" />
+            <Bone className="mt-2 h-3.5 w-24" />
+          </div>
         ))}
       </div>
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-        <Card>
-          <Skeleton active paragraph={{ rows: 6 }} />
-        </Card>
-        <Card>
-          <Skeleton active paragraph={{ rows: 6 }} />
-        </Card>
+
+      <div className="grid gap-4 xl:grid-cols-2">
+        <CardSkeleton>
+          <ChartSkeleton />
+        </CardSkeleton>
+        <CardSkeleton>
+          <ChartSkeleton />
+        </CardSkeleton>
+      </div>
+
+      <CardSkeleton>
+        <ChartSkeleton height={240} />
+      </CardSkeleton>
+
+      <div className="grid gap-4 xl:grid-cols-2">
+        <CardSkeleton>
+          <DonutSkeleton />
+        </CardSkeleton>
+        <CardSkeleton>
+          <DonutSkeleton />
+        </CardSkeleton>
       </div>
     </div>
   );

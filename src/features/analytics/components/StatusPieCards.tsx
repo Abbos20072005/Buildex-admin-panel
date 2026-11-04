@@ -1,11 +1,11 @@
-import { Alert, Segmented, Skeleton } from "antd";
+﻿import { Alert, Segmented } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { DonutChart, oneDecimal } from "@/features/dashboard";
 import { getErrorMessage } from "@/shared/api";
 import { formatNumber } from "@/shared/lib/format";
-import { WidgetCard } from "@/shared/ui";
+import { DonutSkeleton, WidgetCard } from "@/shared/ui";
 import type { OrderStatusPeriod, PublishStatus } from "../api/statuses.api";
 import { useOrderStatusesQuery, useProductStatusesQuery } from "../hooks/queries";
 
@@ -116,7 +116,7 @@ export function OrderStatusesCard() {
       {query.error && !data ? (
         <Alert type="error" showIcon title={getErrorMessage(query.error)} />
       ) : !data ? (
-        <Skeleton active paragraph={{ rows: 5 }} />
+        <DonutSkeleton />
       ) : data.total === 0 ? (
         <div className="grid h-36 place-content-center text-sm text-slate-500">
           {t("dashboard.statuses.noOrders")}
@@ -185,7 +185,7 @@ export function ProductStatusesCard() {
       {query.error && !data ? (
         <Alert type="error" showIcon title={getErrorMessage(query.error)} />
       ) : !data ? (
-        <Skeleton active paragraph={{ rows: 5 }} />
+        <DonutSkeleton />
       ) : data.total === 0 ? (
         <div className="grid h-36 place-content-center text-sm text-slate-500">
           {t("dashboard.statuses.noProducts")}

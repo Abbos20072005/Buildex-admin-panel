@@ -1,4 +1,4 @@
-import { Alert, Segmented, Skeleton, Tooltip } from "antd";
+﻿import { Alert, Segmented, Tooltip } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { compactMoney, oneDecimal } from "@/features/dashboard";
 import { getErrorMessage } from "@/shared/api";
 import { formatNumber } from "@/shared/lib/format";
-import { WidgetCard } from "@/shared/ui";
+import { BarListSkeleton, TableSkeleton, WidgetCard } from "@/shared/ui";
 import type { TopGroup, TopPeriod } from "../api/topSales.api";
 import { useTopCustomersQuery, useTopSalesQuery } from "../hooks/queries";
 
@@ -75,7 +75,7 @@ function TopBarsCard({
       {error && !group ? (
         <Alert type="error" showIcon title={getErrorMessage(error)} />
       ) : loading && !group ? (
-        <Skeleton active paragraph={{ rows: 6 }} />
+        <BarListSkeleton />
       ) : rows.length === 0 ? (
         <div className="py-6 text-center text-sm text-slate-400">{t("dashboard.top.empty")}</div>
       ) : (
@@ -122,7 +122,7 @@ function TopCustomersCard({ period }: { period: TopPeriod }) {
       {query.error && !data ? (
         <Alert type="error" showIcon title={getErrorMessage(query.error)} />
       ) : !data ? (
-        <Skeleton active paragraph={{ rows: 6 }} />
+        <TableSkeleton columns={5} rows={6} />
       ) : data.customers.length === 0 ? (
         <div className="py-6 text-center text-sm text-slate-400">{t("dashboard.top.empty")}</div>
       ) : (
