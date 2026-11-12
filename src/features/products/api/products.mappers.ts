@@ -8,6 +8,7 @@ import {
   type NamedRef,
   type Product,
   type ProductAttribute,
+  type ProductCreate,
   type ProductDetail,
   type ProductFilters,
   type ProductLinks,
@@ -200,6 +201,51 @@ function attributeValueToDto(item: AttributeValue): AttributeValueWriteDto {
     value_uz: item.uz || item.ru,
     value_ru: item.ru || item.uz,
   };
+}
+
+/** An empty field is left out of the request: the API fills its default (null / 0). */
+const filled = (value: string) => value.trim() || undefined;
+
+/** POST /admin/products/ — only `name_ru` and `description_ru` are required. */
+export function createToDto(input: ProductCreate): Record<string, unknown> {
+  const dto: Record<string, unknown> = { publish_status: "draft" };
+  for (const lang of LANGS) {
+    const name = filled(input.names[lang] ?? "");
+    const description = filled(input.descriptions[lang] ?? "");
+    const short = filled(input.shortDescriptions[lang] ?? "");
+    if (name) dto[`name_${lang}`] = name;
+    if (description) dto[`description_${lang}`] = description;
+    if (short) dto[`short_description_${lang}`] = short;
+  }
+  if (input.brandId) dto.brand = input.brandId;
+  if (input.modelId) dto.product_model = input.modelId;
+  if (input.categoryId) dto.product_item_category = input.categoryId;
+  if (input.badgeId) dto.badges = [input.badgeId];
+  dto.price = input.price ?? 0;
+  if (input.discountPrice !== null) dto.discount_price = input.discountPrice;
+  if (input.discount !== null) dto.discount = input.discount;
+  dto.unit = input.unit;
+  dto.quantity = input.quantity ?? 0;
+  const fields = {
+    articul_code: input.articul,
+    barcode: input.barcode,
+    weight: input.weight,
+    length: input.length,
+    width: input.width,
+    height: input.height,
+  };
+  for (const [key, value] of Object.entries(fields)) {
+    if (filled(value)) dto[key] = value.trim();
+  }
+  const attributeValues = input.attributeValues.filter((item) => item.uz.trim() || item.ru.trim());
+  if (attributeValues.length) dto.attribute_values = attributeValues.map(attributeValueToDto);
+  for (const kind of LINK_KINDS) {
+    const ids = input.links[kind];
+    if (ids?.length) dto[LINK_FIELDS[kind]] = ids;
+  }
+  dto.purchasable = input.purchasable;
+  dto.on_order = input.onOrder;
+  return dto;
 }
 
 export function patchToDto(patch: ProductPatch): Partial<Record<string, unknown>> {

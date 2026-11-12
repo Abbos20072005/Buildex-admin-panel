@@ -19,6 +19,8 @@ export const productReferenceKeys = {
   categories: (lang: string) => ["categories", lang] as const,
   brands: (lang: string, search: string) => ["brands", lang, search] as const,
   badges: (lang: string) => ["product-badges", lang] as const,
+  manualBadges: (lang: string) => ["product-badges", lang, "manual"] as const,
+  models: (lang: string, brandId: number) => ["product-models", lang, brandId] as const,
   attributes: (lang: string, itemCategoryId: number) =>
     ["attributes", lang, itemCategoryId] as const,
   itemCategories: (lang: string, search: string) => ["item-categories", lang, search] as const,

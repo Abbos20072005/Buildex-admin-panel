@@ -4,7 +4,13 @@ import { useBulkMutation } from "@/shared/lib/useBulkMutation";
 import { productReferencesApi, productsApi, type ProductsListParams } from "../api/products.api";
 import { productKeys, productReferenceKeys } from "../api/query-keys";
 import { type ProductTab } from "../model/constants";
-import type { ProductDetail, ProductFilters, ProductPatch, PublishStatus } from "../model/types";
+import type {
+  ProductCreate,
+  ProductDetail,
+  ProductFilters,
+  ProductPatch,
+  PublishStatus,
+} from "../model/types";
 
 /** current UI language — translated names depend on it */
 export function useLang() {
@@ -110,6 +116,28 @@ export function useBadgesQuery() {
   });
 }
 
+/** Hand-set badges: the only ones a product can be given (the others follow a rule). */
+export function useManualBadgesQuery(enabled = true) {
+  const lang = useLang();
+  return useQuery({
+    queryKey: productReferenceKeys.manualBadges(lang),
+    queryFn: productReferencesApi.manualBadges,
+    enabled,
+    staleTime: LONG,
+  });
+}
+
+/** Models of the picked brand (a model belongs to one brand). */
+export function useProductModelsQuery(brandId: number | null | undefined) {
+  const lang = useLang();
+  return useQuery({
+    queryKey: productReferenceKeys.models(lang, brandId ?? 0),
+    queryFn: () => productReferencesApi.models(brandId as number),
+    enabled: !!brandId,
+    staleTime: LONG,
+  });
+}
+
 export function useItemCategoriesQuery(search: string) {
   const lang = useLang();
   return useQuery({
@@ -142,6 +170,14 @@ function useInvalidateProducts() {
     if (id !== undefined)
       void queryClient.invalidateQueries({ queryKey: [...productKeys.details(), id] });
   };
+}
+
+export function useCreateProduct() {
+  const invalidate = useInvalidateProducts();
+  return useMutation({
+    mutationFn: (input: ProductCreate) => productsApi.create(input),
+    onSuccess: () => invalidate(),
+  });
 }
 
 export function useUpdateProduct() {

@@ -136,6 +136,39 @@ export interface ProductPatch {
   purchasable?: boolean;
 }
 
+/**
+ * What POST /admin/products/ takes. Photos are not part of it (they are uploaded one by one once
+ * the product has an id) and a new product is always created as a hidden draft: it is shown and
+ * sent to moderation with a PATCH after the photos are in.
+ */
+export interface ProductCreate {
+  names: Partial<Localized>;
+  descriptions: Partial<Localized>;
+  shortDescriptions: Partial<Localized>;
+  brandId: number | null;
+  modelId: number | null;
+  /** the item category (3rd level) */
+  categoryId: number | null;
+  badgeId: number | null;
+  price: number | null;
+  discountPrice: number | null;
+  discount: number | null;
+  unit: Unit;
+  quantity: number | null;
+  articul: string;
+  barcode: string;
+  /** decimal strings ("2.900"): kg and metres */
+  weight: string;
+  length: string;
+  width: string;
+  height: string;
+  attributeValues: AttributeValue[];
+  /** product ids in the wanted order */
+  links: Partial<Record<LinkKind, number[]>>;
+  purchasable: boolean;
+  onOrder: boolean;
+}
+
 export interface ProductFilters {
   search?: string;
   category?: number;

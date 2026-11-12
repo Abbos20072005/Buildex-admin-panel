@@ -3,6 +3,7 @@ export { ProductsGrid } from "./components/list/ProductsGrid";
 export { ProductsTable } from "./components/list/ProductsTable";
 export { ProductsToolbar } from "./components/list/ProductsToolbar";
 export { ProductTabs } from "./components/list/ProductTabs";
+export { ProductCreator } from "./components/product-page/ProductCreator";
 export { ProductEditor } from "./components/product-page/ProductEditor";
 export { PUBLISH_STATUSES } from "./model/constants";
 export {

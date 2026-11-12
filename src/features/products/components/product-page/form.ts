@@ -4,10 +4,12 @@ import {
   LINK_KINDS,
   type AttributeValue,
   type Localized,
+  type ProductCreate,
   type ProductDetail,
   type ProductLinks,
   type ProductPatch,
   type PublishStatus,
+  type Unit,
 } from "../../model/types";
 
 /**
@@ -42,9 +44,137 @@ export const PRODUCT_ERROR_FIELDS: FieldMap = {
   alternative_products: ["links", "alternative"],
   cross_sell_products: ["links", "crossSell"],
   category: "categoryId",
+  product_item_category: "categoryId",
   brand: "brandId",
   badge: "badgeId",
+  badges: "badgeId",
+  product_model: "modelId",
+  articul_code: "articul",
 };
+
+/** The form of a new product: everything of the edit form plus prices, codes and sizes. */
+export interface ProductCreateValues extends ProductFormValues {
+  modelId: number | null;
+  price: number | null;
+  discountPrice: number | null;
+  discount: number | null;
+  unit: Unit;
+  quantity: number | null;
+  articul: string;
+  barcode: string;
+  weight: string;
+  length: string;
+  width: string;
+  height: string;
+  onOrder: boolean;
+}
+
+export function emptyCreateValues(): ProductCreateValues {
+  return {
+    names: emptyLocalized(),
+    descriptions: emptyLocalized(),
+    shortDescriptions: emptyLocalized(),
+    links: { related: [], alternative: [], crossSell: [] },
+    attributeValues: [],
+    categoryId: null,
+    brandId: null,
+    modelId: null,
+    badgeId: null,
+    publishStatus: "draft",
+    isActive: false,
+    purchasable: false,
+    onOrder: false,
+    price: null,
+    discountPrice: null,
+    discount: null,
+    unit: "pcs",
+    quantity: 0,
+    articul: "",
+    barcode: "",
+    weight: "",
+    length: "",
+    width: "",
+    height: "",
+  };
+}
+
+/** The form → the body of POST /admin/products/ (photos and activation follow it). */
+export function toCreateInput(values: ProductCreateValues): ProductCreate {
+  const ids = (kind: (typeof LINK_KINDS)[number]) =>
+    (values.links?.[kind] ?? []).map((item) => item.id);
+  return {
+    names: values.names,
+    descriptions: values.descriptions,
+    shortDescriptions: values.shortDescriptions,
+    brandId: values.brandId,
+    modelId: values.modelId,
+    categoryId: values.categoryId,
+    badgeId: values.badgeId,
+    price: values.price,
+    discountPrice: values.discountPrice,
+    discount: values.discount,
+    unit: values.unit,
+    quantity: values.quantity,
+    articul: values.articul ?? "",
+    barcode: values.barcode ?? "",
+    weight: values.weight ?? "",
+    length: values.length ?? "",
+    width: values.width ?? "",
+    height: values.height ?? "",
+    attributeValues: (values.attributeValues ?? []).filter(hasValue),
+    links: {
+      related: ids("related"),
+      alternative: ids("alternative"),
+      crossSell: ids("crossSell"),
+    },
+    purchasable: values.purchasable,
+    onOrder: values.onOrder,
+  };
+}
+
+/**
+ * A product that doesn't exist yet, for the cards that take one (the readiness list, the
+ * pickers): it has no id, no links and only the photos that are waiting to be uploaded.
+ */
+export function placeholderProduct(
+  publishStatus: PublishStatus,
+  images: ProductDetail["images"],
+): ProductDetail {
+  return {
+    id: 0,
+    name: "",
+    code: null,
+    articul: null,
+    barcode: null,
+    brand: null,
+    badge: null,
+    price: 0,
+    discountPrice: null,
+    discount: null,
+    unit: "pcs",
+    quantity: 0,
+    rating: 0,
+    isActive: false,
+    erpActive: false,
+    publishStatus,
+    purchasable: false,
+    createdAt: "",
+    updatedAt: "",
+    names: emptyLocalized(),
+    descriptions: emptyLocalized(),
+    shortDescriptions: emptyLocalized(),
+    links: { related: [], alternative: [], crossSell: [] },
+    category: null,
+    images,
+    attributeValues: [],
+    weight: null,
+    length: null,
+    width: null,
+    height: null,
+    commentsCount: 0,
+    questionsCount: 0,
+  };
+}
 
 export const emptyLocalized = (): Localized => ({ uz: "", ru: "" });
 

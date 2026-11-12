@@ -61,6 +61,7 @@ export function ProductsPage() {
         }
         textsLoading={textsExporter.loading}
         onViewChange={state.setView}
+        onCreate={() => navigate("/products/new")}
         onToggleFilters={() => setFiltersOpen((open) => !open)}
         onExport={() => exporter.run(listFilters)}
         onExportTexts={(rawHtml) => void textsExporter.run(listFilters, rawHtml)}

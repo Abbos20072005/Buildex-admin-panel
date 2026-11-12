@@ -1,4 +1,4 @@
-import { AppsIcon, DownloadIcon, FilterIcon, ListIcon } from "@/shared/icons";
+import { AppsIcon, DownloadIcon, FilterIcon, ListIcon, PlusIcon } from "@/shared/icons";
 import { Badge, Button, Dropdown, Segmented } from "antd";
 import { useTranslation } from "react-i18next";
 import { brand } from "@/theme";
@@ -14,6 +14,8 @@ interface Props {
   /** the uz / ru texts file is being prepared */
   textsLoading: boolean;
   onViewChange: (view: ProductView) => void;
+  /** open the "new product" page */
+  onCreate: () => void;
   onToggleFilters: () => void;
   /** the table of products as CSV */
   onExport: () => void;
@@ -29,6 +31,7 @@ export function ProductsToolbar({
   exportLabel,
   textsLoading,
   onViewChange,
+  onCreate,
   onToggleFilters,
   onExport,
   onExportTexts,
@@ -48,6 +51,9 @@ export function ProductsToolbar({
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <Button type="primary" icon={<PlusIcon />} onClick={onCreate}>
+          {t("products.create.button")}
+        </Button>
         <Segmented<ProductView>
           value={view}
           onChange={onViewChange}

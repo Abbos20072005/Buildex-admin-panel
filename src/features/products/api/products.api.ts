@@ -4,6 +4,7 @@ import type {
   NamedRef,
   Product,
   ProductAttribute,
+  ProductCreate,
   ProductDetail,
   ProductFilters,
   ProductImage,
@@ -22,6 +23,7 @@ import type {
 } from "./products.dto";
 import {
   categoryPath,
+  createToDto,
   filtersToQuery,
   mapAttribute,
   mapProduct,
@@ -66,6 +68,11 @@ export const productsApi = {
   /** GET /admin/products/{id}/ */
   async get(id: number): Promise<ProductDetail> {
     return mapProductDetail(await api.get<ProductDto>(`/products/${id}/`));
+  },
+
+  /** POST /admin/products/ — a hidden draft without photos; the answer has the new `id` */
+  async create(input: ProductCreate): Promise<ProductDetail> {
+    return mapProductDetail(await api.post<ProductDto>("/products/", createToDto(input)));
   },
 
   /** PATCH /admin/products/{id}/ */
@@ -138,6 +145,28 @@ export const productReferencesApi = {
         search: search || undefined,
         page_size: 50,
         ordering: "name",
+      }),
+    );
+  },
+
+  /** GET /admin/product-models/?brand= — the active models of one brand */
+  async models(brandId: number): Promise<NamedRef[]> {
+    return toRefs(
+      await api.get<Paginated<ReferenceDto>>("/product-models/", {
+        brand: brandId,
+        is_active: true,
+        page_size: 100,
+      }),
+    );
+  },
+
+  /** GET /admin/product-badges/ — the hand-set ones: the automatic ones follow their own rule */
+  async manualBadges(): Promise<NamedRef[]> {
+    return toRefs(
+      await api.get<Paginated<ReferenceDto>>("/product-badges/", {
+        kind: "manual",
+        is_active: true,
+        page_size: 100,
       }),
     );
   },

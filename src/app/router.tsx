@@ -42,6 +42,9 @@ const CategoriesPage = lazy(() =>
 const ProductPage = lazy(() =>
   import("@/pages/ProductPage").then((m) => ({ default: m.ProductPage })),
 );
+const ProductCreatePage = lazy(() =>
+  import("@/pages/ProductCreatePage").then((m) => ({ default: m.ProductCreatePage })),
+);
 const PublicationsPage = lazy(() =>
   import("@/pages/PublicationsPage").then((m) => ({ default: m.PublicationsPage })),
 );
@@ -147,6 +150,7 @@ export function AppRouter() {
             />
           ))}
           <Route path="/customers/:id" element={<CustomerPage />} />
+          <Route path="/products/new" element={<ProductCreatePage />} />
           <Route path="/products/:id" element={<ProductPage />} />
           <Route path="/content/push/new" element={<PushEditPage />} />
           <Route path="/content/push/:id" element={<PushEditPage />} />
