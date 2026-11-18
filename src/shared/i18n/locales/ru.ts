@@ -2056,7 +2056,7 @@ export const ru: Translation = {
   },
   payStatus: {
     pending: "Ожидается",
-    hold: "Заблокировано",
+    hold: "Заморожено",
     paid: "Оплачено",
     cancelled: "Отменено",
   },

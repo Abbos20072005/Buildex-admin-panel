@@ -2064,7 +2064,7 @@ export const uz = {
   },
   payStatus: {
     pending: "Kutilmoqda",
-    hold: "Bloklangan",
+    hold: "Muzlatilgan",
     paid: "To‘langan",
     cancelled: "Bekor qilingan",
   },
