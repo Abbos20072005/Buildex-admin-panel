@@ -147,6 +147,7 @@ export function FeedbackBoard({ kind }: Props) {
       </div>
 
       <RecordsTable<FeedbackItem>
+        tableLayout="auto"
         toolbarClassName="flex flex-wrap items-center gap-3 p-4"
         toolbar={
           <>

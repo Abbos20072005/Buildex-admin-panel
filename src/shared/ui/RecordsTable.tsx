@@ -36,6 +36,11 @@ interface Props<T> {
   toolbar?: ReactNode;
   /** replaces the padding and the row layout of the toolbar box (a toolbar that brings its own) */
   toolbarClassName?: string;
+  /**
+   * "auto": the columns without a `width` take the free space of a wide screen, the others keep
+   * their width (the default fixed layout stretches every column, the narrow ones too)
+   */
+  tableLayout?: "auto" | "fixed";
 }
 
 /** Paginated list of records: a click on a row opens it, the "⋯" menu edits or deletes. */
@@ -54,6 +59,7 @@ export function RecordsTable<T extends { id: number }>({
   rowSelection,
   toolbar,
   toolbarClassName = "flex flex-wrap gap-3 p-4",
+  tableLayout,
 }: Props<T>) {
   const { t } = useTranslation();
 
@@ -107,6 +113,7 @@ export function RecordsTable<T extends { id: number }>({
         dataSource={items}
         loading={loading}
         scroll={{ x: 640 }}
+        tableLayout={tableLayout}
         rowSelection={rowSelection}
         onRow={(item) => ({
           className: "cursor-pointer",

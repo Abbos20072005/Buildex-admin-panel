@@ -25,7 +25,6 @@ export const feedbackColumns = (
   {
     key: "customer",
     title: t("feedback.columns.customer"),
-    width: 220,
     render: (_, item) => (
       <div className="flex items-center gap-3">
         <InitialsAvatar name={authorTitle(item.customer, t)} />
@@ -41,9 +40,9 @@ export const feedbackColumns = (
   {
     key: "text",
     title: t(kind === "reviews" ? "feedback.columns.review" : "feedback.columns.question"),
-    width: 320,
+    // no width: this column takes the free space of a wide screen (see `tableLayout` of the table)
     render: (_, item) => (
-      <div className="line-clamp-2 text-sm break-words">
+      <div className="line-clamp-2 max-w-lg min-w-48 text-sm break-words">
         {item.text || <span className="text-slate-400">—</span>}
       </div>
     ),
@@ -105,10 +104,9 @@ export const feedbackColumns = (
   {
     key: "product",
     title: t("feedback.columns.product"),
-    width: 280,
     render: (_, item) =>
       item.product ? (
-        <div className="min-w-0">
+        <div className="max-w-xs min-w-48">
           <div className="line-clamp-2 text-sm">{item.product.name}</div>
           {item.product.code && (
             <div className="font-mono text-xs text-slate-500">{item.product.code}</div>
