@@ -19,12 +19,16 @@ export const feedbackColumns = (
   {
     key: "number",
     title: "№",
-    width: 56,
+    // narrow: the number and the avatar of the next column stand close (no right padding here,
+    // no left padding there)
+    width: 32,
+    className: "pr-0!",
     render: (_, __, index) => <span className="text-slate-500">{offset + index + 1}</span>,
   },
   {
     key: "customer",
     title: t("feedback.columns.customer"),
+    className: "pl-0!",
     render: (_, item) => (
       <div className="flex items-center gap-3">
         <InitialsAvatar name={authorTitle(item.customer, t)} />
