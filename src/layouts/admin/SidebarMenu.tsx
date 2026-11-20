@@ -2,6 +2,7 @@ import { Menu, type MenuProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useChatStatsQuery } from "@/features/chats";
+import { useFeedbackStatsQuery } from "@/features/feedback";
 import { useModerationStatsQuery } from "@/features/moderation";
 import { useOrderStatsQuery } from "@/features/orders";
 import { useProductsInReviewCount, useProductsTotalCount } from "@/features/products";
@@ -34,6 +35,8 @@ export function SidebarMenu({ nav, onNavigate }: Props) {
   const { data: inReview } = useProductsInReviewCount();
   const { data: moderation } = useModerationStatsQuery();
   const { data: chats } = useChatStatsQuery();
+  const { data: questions } = useFeedbackStatsQuery("questions");
+  const { data: reviews } = useFeedbackStatsQuery("reviews");
   const { data: total } = useProductsTotalCount();
 
   const badges: Record<NavBadge, number> = {
@@ -42,6 +45,8 @@ export function SidebarMenu({ nav, onNavigate }: Props) {
     productsInReview: moderation?.pending ?? inReview ?? 0,
     productsTotal: total ?? 0,
     unansweredChats: chats?.unanswered ?? 0,
+    unansweredQuestions: questions?.unanswered ?? 0,
+    unansweredReviews: reviews?.unanswered ?? 0,
   };
 
   const leafLabel = (leaf: NavLeaf) => (

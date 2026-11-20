@@ -15,7 +15,13 @@ import {
 import type { ReactNode } from "react";
 
 /** Live counters shown next to menu items (all of them come from the API). */
-export type NavBadge = "newOrders" | "productsInReview" | "productsTotal" | "unansweredChats";
+export type NavBadge =
+  | "newOrders"
+  | "productsInReview"
+  | "productsTotal"
+  | "unansweredChats"
+  | "unansweredQuestions"
+  | "unansweredReviews";
 
 export interface NavLeaf {
   path: string;
@@ -49,8 +55,8 @@ export const NAVIGATION: NavItem[] = [
     icon: <HeadsetIcon />,
     children: [
       { path: "/support/chat", label: "nav.chat", badge: "unansweredChats" },
-      { path: "/support/requests", label: "nav.requests" },
-      { path: "/support/scripts", label: "nav.scripts" },
+      { path: "/support/questions", label: "nav.questions", badge: "unansweredQuestions" },
+      { path: "/support/reviews", label: "nav.reviews", badge: "unansweredReviews" },
     ],
   },
   {
