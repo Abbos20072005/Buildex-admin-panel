@@ -17,6 +17,11 @@ interface Props {
   minHeight?: number;
   /** also headings (H2, H3) and links — for long texts such as a category's SEO text */
   extended?: boolean;
+  /**
+   * the answer of a FAQ question: the backend keeps only bold, lists, links and paragraphs
+   * (it strips everything else on save), so the editor offers just these
+   */
+  answer?: boolean;
 }
 
 const COMMANDS: { command: string; icon: ReactNode; label: string }[] = [
@@ -29,13 +34,21 @@ const COMMANDS: { command: string; icon: ReactNode; label: string }[] = [
 
 const HEADINGS = ["h2", "h3"] as const;
 
-const clean = (html: string) => DOMPurify.sanitize(html);
+const ANSWER_COMMANDS = ["bold", "insertUnorderedList", "insertOrderedList"];
+
+const clean = (html: string, answer?: boolean) =>
+  answer
+    ? DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ["a", "b", "strong", "ul", "ol", "li", "p", "br"],
+        ALLOWED_ATTR: ["href"],
+      })
+    : DOMPurify.sanitize(html);
 
 /**
  * The text is stored as HTML on the backend, so it is shown formatted (tables, lists, bold…)
  * and edited in place instead of as raw tags. Works as an antd `Form.Item` control.
  */
-export function RichTextEditor({ value = "", onChange, minHeight = 120, extended }: Props) {
+export function RichTextEditor({ value = "", onChange, minHeight = 120, extended, answer }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   /** last html this editor produced — a different `value` comes from outside (reset, save) */
   const emitted = useRef<string | null>(null);
@@ -43,9 +56,16 @@ export function RichTextEditor({ value = "", onChange, minHeight = 120, extended
   useEffect(() => {
     const node = ref.current;
     if (!node || value === emitted.current) return;
-    node.innerHTML = clean(value);
+    node.innerHTML = clean(value, answer);
     emitted.current = value;
-  }, [value]);
+  }, [value, answer]);
+
+  /** Enter makes a `<p>`, not a `<div>` — the backend strips a div and would glue the lines. */
+  const startParagraphs = () => {
+    if (!answer) return;
+    document.execCommand("defaultParagraphSeparator", false, "p");
+    if (ref.current && !ref.current.textContent) document.execCommand("formatBlock", false, "p");
+  };
 
   const emit = () => {
     const html = ref.current?.innerHTML ?? "";
@@ -81,42 +101,43 @@ export function RichTextEditor({ value = "", onChange, minHeight = 120, extended
   return (
     <div className="overflow-hidden rounded-lg border border-slate-300 focus-within:border-brand">
       <div className="flex gap-1 border-b border-slate-200 bg-surface-alt px-2 py-1">
-        {COMMANDS.map(({ command, icon, label }) => (
-          <Button
-            key={command}
-            size="small"
-            type="text"
-            icon={icon}
-            aria-label={label}
-            // keep the text selection while the button is pressed
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => run(command)}
-          />
-        ))}
-        {extended && (
-          <>
-            {HEADINGS.map((tag) => (
-              <Button
-                key={tag}
-                size="small"
-                type="text"
-                aria-label={`Heading ${tag.slice(1)}`}
-                className="font-bold"
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => heading(tag)}
-              >
-                {tag.toUpperCase()}
-              </Button>
-            ))}
+        {COMMANDS.filter(({ command }) => !answer || ANSWER_COMMANDS.includes(command)).map(
+          ({ command, icon, label }) => (
             <Button
+              key={command}
               size="small"
               type="text"
-              icon={<LinkIcon />}
-              aria-label="Link"
+              icon={icon}
+              aria-label={label}
+              // keep the text selection while the button is pressed
               onMouseDown={(event) => event.preventDefault()}
-              onClick={link}
+              onClick={() => run(command)}
             />
-          </>
+          ),
+        )}
+        {extended &&
+          HEADINGS.map((tag) => (
+            <Button
+              key={tag}
+              size="small"
+              type="text"
+              aria-label={`Heading ${tag.slice(1)}`}
+              className="font-bold"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => heading(tag)}
+            >
+              {tag.toUpperCase()}
+            </Button>
+          ))}
+        {(extended || answer) && (
+          <Button
+            size="small"
+            type="text"
+            icon={<LinkIcon />}
+            aria-label="Link"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={link}
+          />
         )}
       </div>
       <div
@@ -126,12 +147,13 @@ export function RichTextEditor({ value = "", onChange, minHeight = 120, extended
         role="textbox"
         aria-multiline
         onInput={emit}
+        onFocus={startParagraphs}
         onPaste={(event) => {
           // paste as clean HTML, without foreign styles
           const html = event.clipboardData.getData("text/html");
           if (!html) return;
           event.preventDefault();
-          document.execCommand("insertHTML", false, clean(html));
+          document.execCommand("insertHTML", false, clean(html, answer));
         }}
         style={{ minHeight }}
         className="rich-content max-h-[420px] overflow-auto px-3 py-2 outline-none"

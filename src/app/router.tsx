@@ -74,6 +74,7 @@ const QuestionsPage = lazy(() =>
 const ReviewsPage = lazy(() =>
   import("@/pages/ReviewsPage").then((m) => ({ default: m.ReviewsPage })),
 );
+const FaqPage = lazy(() => import("@/pages/FaqPage").then((m) => ({ default: m.FaqPage })));
 const ModerationPage = lazy(() =>
   import("@/pages/ModerationPage").then((m) => ({ default: m.ModerationPage })),
 );
@@ -98,6 +99,7 @@ const PAGES: Record<string, ReactNode> = {
   "/content/banners": <BannersPage />,
   "/content/news": <PublicationsPage />,
   "/content/ad-blocks": <AdBlocksPage />,
+  "/content/faq": <FaqPage />,
   "/content/push": <PushPage />,
   "/content/home": <HomePage />,
   "/analytics/sales": <SalesAnalyticsPage />,

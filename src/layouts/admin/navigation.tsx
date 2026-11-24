@@ -91,6 +91,7 @@ export const NAVIGATION: NavItem[] = [
       { path: "/content/news", label: "nav.news" },
       { path: "/content/ad-blocks", label: "nav.adBlocks" },
       { path: "/content/home", label: "nav.homePage" },
+      { path: "/content/faq", label: "nav.faq" },
       { path: "/content/pages", label: "nav.pages" },
       { path: "/content/push", label: "nav.push" },
       { path: "/content/media", label: "nav.media" },
