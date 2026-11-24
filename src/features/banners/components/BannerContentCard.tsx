@@ -10,6 +10,13 @@ const LANGS = [
 
 const BUTTON_MAX = 24;
 
+/**
+ * The language tabs are hidden: the API stores one pair of pictures for a banner, so a picture
+ * put under "O'zbekcha" showed under "Русский" too. Turn them on when the backend has the
+ * pictures per language (BLD-514).
+ */
+const SHOW_LANG_TABS = false;
+
 const required = (text: string) => (
   <>
     {text} <span className="text-red-600">*</span>
@@ -17,7 +24,7 @@ const required = (text: string) => (
 );
 
 /**
- * Language tabs + pictures + alt / button text.
+ * Pictures + alt / button text (language tabs: see `SHOW_LANG_TABS`).
  * The API has no per-language pictures or texts yet — the texts are local, not sent.
  */
 export function BannerContentCard({ images }: { images: ReactNode }) {
@@ -30,24 +37,26 @@ export function BannerContentCard({ images }: { images: ReactNode }) {
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white">
-      <div className="flex gap-6 border-b border-slate-200 px-5">
-        {LANGS.map((item) => (
-          <button
-            key={item.code}
-            type="button"
-            onClick={() => setLang(item.code)}
-            className={clsx(
-              "-mb-px flex cursor-pointer items-center gap-2 border-0 border-b-2 bg-transparent py-3 text-sm font-bold",
-              lang === item.code
-                ? "border-brand text-brand"
-                : "border-transparent text-slate-500 hover:text-slate-700",
-            )}
-          >
-            <span className={clsx("size-2 rounded-full", item.dot)} />
-            {item.label}
-          </button>
-        ))}
-      </div>
+      {SHOW_LANG_TABS && (
+        <div className="flex gap-6 border-b border-slate-200 px-5">
+          {LANGS.map((item) => (
+            <button
+              key={item.code}
+              type="button"
+              onClick={() => setLang(item.code)}
+              className={clsx(
+                "-mb-px flex cursor-pointer items-center gap-2 border-0 border-b-2 bg-transparent py-3 text-sm font-bold",
+                lang === item.code
+                  ? "border-brand text-brand"
+                  : "border-transparent text-slate-500 hover:text-slate-700",
+              )}
+            >
+              <span className={clsx("size-2 rounded-full", item.dot)} />
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="p-5">
         {images}
