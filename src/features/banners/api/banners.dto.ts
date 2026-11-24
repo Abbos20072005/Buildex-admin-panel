@@ -8,8 +8,13 @@ export interface BannerDto {
   title: string;
   title_uz?: string | null;
   title_ru?: string | null;
+  /** deprecated: the Russian picture */
   desktop_image?: string | null;
   mobile_image?: string | null;
+  desktop_image_uz?: string | null;
+  desktop_image_ru?: string | null;
+  mobile_image_uz?: string | null;
+  mobile_image_ru?: string | null;
   placement: BannerPlacement;
   show_on_site: boolean;
   show_on_ios: boolean;

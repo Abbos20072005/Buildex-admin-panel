@@ -1,8 +1,9 @@
 import { ImageIcon } from "@/shared/icons";
 import { Upload } from "antd";
-import { useEffect, useMemo, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { clsx } from "@/shared/lib/clsx";
+import { useObjectUrl } from "@/shared/lib/useObjectUrl";
 
 interface Props {
   label: ReactNode;
@@ -18,14 +19,7 @@ interface Props {
 /** A dashed area with the picture (or "Yuklash"); a click opens the file dialog. */
 export function BannerImageDrop({ label, wide, url, file, onPick }: Props) {
   const { t } = useTranslation();
-  const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
-
-  useEffect(
-    () => () => {
-      if (preview) URL.revokeObjectURL(preview);
-    },
-    [preview],
-  );
+  const preview = useObjectUrl(file);
 
   const src = preview ?? url;
 

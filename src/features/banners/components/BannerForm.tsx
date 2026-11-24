@@ -12,11 +12,12 @@ import {
   Tag,
 } from "antd";
 import dayjs, { type Dayjs } from "dayjs";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "@/shared/api";
 import { reportInvalid, useEditorForm } from "@/shared/form";
+import { useObjectUrl } from "@/shared/lib/useObjectUrl";
 import { WidgetCard } from "@/shared/ui";
 import { BannerContentCard } from "./BannerContentCard";
 import { BannerImageDrop } from "./BannerImageDrop";
@@ -33,13 +34,16 @@ import {
   STATUS_COLOR,
   TARGET_LINK_TYPES,
 } from "../model/constants";
-import type {
-  Banner,
-  BannerFiles,
-  BannerInput,
-  BannerPlacement,
-  LinkType,
-  TargetModel,
+import {
+  IMAGE_SLOT,
+  type Banner,
+  type BannerFiles,
+  type BannerInput,
+  type BannerLang,
+  type BannerPlacement,
+  type ImageSlot,
+  type LinkType,
+  type TargetModel,
 } from "../model/types";
 import { BannerPreview, BannerReadiness } from "./BannerAside";
 import { TargetField } from "./TargetField";
@@ -88,9 +92,13 @@ const hasAddress = (values: Partial<FormValues>) => {
   }
 };
 
+type Kind = "desktop" | "mobile";
+
 /**
  * Create / edit page of a banner: the form on the left, the preview and a checklist on the
- * right. Both images go together with the form (multipart).
+ * right. The pictures carry text, so every language has its own pair (wide + square); they go
+ * together with the form (multipart). The Russian wide one is required, the Uzbek ones are
+ * optional: without them an Uzbek customer gets the Russian pictures.
  */
 export function BannerForm({ banner }: { banner: Banner | null }) {
   const { t } = useTranslation();
@@ -113,22 +121,25 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
     Partial<FormValues> | undefined;
   const linkType = values?.linkType ?? banner?.linkType ?? "category";
 
-  const desktopPreview = useMemo(
-    () => (files.desktop ? URL.createObjectURL(files.desktop) : (banner?.desktopImage ?? null)),
-    [files.desktop, banner?.desktopImage],
-  );
-  const mobilePreview = useMemo(
-    () =>
-      files.mobile
-        ? URL.createObjectURL(files.mobile)
-        : files.clearMobile
-          ? null
-          : (banner?.mobileImage ?? null),
-    [files.mobile, files.clearMobile, banner?.mobileImage],
-  );
+  /** the language whose pictures the card and the preview show */
+  const [lang, setLang] = useState<BannerLang>("ru");
+  const fileUrls: Record<ImageSlot, string | null> = {
+    desktopUz: useObjectUrl(files.desktopUz),
+    desktopRu: useObjectUrl(files.desktopRu),
+    mobileUz: useObjectUrl(files.mobileUz),
+    mobileRu: useObjectUrl(files.mobileRu),
+  };
+  /** the saved picture of a slot; null when there is none or it was removed here */
+  const savedOf = (kind: Kind, l: BannerLang): string | null =>
+    files.clear?.[IMAGE_SLOT[kind][l]] ? null : (banner?.pictures[l][kind] ?? null);
+  const shownOf = (kind: Kind, l: BannerLang): string | null =>
+    fileUrls[IMAGE_SLOT[kind][l]] ?? savedOf(kind, l);
+  // what a customer of the chosen language sees: Uzbek without its own picture shows the Russian
+  const previewOf = (kind: Kind): string | null =>
+    shownOf(kind, lang) ?? (lang === "uz" ? shownOf(kind, "ru") : null);
 
   const readiness = [
-    { key: "desktop", done: !!desktopPreview },
+    { key: "desktop", done: !!shownOf("desktop", "ru") },
     {
       key: "channel",
       done: !!(values?.showOnSite || values?.showOnIos || values?.showOnAndroid),
@@ -185,17 +196,31 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
     else create.mutate({ input, files }, done);
   };
 
-  const pick = (key: "desktop" | "mobile") => (file: File) => {
+  const pick = (slot: ImageSlot) => (file: File) => {
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
       message.error(t("common.imageTooBig", { size: MAX_SIZE_MB }));
       return;
     }
     setFiles((current) => ({
       ...current,
-      [key]: file,
-      ...(key === "mobile" ? { clearMobile: false } : {}),
+      [slot]: file,
+      clear: { ...current.clear, [slot]: false },
     }));
   };
+
+  /** a picked file is dropped; a saved picture is marked to be removed on save */
+  const removePicture = (kind: Kind) => {
+    const slot = IMAGE_SLOT[kind][lang];
+    setFiles((current) => ({
+      ...current,
+      [slot]: undefined,
+      clear: { ...current.clear, [slot]: !!banner?.pictures[lang][kind] },
+    }));
+  };
+  // the Russian wide picture is required: it can be replaced, not removed
+  const canRemove = (kind: Kind) =>
+    IMAGE_SLOT[kind][lang] !== "desktopRu" &&
+    (!!files[IMAGE_SLOT[kind][lang]] || !!savedOf(kind, lang));
 
   const toggleArchive = () => {
     if (!banner) return;
@@ -403,46 +428,56 @@ export function BannerForm({ banner }: { banner: Banner | null }) {
           </div>
 
           <BannerContentCard
+            lang={lang}
+            onLangChange={setLang}
             images={
               <>
-                <div className="flex gap-4">
+                {/* key: the picked file of one language must not show in the other one's area */}
+                <div key={lang} className="flex gap-4">
                   <BannerImageDrop
-                    label={t("banners.desktopImage")}
+                    label={
+                      lang === "ru"
+                        ? required(t("banners.desktopImage"))
+                        : t("banners.desktopImage")
+                    }
                     wide
-                    url={banner?.desktopImage ?? null}
-                    file={files.desktop}
-                    onPick={pick("desktop")}
+                    url={savedOf("desktop", lang)}
+                    file={files[IMAGE_SLOT.desktop[lang]]}
+                    onPick={pick(IMAGE_SLOT.desktop[lang])}
                   />
                   <BannerImageDrop
                     label={t("banners.mobileImage")}
-                    url={files.clearMobile ? null : (banner?.mobileImage ?? null)}
-                    file={files.mobile}
-                    onPick={pick("mobile")}
+                    url={savedOf("mobile", lang)}
+                    file={files[IMAGE_SLOT.mobile[lang]]}
+                    onPick={pick(IMAGE_SLOT.mobile[lang])}
                   />
                 </div>
-                {(files.mobile || (banner?.mobileImage && !files.clearMobile)) && (
-                  <Button
-                    type="link"
-                    size="small"
-                    className="px-0"
-                    onClick={() =>
-                      setFiles((current) => ({
-                        ...current,
-                        mobile: undefined,
-                        clearMobile: !!banner?.mobileImage,
-                      }))
-                    }
-                  >
-                    {t("banners.removeMobile")}
-                  </Button>
-                )}
+                <div className="mt-1 flex flex-wrap gap-x-4">
+                  {(["desktop", "mobile"] as const).map(
+                    (kind) =>
+                      canRemove(kind) && (
+                        <Button
+                          key={kind}
+                          type="link"
+                          size="small"
+                          className="px-0"
+                          onClick={() => removePicture(kind)}
+                        >
+                          {t(`banners.remove.${kind}`)}
+                        </Button>
+                      ),
+                  )}
+                </div>
+                <p className="m-0 mt-2 text-xs text-slate-500">
+                  {t(lang === "ru" ? "banners.ruRequired" : "banners.uzFallback")}
+                </p>
               </>
             }
           />
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
-          <BannerPreview desktopSrc={desktopPreview} mobileSrc={mobilePreview} />
+          <BannerPreview desktopSrc={previewOf("desktop")} mobileSrc={previewOf("mobile")} />
           <BannerReadiness items={readiness} />
           <WidgetCard title={t("banners.note.title")}>
             <p className="m-0 text-xs text-slate-500">{t("banners.note.text")}</p>

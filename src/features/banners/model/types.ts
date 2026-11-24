@@ -22,6 +22,23 @@ export interface BannerTarget {
   name: string;
 }
 
+/** The language of a banner's pictures (they carry text, so every language has its own). */
+export type BannerLang = "uz" | "ru";
+
+/** The wide (16:5) and the square (1:1) picture of one language. */
+export interface BannerPictures {
+  desktop: string | null;
+  mobile: string | null;
+}
+
+/** The four places a picture goes to: the kind of the picture and the language. */
+export type ImageSlot = "desktopUz" | "desktopRu" | "mobileUz" | "mobileRu";
+
+export const IMAGE_SLOT: Record<"desktop" | "mobile", Record<BannerLang, ImageSlot>> = {
+  desktop: { uz: "desktopUz", ru: "desktopRu" },
+  mobile: { uz: "mobileUz", ru: "mobileRu" },
+};
+
 export interface Banner {
   id: number;
   /** BNR-0412 */
@@ -30,8 +47,10 @@ export interface Banner {
   name: string;
   nameUz: string;
   nameRu: string;
+  /** the Russian pictures: the list shows them, the Uzbek customer gets them when there is no Uzbek one */
   desktopImage: string | null;
   mobileImage: string | null;
+  pictures: Record<BannerLang, BannerPictures>;
   placement: BannerPlacement;
   showOnSite: boolean;
   showOnIos: boolean;
@@ -66,12 +85,10 @@ export interface BannerInput {
   isVisible: boolean;
 }
 
-export interface BannerFiles {
-  desktop?: File;
-  mobile?: File;
-  /** remove the saved mobile image */
-  clearMobile?: boolean;
-}
+/** Newly picked files by slot, and the saved pictures to remove (not the Russian desktop one). */
+export type BannerFiles = Partial<Record<ImageSlot, File>> & {
+  clear?: Partial<Record<ImageSlot, boolean>>;
+};
 
 /** GET /admin/banners/stats/ — cards and tab counters (not affected by list filters). */
 export interface BannerStats {

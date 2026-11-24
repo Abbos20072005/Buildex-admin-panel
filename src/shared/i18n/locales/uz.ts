@@ -152,7 +152,13 @@ export const uz = {
     upload: "Yuklash",
     imagesHint:
       "Keng rasm — desktop, kvadrat — mobil. Kvadrat rasm mobil sayt va Buildex Go ilovasida ishlatiladi; bo‘lmasa, keng rasm ko‘rsatiladi.",
-    removeMobile: "Mobil rasmni olib tashlash",
+    remove: {
+      desktop: "Desktop rasmni olib tashlash",
+      mobile: "Mobil rasmni olib tashlash",
+    },
+    ruRequired: "Ruscha desktop rasm majburiy; qolganlari ixtiyoriy.",
+    uzFallback:
+      "O‘zbekcha rasm yuklanmasa, o‘zbekcha mijozga ruscha rasm ko‘rsatiladi. Rasmda matn bo‘lsa, har til uchun alohida yuklang.",
     library: "Media kutubxonasidan tanlash",
     sizesHint: "Keng rasm — desktop, kvadrat — mobil.",
     squareHint: "Kvadrat rasm mobil sayt va Buildex Go ilovasida ishlatiladi.",
