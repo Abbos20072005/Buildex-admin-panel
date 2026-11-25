@@ -1,9 +1,10 @@
 import { Alert, App, Card, Modal, Skeleton } from "antd";
 import { useTranslation } from "react-i18next";
+import { IkpuHistoryList } from "@/features/products";
 import { getErrorMessage } from "@/shared/api";
 import { modalStyles } from "@/theme";
 import { useOrderQuery, useUpdateOrder } from "../../hooks/queries";
-import { itemsWithoutIkpu } from "../../lib/ikpu";
+import { itemsWithoutIkpu, missingIkpuOfError } from "../../lib/ikpu";
 import type { OrderPatch } from "../../model/types";
 import { CommentsCard } from "./CommentsCard";
 import { CustomerCard } from "./CustomerCard";
@@ -39,25 +40,28 @@ export function OrderModal({ orderId, onClose }: Props) {
   const { data: order, isPending, error } = useOrderQuery(orderId);
   const updateOrder = useUpdateOrder();
 
+  const showMissingIkpu = (names: string[]) =>
+    modal.error({
+      title: t("orders.modal.ikpuBlockedTitle"),
+      content: (
+        <div>
+          <p className="mt-0">{t("orders.modal.ikpuBlockedText")}</p>
+          <ul className="m-0 pl-5">
+            {names.map((name, index) => (
+              <li key={`${name}-${index}`}>{name}</li>
+            ))}
+          </ul>
+        </div>
+      ),
+    });
+
   const handleUpdate = (patch: OrderPatch) => {
     if (orderId === null) return;
 
     // An order is not confirmed while a line has no IKPU code: the receipt needs it (BLD-542)
     const missing = order ? itemsWithoutIkpu(order) : [];
     if (order?.status === "new" && patch.status && patch.status !== "cancelled" && missing.length) {
-      modal.error({
-        title: t("orders.modal.ikpuBlockedTitle"),
-        content: (
-          <div>
-            <p className="mt-0">{t("orders.modal.ikpuBlockedText")}</p>
-            <ul className="m-0 pl-5">
-              {missing.map((item) => (
-                <li key={item.id}>{item.name}</li>
-              ))}
-            </ul>
-          </div>
-        ),
-      });
+      showMissingIkpu(missing.map((item) => item.name));
       return;
     }
 
@@ -65,7 +69,12 @@ export function OrderModal({ orderId, onClose }: Props) {
       { id: orderId, patch },
       {
         onSuccess: () => message.success(t("orders.toast.saved")),
-        onError: (err) => message.error(getErrorMessage(err)),
+        onError: (err) => {
+          // the server refused to confirm: it names the lines without a code
+          const names = missingIkpuOfError(err);
+          if (names) showMissingIkpu(names);
+          else message.error(getErrorMessage(err));
+        },
       },
     );
   };
@@ -106,6 +115,11 @@ export function OrderModal({ orderId, onClose }: Props) {
           <div className="flex min-w-0 flex-col gap-4">
             <OrderItemsCard order={order} />
             <OrderProgressCard order={order} saving={saving} onUpdate={handleUpdate} />
+            {order.items.some((item) => item.ikpuCode !== undefined) && (
+              <Card title={t("orders.modal.ikpuHistory")}>
+                <IkpuHistoryList order={order.id} />
+              </Card>
+            )}
           </div>
           <div className="flex min-w-0 flex-col gap-4">
             <CustomerCard order={order} />

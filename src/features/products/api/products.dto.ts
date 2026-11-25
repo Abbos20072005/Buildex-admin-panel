@@ -112,16 +112,21 @@ export interface ProductDto extends ProductListDto {
   package_code?: string | null;
 }
 
-/** Item of GET /admin/products/{id}/ikpu-history/ (BLD-541) */
+/** Item of GET /admin/ikpu-changes/ (BLD-541) */
 export interface IkpuChangeDto {
   id: number;
-  changed_by?: { id: number; full_name?: string | null; username?: string | null } | null;
-  created_at: string;
+  product?: { id: number; name?: string | null } | null;
+  /** null - changed on the product card */
+  order?: { id: number; status?: number } | null;
+  /** "ikpu_code" | "package_code" */
+  field: string;
   old_value?: string | null;
   new_value?: string | null;
   /** "product" | "order" */
   source?: string | null;
-  order_id?: number | null;
+  /** null - the admin was deleted */
+  changed_by?: { id: number; full_name?: string | null; username?: string | null } | null;
+  created_at: string;
 }
 
 export interface ProductStatsDto {

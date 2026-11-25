@@ -102,9 +102,9 @@ export function useSetOrderItemIkpu(orderId: number) {
   return useMutation({
     mutationFn: ({ itemId, ikpuCode }: { itemId: number; ikpuCode: string }) =>
       ordersApi.setItemIkpu(orderId, itemId, ikpuCode),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderId) });
-      // the product card has the code too (and its journal)
+    onSuccess: (order: OrderDetail) => {
+      queryClient.setQueryData(orderKeys.detail(orderId), order);
+      // the product card has the code too (and the journal of the product and the order)
       void queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });

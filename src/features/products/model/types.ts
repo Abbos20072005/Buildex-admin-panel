@@ -127,9 +127,14 @@ export interface ProductDetail extends Omit<
 /** The IKPU code is 17 digits (tasnif.soliq.uz). */
 export const IKPU_PATTERN = /^\d{17}$/;
 
-/** A line of the IKPU journal of a product: who changed it, when, from where. */
+/** The package code is digits only, 1-20 of them. */
+export const PACKAGE_CODE_PATTERN = /^\d{1,20}$/;
+
+/** A line of the journal GET /admin/ikpu-changes/: who changed a code, when, from where. */
 export interface IkpuChange {
   id: number;
+  productName: string;
+  field: "ikpu_code" | "package_code";
   changedBy: string;
   createdAt: string;
   oldValue: string;
@@ -137,6 +142,12 @@ export interface IkpuChange {
   /** "order" - changed inside an order; "product" - on the product card */
   source: "product" | "order";
   orderId: number | null;
+}
+
+/** The journal of one product or of one order. */
+export interface IkpuChangesParams {
+  product?: number;
+  order?: number;
 }
 
 /** Fields the admin can edit in the product modal. */

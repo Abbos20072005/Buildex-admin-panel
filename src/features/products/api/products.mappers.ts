@@ -168,12 +168,14 @@ export function mapProductDetail(dto: ProductDto): ProductDetail {
 export function mapIkpuChange(dto: IkpuChangeDto): IkpuChange {
   return {
     id: dto.id,
+    productName: dto.product?.name ?? "",
+    field: dto.field === "package_code" ? "package_code" : "ikpu_code",
     changedBy: dto.changed_by?.full_name?.trim() || dto.changed_by?.username || "—",
     createdAt: dto.created_at,
     oldValue: text(dto.old_value),
     newValue: text(dto.new_value),
-    source: dto.source === "order" || dto.order_id ? "order" : "product",
-    orderId: dto.order_id ?? null,
+    source: dto.source === "order" || dto.order ? "order" : "product",
+    orderId: dto.order?.id ?? null,
   };
 }
 

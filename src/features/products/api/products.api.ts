@@ -2,6 +2,7 @@ import { api, type DownloadedFile, type Page, type Paginated } from "@/shared/ap
 import type {
   CategoryPath,
   IkpuChange,
+  IkpuChangesParams,
   NamedRef,
   Product,
   ProductAttribute,
@@ -83,12 +84,14 @@ export const productsApi = {
     return mapProductDetail(await api.patch<ProductDto>(`/products/${id}/`, patchToDto(patch)));
   },
 
-  /** GET /admin/products/{id}/ikpu-history/ — who changed the IKPU code, when, from where (BLD-541) */
-  async ikpuHistory(id: number): Promise<IkpuChange[]> {
-    const data = await api.get<Paginated<IkpuChangeDto> | IkpuChangeDto[]>(
-      `/products/${id}/ikpu-history/`,
-    );
-    return (Array.isArray(data) ? data : data.results).map(mapIkpuChange);
+  /** GET /admin/ikpu-changes/?product= | ?order= — who changed a code, when, from where (newest first) */
+  async ikpuChanges(params: IkpuChangesParams): Promise<IkpuChange[]> {
+    const data = await api.get<Paginated<IkpuChangeDto>>("/ikpu-changes/", {
+      product: params.product,
+      order: params.order,
+      page_size: 100,
+    });
+    return data.results.map(mapIkpuChange);
   },
 
   /** POST /admin/products/{id}/images/ (multipart, field `image`) */

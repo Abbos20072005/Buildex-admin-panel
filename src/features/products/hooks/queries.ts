@@ -5,6 +5,7 @@ import { productReferencesApi, productsApi, type ProductsListParams } from "../a
 import { productKeys, productReferenceKeys } from "../api/query-keys";
 import { type ProductTab } from "../model/constants";
 import type {
+  IkpuChangesParams,
   ProductCreate,
   ProductDetail,
   ProductFilters,
@@ -84,11 +85,11 @@ export function useProductQuery(id: number | null) {
   });
 }
 
-/** The IKPU journal of a product (the code is edited on the card and inside orders). */
-export function useIkpuHistoryQuery(id: number) {
+/** The IKPU journal of a product or of an order (the code is edited on the card and in orders). */
+export function useIkpuChangesQuery(params: IkpuChangesParams) {
   return useQuery({
-    queryKey: productKeys.ikpuHistory(id),
-    queryFn: () => productsApi.ikpuHistory(id),
+    queryKey: productKeys.ikpuChanges(params),
+    queryFn: () => productsApi.ikpuChanges(params),
     retry: false,
   });
 }
@@ -178,6 +179,8 @@ function useInvalidateProducts() {
     void queryClient.invalidateQueries({ queryKey: productKeys.stats() });
     if (id !== undefined)
       void queryClient.invalidateQueries({ queryKey: [...productKeys.details(), id] });
+    // the IKPU journal gets a line when a code changed
+    void queryClient.invalidateQueries({ queryKey: [...productKeys.all, "ikpu-changes"] });
   };
 }
 

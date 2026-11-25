@@ -1,4 +1,4 @@
-import type { ProductFilters } from "../model/types";
+import type { IkpuChangesParams, ProductFilters } from "../model/types";
 import type { ProductsListParams } from "./products.api";
 
 /** Query-key factory — one place that defines the cache structure of the products feature. */
@@ -12,7 +12,7 @@ export const productKeys = {
   inReview: () => [...productKeys.stats(), "review"] as const,
   details: () => [...productKeys.all, "detail"] as const,
   detail: (id: number, lang: string) => [...productKeys.details(), id, lang] as const,
-  ikpuHistory: (id: number) => [...productKeys.all, "ikpu-history", id] as const,
+  ikpuChanges: (params: IkpuChangesParams) => [...productKeys.all, "ikpu-changes", params] as const,
 };
 
 /** Dictionaries are translated too, so the language is part of every key. */

@@ -1,3 +1,4 @@
+export { IkpuHistoryList } from "./components/IkpuHistoryList";
 export { ProductsFilterPanel } from "./components/list/ProductsFilterPanel";
 export { ProductsGrid } from "./components/list/ProductsGrid";
 export { ProductsTable } from "./components/list/ProductsTable";
