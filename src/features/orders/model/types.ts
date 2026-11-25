@@ -13,7 +13,14 @@ export type OrderStatus =
 export type PayStatus = "pending" | "hold" | "paid" | "cancelled";
 
 /** PaymentTypeEnum 1 Click · 2 Payme · 3 Uzum · 4 on receipt (split by payment_method) */
-export type PayType = "click" | "payme" | "uzum" | "receiptCash" | "receiptCard" | "receipt";
+export type PayType =
+  | "atmos"
+  | "click"
+  | "payme"
+  | "uzum"
+  | "receiptCash"
+  | "receiptCard"
+  | "receipt";
 
 export type Fulfillment = "delivery" | "pickup";
 
@@ -104,7 +111,10 @@ export interface OrderDetail extends Order {
   ofdUrl: string | null;
   yandexStatus: string | null;
   yandexClaimId: string | null;
-  holdId: number | null;
+  /** the id of the Atmos transaction (the hold) shown beside the payment state; null - none yet */
+  transactionId: string | null;
+  /** the PRO project the order is linked to; null - not linked (the row is not shown) */
+  project: { id: number; name: string } | null;
 }
 
 export interface OrderStats {
@@ -141,7 +151,6 @@ export type OrderSort = "-created_at" | "created_at" | "-total_price" | "total_p
 
 export interface OrderPatch {
   status?: OrderStatus;
-  payStatus?: PayStatus;
   /** manager id; null removes the assignment */
   manager?: number | null;
 }

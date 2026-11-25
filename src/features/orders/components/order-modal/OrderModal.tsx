@@ -124,7 +124,7 @@ export function OrderModal({ orderId, onClose }: Props) {
           <div className="flex min-w-0 flex-col gap-4">
             <CustomerCard order={order} />
             <FulfillmentCard order={order} />
-            <PaymentCard order={order} saving={saving} onUpdate={handleUpdate} />
+            <PaymentCard order={order} />
             <ManagerCard order={order} saving={saving} onUpdate={handleUpdate} />
             <CommentsCard order={order} />
           </div>

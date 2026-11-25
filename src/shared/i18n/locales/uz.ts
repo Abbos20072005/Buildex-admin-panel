@@ -1929,7 +1929,7 @@ export const uz = {
       method: "Usul",
       payStatus: "Holat",
       amount: "Summa",
-      holdId: "Hold ID",
+      transactionId: "Atmos tranzaksiya ID",
       receipt: "Fiskal chek",
       openReceipt: "Chekni ochish",
       noItems: "Mahsulotlar yo‘q",
@@ -2198,6 +2198,7 @@ export const uz = {
     cancelled: "Bekor qilindi",
   },
   payType: {
+    atmos: "Onlayn · karta (Atmos)",
     click: "Click",
     payme: "Payme",
     uzum: "Uzum Bank",

@@ -72,6 +72,9 @@ function payTypeFromApi(
 
 function payTypeToQuery(type: PayType): Query {
   switch (type) {
+    // not offered in the filter: the API has no value for it (the old types stay for old orders)
+    case "atmos":
+      return {};
     case "click":
       return { payment_type: 1 };
     case "payme":
@@ -105,7 +108,11 @@ export function mapOrder(dto: OrderListDto): Order {
     receiver: { name: dto.receiver_name ?? null, phone: dto.receiver_phone ?? null },
     status: STATUS_FROM_API[dto.status] ?? "new",
     payStatus: PAY_STATUS_FROM_API[dto.payment_status ?? 0] ?? "pending",
-    payType: payTypeFromApi(dto.payment_type, dto.payment_method),
+    // an Atmos payment is "Onlayn · karta (Atmos)" (it has a hold); the rest is the old way
+    payType:
+      dto.hold_id != null || dto.payment_method === "atmos"
+        ? "atmos"
+        : payTypeFromApi(dto.payment_type, dto.payment_method),
     fulfillment,
     channel: dto.channel ? (dto.channel === "site" ? "site" : "app") : null,
     itemsCount: dto.items_count ?? 0,
@@ -170,6 +177,12 @@ function pickupOf(dto: OrderDto): PickupInfo | null {
   };
 }
 
+/** The Atmos transaction id: its own field, else the hold of the payment. */
+function transactionId(dto: OrderDto): string | null {
+  const id = dto.atmos_transaction_id ?? dto.hold_id;
+  return id === null || id === undefined || id === "" ? null : String(id);
+}
+
 export function mapOrderDetail(dto: OrderDto): OrderDetail {
   const items = (dto.items ?? []).map((item) => ({
     id: item.id,
@@ -216,7 +229,8 @@ export function mapOrderDetail(dto: OrderDto): OrderDetail {
     ofdUrl: dto.ofd_url || null,
     yandexStatus: dto.yandex_claim_status || null,
     yandexClaimId: dto.yandex_claim_id || null,
-    holdId: dto.hold_id ?? null,
+    transactionId: transactionId(dto),
+    project: dto.project?.name ? { id: dto.project.id, name: dto.project.name } : null,
   };
 }
 
@@ -271,7 +285,6 @@ export function filtersToQuery(filters: OrderFilters): Query {
 export function patchToDto(patch: OrderPatch): Record<string, unknown> {
   const body: Record<string, unknown> = {};
   if (patch.status) body.status = STATUS_TO_API[patch.status];
-  if (patch.payStatus) body.payment_status = PAY_STATUS_TO_API[patch.payStatus];
   if (patch.manager !== undefined) body.manager = patch.manager ? { id: patch.manager } : null;
   return body;
 }

@@ -84,12 +84,14 @@ export function FulfillmentCard({ order }: { order: OrderDetail }) {
       ),
     });
   }
-  // the project of the order: the API has no link between an order and a project yet (BLD-292)
-  items.push({
-    key: "project",
-    label: t("orders.modal.project"),
-    children: <span className="text-slate-400">{t("customers.soon")}</span>,
-  });
+  // the project of the order: the row is only there when the order is linked to one (BLD-551)
+  if (order.project) {
+    items.push({
+      key: "project",
+      label: t("orders.modal.project"),
+      children: order.project.name,
+    });
+  }
   if (pickup?.readyAt) {
     items.push({
       key: "readyAt",

@@ -1925,7 +1925,7 @@ export const ru: Translation = {
       method: "Способ",
       payStatus: "Статус",
       amount: "Сумма",
-      holdId: "Hold ID",
+      transactionId: "ID транзакции Atmos",
       receipt: "Фискальный чек",
       openReceipt: "Открыть чек",
       noItems: "Нет товаров",
@@ -2190,6 +2190,7 @@ export const ru: Translation = {
     cancelled: "Отменён",
   },
   payType: {
+    atmos: "Онлайн · карта (Atmos)",
     click: "Click",
     payme: "Payme",
     uzum: "Uzum Bank",

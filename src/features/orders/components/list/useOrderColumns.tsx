@@ -62,8 +62,7 @@ export function useOrderColumns(sort: OrderSort): TableColumnsType<Order> {
         render: (value: Order["fulfillment"]) => t(`fulfillment.${value}`),
       },
       {
-        // a project order would show the project here; the API has no link between an order and a
-        // project yet, so a pickup order shows its store and a delivery has nothing to show
+        // a pickup order shows its store, a delivery has nothing to show
         key: "store",
         title: t("orders.columns.store"),
         render: (_, order) =>

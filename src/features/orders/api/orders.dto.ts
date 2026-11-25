@@ -13,6 +13,8 @@ export interface OrderListDto {
   payment_status?: number;
   payment_type?: number | null;
   payment_method?: string | null;
+  /** a payment taken by Atmos has a hold: it is an online card payment */
+  hold_id?: number | null;
   delivery_type?: number;
   /** "site" | "ios" | "android" */
   channel?: string | null;
@@ -115,7 +117,10 @@ export interface OrderDto extends OrderListDto {
   ofd_url?: string | null;
   yandex_claim_id?: string | null;
   yandex_claim_status?: string | null;
-  hold_id?: number | null;
+  /** the Atmos transaction id (BLD-547); the hold id is the same payment */
+  atmos_transaction_id?: string | number | null;
+  /** the PRO project the order is linked to; null - not linked (BLD-547) */
+  project?: { id: number; name?: string | null } | null;
 }
 
 export type OrderStatsDto = Partial<
