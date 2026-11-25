@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
 import { modalStyles } from "@/theme";
 import { useOrderQuery, useUpdateOrder } from "../../hooks/queries";
+import { itemsWithoutIkpu } from "../../lib/ikpu";
 import type { OrderPatch } from "../../model/types";
 import { CommentsCard } from "./CommentsCard";
 import { CustomerCard } from "./CustomerCard";
@@ -34,12 +35,32 @@ function LoadingState() {
 /** Full order view: items, status flow, customer, fulfillment and payment. */
 export function OrderModal({ orderId, onClose }: Props) {
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { data: order, isPending, error } = useOrderQuery(orderId);
   const updateOrder = useUpdateOrder();
 
   const handleUpdate = (patch: OrderPatch) => {
     if (orderId === null) return;
+
+    // An order is not confirmed while a line has no IKPU code: the receipt needs it (BLD-542)
+    const missing = order ? itemsWithoutIkpu(order) : [];
+    if (order?.status === "new" && patch.status && patch.status !== "cancelled" && missing.length) {
+      modal.error({
+        title: t("orders.modal.ikpuBlockedTitle"),
+        content: (
+          <div>
+            <p className="mt-0">{t("orders.modal.ikpuBlockedText")}</p>
+            <ul className="m-0 pl-5">
+              {missing.map((item) => (
+                <li key={item.id}>{item.name}</li>
+              ))}
+            </ul>
+          </div>
+        ),
+      });
+      return;
+    }
+
     updateOrder.mutate(
       { id: orderId, patch },
       {

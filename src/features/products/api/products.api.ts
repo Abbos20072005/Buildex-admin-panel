@@ -1,6 +1,7 @@
 import { api, type DownloadedFile, type Page, type Paginated } from "@/shared/api";
 import type {
   CategoryPath,
+  IkpuChange,
   NamedRef,
   Product,
   ProductAttribute,
@@ -13,6 +14,7 @@ import type {
   ProductStats,
 } from "../model/types";
 import type {
+  IkpuChangeDto,
   ItemCategoryDto,
   ProductDto,
   ProductAttributeDto,
@@ -26,6 +28,7 @@ import {
   createToDto,
   filtersToQuery,
   mapAttribute,
+  mapIkpuChange,
   mapProduct,
   mapProductDetail,
   mapProductStats,
@@ -78,6 +81,14 @@ export const productsApi = {
   /** PATCH /admin/products/{id}/ */
   async update(id: number, patch: ProductPatch): Promise<ProductDetail> {
     return mapProductDetail(await api.patch<ProductDto>(`/products/${id}/`, patchToDto(patch)));
+  },
+
+  /** GET /admin/products/{id}/ikpu-history/ — who changed the IKPU code, when, from where (BLD-541) */
+  async ikpuHistory(id: number): Promise<IkpuChange[]> {
+    const data = await api.get<Paginated<IkpuChangeDto> | IkpuChangeDto[]>(
+      `/products/${id}/ikpu-history/`,
+    );
+    return (Array.isArray(data) ? data : data.results).map(mapIkpuChange);
   },
 
   /** POST /admin/products/{id}/images/ (multipart, field `image`) */

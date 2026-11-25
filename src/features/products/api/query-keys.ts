@@ -12,6 +12,7 @@ export const productKeys = {
   inReview: () => [...productKeys.stats(), "review"] as const,
   details: () => [...productKeys.all, "detail"] as const,
   detail: (id: number, lang: string) => [...productKeys.details(), id, lang] as const,
+  ikpuHistory: (id: number) => [...productKeys.all, "ikpu-history", id] as const,
 };
 
 /** Dictionaries are translated too, so the language is part of every key. */

@@ -179,6 +179,12 @@ export function mapOrderDetail(dto: OrderDto): OrderDetail {
     price: num(item.product.price),
     discountPrice: item.product.discount_price != null ? num(item.product.discount_price) : null,
     qty: item.quantity ?? 1,
+    // the price of the order; an old line has none: the product price now
+    unitPrice:
+      item.unit_price != null
+        ? num(item.unit_price)
+        : num(item.product.discount_price ?? item.product.price),
+    ikpuCode: item.ikpu_code === undefined ? undefined : (item.ikpu_code ?? ""),
   }));
   const location = dto.order_location;
   const promo = dto.promocode;

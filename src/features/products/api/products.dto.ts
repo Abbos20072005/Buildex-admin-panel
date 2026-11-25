@@ -107,6 +107,21 @@ export interface ProductDto extends ProductListDto {
   height?: string | null;
   questions_quantity?: number | null;
   attribute_values?: AttributeValueDto[];
+  /** 17 digits; "" / null - not set (BLD-541) */
+  ikpu_code?: string | null;
+  package_code?: string | null;
+}
+
+/** Item of GET /admin/products/{id}/ikpu-history/ (BLD-541) */
+export interface IkpuChangeDto {
+  id: number;
+  changed_by?: { id: number; full_name?: string | null; username?: string | null } | null;
+  created_at: string;
+  old_value?: string | null;
+  new_value?: string | null;
+  /** "product" | "order" */
+  source?: string | null;
+  order_id?: number | null;
 }
 
 export interface ProductStatsDto {

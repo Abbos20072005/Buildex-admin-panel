@@ -74,6 +74,14 @@ export const ordersApi = {
     return mapOrderDetail(await api.patch<OrderDto>(`/orders/${id}/`, patchToDto(patch)));
   },
 
+  /**
+   * PATCH /admin/orders/{id}/items/{itemId}/ — the IKPU code of one line, only while the order is
+   * not confirmed; the server also writes it to the product card (BLD-541).
+   */
+  async setItemIkpu(orderId: number, itemId: number, ikpuCode: string): Promise<void> {
+    await api.patch(`/orders/${orderId}/items/${itemId}/`, { ikpu_code: ikpuCode });
+  },
+
   /** Every order matching the filters, page by page (CSV export). */
   async listAll(
     filters: OrderFilters,

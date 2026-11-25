@@ -84,6 +84,15 @@ export function useProductQuery(id: number | null) {
   });
 }
 
+/** The IKPU journal of a product (the code is edited on the card and inside orders). */
+export function useIkpuHistoryQuery(id: number) {
+  return useQuery({
+    queryKey: productKeys.ikpuHistory(id),
+    queryFn: () => productsApi.ikpuHistory(id),
+    retry: false,
+  });
+}
+
 /* ---------- dictionaries ---------- */
 
 const LONG = 30 * 60_000;

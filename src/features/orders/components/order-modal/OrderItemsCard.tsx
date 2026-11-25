@@ -1,14 +1,18 @@
 import { InboxIcon } from "@/shared/icons";
-import { Card, Table, type TableColumnsType } from "antd";
+import { Alert, Card, Table, type TableColumnsType } from "antd";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { formatDate, formatNumber } from "@/shared/lib/format";
+import { canEditIkpu, itemsWithoutIkpu } from "../../lib/ikpu";
 import type { OrderDetail, OrderItem } from "../../model/types";
+import { IkpuCell } from "./IkpuCell";
 
-const unitPrice = (item: OrderItem) => item.discountPrice ?? item.price;
+/** The price of the order (BLD-542): so the lines add up to "Mahsulotlar" even after a price change. */
+const unitPrice = (item: OrderItem) => item.unitPrice;
 
-function useItemColumns(): TableColumnsType<OrderItem> {
+function useItemColumns(order: OrderDetail): TableColumnsType<OrderItem> {
   const { t } = useTranslation();
+  const editable = canEditIkpu(order);
   return [
     {
       key: "thumb",
@@ -29,20 +33,19 @@ function useItemColumns(): TableColumnsType<OrderItem> {
         </div>
       ),
     },
+    {
+      key: "ikpu",
+      title: t("orders.modal.ikpu"),
+      width: 190,
+      render: (_, item) => <IkpuCell orderId={order.id} item={item} editable={editable} />,
+    },
     { key: "qty", title: t("orders.modal.qty"), dataIndex: "qty", align: "right", width: 80 },
     {
       key: "price",
       title: t("orders.modal.price"),
       align: "right",
       width: 130,
-      render: (_, item) => (
-        <div className="tabular-nums">
-          {formatNumber(unitPrice(item))}
-          {item.discountPrice != null && item.discountPrice < item.price && (
-            <div className="text-xs text-slate-400 line-through">{formatNumber(item.price)}</div>
-          )}
-        </div>
-      ),
+      render: (_, item) => <div className="tabular-nums">{formatNumber(unitPrice(item))}</div>,
     },
     {
       key: "total",
@@ -68,7 +71,8 @@ function TotalsRow({ label, value, tone }: { label: ReactNode; value: ReactNode;
 
 export function OrderItemsCard({ order }: { order: OrderDetail }) {
   const { t } = useTranslation();
-  const columns = useItemColumns();
+  const columns = useItemColumns(order);
+  const missing = itemsWithoutIkpu(order).length;
   const itemsSum = order.items.reduce((sum, item) => sum + item.qty * unitPrice(item), 0);
   const promo = order.promocode;
 
@@ -84,13 +88,22 @@ export function OrderItemsCard({ order }: { order: OrderDetail }) {
       }
       styles={{ body: { padding: 0 } }}
     >
+      {missing > 0 && canEditIkpu(order) && (
+        <Alert
+          type="warning"
+          showIcon
+          banner
+          title={t("orders.modal.ikpuMissingBanner", { count: missing })}
+        />
+      )}
       <Table<OrderItem>
         rowKey="id"
         size="small"
         columns={columns}
         dataSource={order.items}
         pagination={false}
-        scroll={{ x: 560 }}
+        rowClassName={(item) => (item.ikpuCode === "" ? "bg-red-50" : "")}
+        scroll={{ x: 750 }}
         locale={{ emptyText: t("orders.modal.noItems") }}
       />
 

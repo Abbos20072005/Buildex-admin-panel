@@ -28,6 +28,8 @@ export interface ProductFormValues {
   publishStatus: PublishStatus;
   isActive: boolean;
   purchasable: boolean;
+  ikpuCode: string;
+  packageCode: string;
 }
 
 /** API field of a server validation error → form field (the rest are the same in camelCase) */
@@ -50,6 +52,8 @@ export const PRODUCT_ERROR_FIELDS: FieldMap = {
   badges: "badgeId",
   product_model: "modelId",
   articul_code: "articul",
+  ikpu_code: "ikpuCode",
+  package_code: "packageCode",
 };
 
 /** The form of a new product: everything of the edit form plus prices, codes and sizes. */
@@ -83,6 +87,8 @@ export function emptyCreateValues(): ProductCreateValues {
     publishStatus: "draft",
     isActive: false,
     purchasable: false,
+    ikpuCode: "",
+    packageCode: "",
     onOrder: false,
     price: null,
     discountPrice: null,
@@ -173,6 +179,8 @@ export function placeholderProduct(
     height: null,
     commentsCount: 0,
     questionsCount: 0,
+    ikpuCode: "",
+    packageCode: "",
   };
 }
 
@@ -195,6 +203,8 @@ export function toFormValues(product: ProductDetail): ProductFormValues {
     publishStatus: product.publishStatus,
     isActive: product.isActive,
     purchasable: product.purchasable,
+    ikpuCode: product.ikpuCode,
+    packageCode: product.packageCode,
   };
 }
 
@@ -238,6 +248,10 @@ export function buildPatch(product: ProductDetail, values: ProductFormValues): P
   if (values.publishStatus !== initial.publishStatus) patch.publishStatus = values.publishStatus;
   if (values.isActive !== initial.isActive) patch.isActive = values.isActive;
   if (values.purchasable !== initial.purchasable) patch.purchasable = values.purchasable;
+  const ikpuCode = (values.ikpuCode ?? initial.ikpuCode).trim();
+  if (ikpuCode !== initial.ikpuCode) patch.ikpuCode = ikpuCode;
+  const packageCode = (values.packageCode ?? initial.packageCode).trim();
+  if (packageCode !== initial.packageCode) patch.packageCode = packageCode;
 
   return Object.fromEntries(
     Object.entries(patch).filter(([, value]) => value !== undefined),

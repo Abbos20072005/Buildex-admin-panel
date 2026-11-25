@@ -28,6 +28,7 @@ const PARAM = {
   hasDiscount: "disc",
   purchasable: "buy",
   erpActive: "erp",
+  ikpuMissing: "ikpu",
   minPrice: "min",
   maxPrice: "max",
   from: "from",
@@ -46,6 +47,7 @@ const FILTER_KEYS: ParamKey[] = [
   "hasDiscount",
   "purchasable",
   "erpActive",
+  "ikpuMissing",
   "minPrice",
   "maxPrice",
   "from",
@@ -94,6 +96,7 @@ export function useProductListState() {
   const hasDiscount = toBool(params.get(PARAM.hasDiscount));
   const purchasable = toBool(params.get(PARAM.purchasable));
   const erpActive = toBool(params.get(PARAM.erpActive));
+  const ikpuMissing = toBool(params.get(PARAM.ikpuMissing));
   const minPrice = toNumber(params.get(PARAM.minPrice));
   const maxPrice = toNumber(params.get(PARAM.maxPrice));
   const from = params.get(PARAM.from) ?? undefined;
@@ -111,6 +114,7 @@ export function useProductListState() {
       hasDiscount,
       purchasable,
       erpActive,
+      ikpuMissing,
       minPrice,
       maxPrice,
       from,
@@ -126,6 +130,7 @@ export function useProductListState() {
       hasDiscount,
       purchasable,
       erpActive,
+      ikpuMissing,
       minPrice,
       maxPrice,
       from,

@@ -95,6 +95,21 @@ export function useUpdateOrder() {
   });
 }
 
+/** Saves the IKPU code of an order line; the order and the product card show the new code. */
+export function useSetOrderItemIkpu(orderId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ itemId, ikpuCode }: { itemId: number; ikpuCode: string }) =>
+      ordersApi.setItemIkpu(orderId, itemId, ikpuCode),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderId) });
+      // the product card has the code too (and its journal)
+      void queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+}
+
 export interface BulkUpdateResult {
   succeeded: number;
   failed: number;

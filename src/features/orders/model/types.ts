@@ -44,9 +44,14 @@ export interface OrderItem {
   productId: number;
   name: string;
   code: string | null;
+  /** the price of the product now (not the one of the order) */
   price: number;
   discountPrice: number | null;
   qty: number;
+  /** the price of 1 piece when the order was placed (BLD-542); the lines add up to the order */
+  unitPrice: number;
+  /** IKPU (MXIK) code of the line; "" - not set; undefined - the API does not send it yet */
+  ikpuCode?: string;
 }
 
 /** Staff member a customer's order is assigned to (not a login account). */

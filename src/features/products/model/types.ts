@@ -118,10 +118,31 @@ export interface ProductDetail extends Omit<
   height: string | null;
   commentsCount: number;
   questionsCount: number;
+  /** IKPU (MXIK) code of the tax receipt: 17 digits, "" while it is not set */
+  ikpuCode: string;
+  /** the package code (код упаковки): optional, "" while it is not set */
+  packageCode: string;
+}
+
+/** The IKPU code is 17 digits (tasnif.soliq.uz). */
+export const IKPU_PATTERN = /^\d{17}$/;
+
+/** A line of the IKPU journal of a product: who changed it, when, from where. */
+export interface IkpuChange {
+  id: number;
+  changedBy: string;
+  createdAt: string;
+  oldValue: string;
+  newValue: string;
+  /** "order" - changed inside an order; "product" - on the product card */
+  source: "product" | "order";
+  orderId: number | null;
 }
 
 /** Fields the admin can edit in the product modal. */
 export interface ProductPatch {
+  ikpuCode?: string;
+  packageCode?: string;
   names?: Partial<Localized>;
   descriptions?: Partial<Localized>;
   shortDescriptions?: Partial<Localized>;
@@ -181,6 +202,8 @@ export interface ProductFilters {
   hasDiscount?: boolean;
   purchasable?: boolean;
   erpActive?: boolean;
+  /** true: the products without an IKPU code; false: those that have one */
+  ikpuMissing?: boolean;
   minPrice?: number;
   maxPrice?: number;
   from?: string;

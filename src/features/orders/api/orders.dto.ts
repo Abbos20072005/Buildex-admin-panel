@@ -107,6 +107,10 @@ export interface OrderDto extends OrderListDto {
       price: number;
       discount_price: number | null;
     };
+    /** the price of 1 piece when the order was placed, as a decimal string; null - an old line */
+    unit_price?: string | number | null;
+    /** IKPU (MXIK) code of the line, 17 digits; "" - not set (BLD-541) */
+    ikpu_code?: string | null;
   }[];
   ofd_url?: string | null;
   yandex_claim_id?: string | null;

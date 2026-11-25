@@ -10,6 +10,7 @@ import { ProductCatalogCard } from "./ProductCatalogCard";
 import { ProductCharacteristicsCard } from "./ProductCharacteristicsCard";
 import { ProductContentCard } from "./ProductContentCard";
 import { ProductErpCard } from "./ProductErpCard";
+import { ProductIkpuCard } from "./ProductIkpuCard";
 import { ProductImagesCard } from "./ProductImagesCard";
 import { ProductLinksCard } from "./ProductLinksCard";
 import { ProductPageHeader } from "./ProductPageHeader";
@@ -147,6 +148,7 @@ export function ProductEditor({ productId, onBack }: Props) {
             <div className="flex min-w-0 flex-col gap-4">
               <ProductPublishCard product={shown} />
               <ProductErpCard product={shown} />
+              <ProductIkpuCard product={shown} />
               <ProductCatalogCard product={shown} />
               <ProductRatingCard product={shown} />
             </div>

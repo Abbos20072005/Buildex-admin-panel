@@ -17,7 +17,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-type BoolKey = "inStock" | "hasDiscount" | "purchasable" | "erpActive";
+type BoolKey = "inStock" | "hasDiscount" | "purchasable" | "erpActive" | "ikpuMissing";
 
 /** "Yes / No" select for a boolean API filter. */
 function BoolSelect({
@@ -99,6 +99,10 @@ export function ProductsFilterPanel({ state }: { state: ProductListState }) {
 
         <Field label={t("products.filter.erp")}>
           <BoolSelect name="erpActive" filters={filters} onChange={setFilter} />
+        </Field>
+
+        <Field label={t("products.filter.ikpu")}>
+          <BoolSelect name="ikpuMissing" filters={filters} onChange={setFilter} />
         </Field>
 
         <Field label={t("products.filter.badge")}>

@@ -3,6 +3,7 @@ import {
   LINK_KINDS,
   type AttributeValue,
   type CategoryPath,
+  type IkpuChange,
   type LinkedProduct,
   type LinkKind,
   type NamedRef,
@@ -18,6 +19,7 @@ import {
 import type {
   AttributeValueDto,
   AttributeValueWriteDto,
+  IkpuChangeDto,
   ItemCategoryRefDto,
   LinkedProductDto,
   NamedRefDto,
@@ -158,6 +160,20 @@ export function mapProductDetail(dto: ProductDto): ProductDetail {
     height: dto.height ?? null,
     commentsCount: dto.comments_quantity ?? 0,
     questionsCount: dto.questions_quantity ?? 0,
+    ikpuCode: text(dto.ikpu_code),
+    packageCode: text(dto.package_code),
+  };
+}
+
+export function mapIkpuChange(dto: IkpuChangeDto): IkpuChange {
+  return {
+    id: dto.id,
+    changedBy: dto.changed_by?.full_name?.trim() || dto.changed_by?.username || "—",
+    createdAt: dto.created_at,
+    oldValue: text(dto.old_value),
+    newValue: text(dto.new_value),
+    source: dto.source === "order" || dto.order_id ? "order" : "product",
+    orderId: dto.order_id ?? null,
   };
 }
 
@@ -184,6 +200,7 @@ export function filtersToQuery(filters: ProductFilters): Query {
     has_discount: filters.hasDiscount,
     purchasable: filters.purchasable,
     erp_active: filters.erpActive,
+    ikpu_missing: filters.ikpuMissing,
     min_price: filters.minPrice,
     max_price: filters.maxPrice,
     from_created: filters.from,
@@ -270,5 +287,7 @@ export function patchToDto(patch: ProductPatch): Partial<Record<string, unknown>
   if (patch.publishStatus) dto.publish_status = patch.publishStatus;
   if (patch.isActive !== undefined) dto.is_active = patch.isActive;
   if (patch.purchasable !== undefined) dto.purchasable = patch.purchasable;
+  if (patch.ikpuCode !== undefined) dto.ikpu_code = patch.ikpuCode;
+  if (patch.packageCode !== undefined) dto.package_code = patch.packageCode;
   return dto;
 }
