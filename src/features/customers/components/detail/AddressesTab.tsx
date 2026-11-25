@@ -1,6 +1,7 @@
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
-import { maskPhone } from "@/shared/lib/format";
+import { formatPhone } from "@/shared/lib/format";
+import { useCustomerPhone } from "../../hooks/queries";
 import type { Customer, CustomerAddress } from "../../model/types";
 
 /** "kv. 4 · 2-kirish · 3-qavat · domofon 1234": what the courier needs besides the street. */
@@ -17,6 +18,7 @@ const detailsLine = (address: CustomerAddress, t: TFunction) =>
 /** The saved addresses; the customer manages them in the app or on the site, the admin only reads. */
 export function AddressesTab({ customer }: { customer: Customer }) {
   const { t } = useTranslation();
+  const phone = useCustomerPhone(customer.id, customer.phone);
   return (
     <div>
       <p className="mt-0 mb-3 text-xs text-slate-500">{t("customers.addressesHint")}</p>
@@ -45,7 +47,7 @@ export function AddressesTab({ customer }: { customer: Customer }) {
               <div className="mt-2 flex gap-2 text-xs text-slate-500">
                 <span>{address.recipientName || customer.fullName || "—"}</span>
                 <span className="font-mono">
-                  {maskPhone(address.recipientPhone || customer.phone)}
+                  {formatPhone(address.recipientPhone || phone)}
                 </span>
               </div>
               {address.courierComment && (

@@ -38,13 +38,6 @@ export function formatPhone(raw: string | null | undefined): string {
   return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(5, 8)} ${digits.slice(8, 10)} ${digits.slice(10)}`;
 }
 
-/** "+998901234567" → "+998 90 *** ** 67" */
-export function maskPhone(raw: string | null | undefined): string {
-  const digits = onlyDigits(raw ?? "");
-  if (digits.length !== 12) return raw ?? "";
-  return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} *** ** ${digits.slice(10)}`;
-}
-
 export function telHref(raw: string): string {
   return `tel:+${onlyDigits(raw)}`;
 }

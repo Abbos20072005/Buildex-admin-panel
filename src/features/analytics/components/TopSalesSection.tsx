@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { compactMoney, oneDecimal } from "@/features/dashboard";
 import { getErrorMessage } from "@/shared/api";
-import { formatNumber } from "@/shared/lib/format";
+import { formatNumber, formatPhone } from "@/shared/lib/format";
 import { BarListSkeleton, TableSkeleton, WidgetCard } from "@/shared/ui";
 import type { TopGroup, TopPeriod } from "../api/topSales.api";
 import { useTopCustomersQuery, useTopSalesQuery } from "../hooks/queries";
@@ -159,7 +159,7 @@ function TopCustomersCard({ period }: { period: TopPeriod }) {
                         )}
                       </div>
                       <div className="font-mono text-[11px] text-slate-500">
-                        {customer.phoneNumber}
+                        {formatPhone(customer.phoneNumber)}
                       </div>
                     </td>
                     <td className="py-2.5 pr-3">

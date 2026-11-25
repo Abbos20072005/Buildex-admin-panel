@@ -4,24 +4,23 @@ import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/shared/api";
 import { CheckIcon, LockIcon } from "@/shared/icons";
 import { formatPhone } from "@/shared/lib/format";
-import { usePatchCustomerProfile, useRevealCustomerPhone } from "../../hooks/queries";
+import { useCustomerPhone, usePatchCustomerProfile } from "../../hooks/queries";
 import { CUSTOMER_LANGUAGES, CUSTOMER_ROLES, type Customer } from "../../model/types";
 import { RoleChangeModal } from "./RoleChangeModal";
 import { InfoRow, SectionCard } from "./SectionCard";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Name, e-mail and language (editable), the phone (masked until "Ko'rsatish"). */
+/** Name, e-mail and language (editable) and the whole phone. */
 export function ProfileCard({ customer }: { customer: Customer }) {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const patch = usePatchCustomerProfile();
-  const reveal = useRevealCustomerPhone();
+  /** the whole number is always shown (BLD-543): a masked one is asked from the server */
+  const phone = useCustomerPhone(customer.id, customer.phone);
   const [name, setName] = useState(customer.fullName);
   const [email, setEmail] = useState(customer.email);
   const [language, setLanguage] = useState(customer.language ?? undefined);
-  /** the whole number, once the server has given it (each reveal is written to the journal) */
-  const [phone, setPhone] = useState<string>();
   const [roleOpen, setRoleOpen] = useState(false);
 
   const emailInvalid = email.trim() !== "" && !EMAIL_PATTERN.test(email.trim());
@@ -47,14 +46,6 @@ export function ProfileCard({ customer }: { customer: Customer }) {
       },
     );
 
-  const toggleHidden = () => {
-    if (phone) return setPhone(undefined);
-    reveal.mutate(customer.id, {
-      onSuccess: setPhone,
-      onError: (error) => message.error(getErrorMessage(error)),
-    });
-  };
-
   return (
     <SectionCard title={t("customers.profile.title")} flush>
       <div className="px-5">
@@ -63,16 +54,7 @@ export function ProfileCard({ customer }: { customer: Customer }) {
         </InfoRow>
         <InfoRow label={t("customers.profile.phone")}>
           <div className="flex flex-wrap items-center gap-3">
-            {/* the list and the card get the number masked: "+998 90 *** ** 67" */}
-            <span className="font-mono">{phone ? formatPhone(phone) : customer.phone}</span>
-            <button
-              type="button"
-              disabled={reveal.isPending}
-              onClick={toggleHidden}
-              className="cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-brand disabled:cursor-wait disabled:text-slate-400"
-            >
-              {t(phone ? "customers.profile.hide" : "customers.profile.show")}
-            </button>
+            <span className="font-mono">{formatPhone(phone)}</span>
             {customer.verified ? (
               <Tag color="green" variant="filled" icon={<CheckIcon />} className="m-0">
                 {t("customers.profile.verified")}

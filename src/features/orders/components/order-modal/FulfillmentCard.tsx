@@ -1,6 +1,6 @@
 import { Card, Descriptions, Tag, type DescriptionsProps } from "antd";
 import { useTranslation } from "react-i18next";
-import { formatDateTime, maskPhone } from "@/shared/lib/format";
+import { formatDateTime, formatPhone } from "@/shared/lib/format";
 import type { OrderDetail } from "../../model/types";
 
 function MapPreview({ lat, lng }: { lat: number; lng: number }) {
@@ -63,7 +63,7 @@ export function FulfillmentCard({ order }: { order: OrderDetail }) {
       children: (
         <span className="flex flex-col items-end">
           {receiver.name && <span>{receiver.name}</span>}
-          {receiver.phone && <span className="font-mono">{maskPhone(receiver.phone)}</span>}
+          {receiver.phone && <span className="font-mono">{formatPhone(receiver.phone)}</span>}
         </span>
       ),
     });

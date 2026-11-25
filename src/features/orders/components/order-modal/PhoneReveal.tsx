@@ -1,32 +1,15 @@
-import { Button } from "antd";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { formatPhone, maskPhone, telHref } from "@/shared/lib/format";
+import { useCustomerPhone } from "@/features/customers";
+import { formatPhone, telHref } from "@/shared/lib/format";
 
-/** Shows a masked phone number; "Show" reveals it as a tel: link. */
-export function PhoneReveal({ phone }: { phone: string }) {
-  const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
+/** The whole phone number as a tel: link (BLD-543); a masked one is asked from the server. */
+export function PhoneReveal({ phone, customerId }: { phone: string; customerId: number | null }) {
+  const whole = useCustomerPhone(customerId, phone);
 
-  if (!phone) return <>—</>;
+  if (!whole) return <>—</>;
 
   return (
-    <span className="inline-flex items-center gap-2">
-      {visible ? (
-        <a href={telHref(phone)} className="font-mono">
-          {formatPhone(phone)}
-        </a>
-      ) : (
-        <span className="font-mono">{maskPhone(phone)}</span>
-      )}
-      <Button
-        type="link"
-        size="small"
-        className="p-0 font-semibold"
-        onClick={() => setVisible((v) => !v)}
-      >
-        {visible ? t("orders.modal.hide") : t("orders.modal.show")}
-      </Button>
-    </span>
+    <a href={telHref(whole)} className="font-mono">
+      {formatPhone(whole)}
+    </a>
   );
 }

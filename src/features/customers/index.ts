@@ -6,6 +6,7 @@ export { CustomersToolbar } from "./components/CustomersToolbar";
 export { CustomerDetail } from "./components/detail/CustomerDetail";
 export { CustomerStatsCards } from "./components/CustomerStatsCards";
 export {
+  useCustomerPhone,
   useCustomersCountQuery,
   useCustomersQuery,
   useCustomerStatsQuery,

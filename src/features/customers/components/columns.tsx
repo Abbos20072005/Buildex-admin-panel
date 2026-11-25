@@ -1,7 +1,7 @@
 import { Tag, type TableColumnsType } from "antd";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
-import { formatDate, formatNumber, maskPhone } from "@/shared/lib/format";
+import { formatDate, formatNumber, formatPhone } from "@/shared/lib/format";
 import { InitialsAvatar } from "@/shared/ui";
 import { CUSTOMER_API } from "../model/capabilities";
 import type { Customer } from "../model/types";
@@ -67,7 +67,7 @@ export const customerColumns = (t: TFunction): TableColumnsType<Customer> => [
     key: "phone",
     title: t("customers.columns.phone"),
     width: 170,
-    render: (_, item) => <span className="font-mono text-xs">{maskPhone(item.phone)}</span>,
+    render: (_, item) => <span className="font-mono text-xs">{formatPhone(item.phone)}</span>,
   },
   {
     key: "channel",

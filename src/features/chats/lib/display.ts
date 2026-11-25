@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import type { TFunction } from "i18next";
-import { maskPhone } from "@/shared/lib/format";
+import { formatPhone } from "@/shared/lib/format";
 import type { Chat } from "../model/types";
 
 /** The customer's name, or the phone, or "Guest" for a chat nobody is logged in to. */
 export function chatTitle(chat: Pick<Chat, "customer">, t: TFunction): string {
   const customer = chat.customer;
   if (!customer) return t("chats.guest");
-  return customer.fullName || maskPhone(customer.phone) || t("chats.guest");
+  return customer.fullName || formatPhone(customer.phone) || t("chats.guest");
 }
 
 /** "Bugun", "Kecha" or the date — the label of a day in the thread. */

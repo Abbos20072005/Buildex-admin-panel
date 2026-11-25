@@ -19,7 +19,16 @@ export function CustomerCard({ order }: { order: OrderDetail }) {
     {
       key: "phone",
       label: t("orders.modal.phone"),
-      children: <PhoneReveal phone={customer?.phone || order.customer.phone} />,
+      children: (
+        <PhoneReveal
+          phone={
+            order.customer.phone && !order.customer.phone.includes("*")
+              ? order.customer.phone
+              : customer?.phone || order.customer.phone
+          }
+          customerId={order.customer.id}
+        />
+      ),
     },
   ];
 

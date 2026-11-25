@@ -6,7 +6,7 @@ import {
   formatNumber,
   formatOrderId,
   formatTime,
-  maskPhone,
+  formatPhone,
 } from "@/shared/lib/format";
 import { CardLink, WidgetCard } from "@/shared/ui";
 
@@ -65,7 +65,7 @@ export function RecentOrdersTable({ orders }: { orders: Order[] }) {
                   <td className="px-3 py-3">
                     <div className="font-medium">{order.customer.name}</div>
                     <div className="font-mono text-xs text-slate-400">
-                      {maskPhone(order.customer.phone)}
+                      {formatPhone(order.customer.phone)}
                     </div>
                   </td>
                   <td className="px-3 py-3">{t(`fulfillment.${order.fulfillment}`)}</td>

@@ -58,15 +58,26 @@ export function useCustomerActivityQuery(id: number) {
   });
 }
 
-/** The whole phone number. Not cached: every call is written to the journal on the server. */
-export function useRevealCustomerPhone() {
+/**
+ * The whole phone number of a customer, always shown (BLD-543). The customer API gives it masked
+ * ("+998 90 *** ** 67"); then the whole number is asked from reveal-phone/ once per 10 minutes
+ * (every call is written to the journal on the server). A number that is not masked is returned as is.
+ */
+export function useCustomerPhone(id: number | null, phone: string): string {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: number) => customersApi.revealPhone(id),
-    // the journal now has a "phone shown" line
-    onSuccess: (_phone, id) =>
-      void queryClient.invalidateQueries({ queryKey: [...ALL, "activity", id] }),
+  const masked = phone.includes("*");
+  const { data } = useQuery({
+    queryKey: [...ALL, "phone", id],
+    queryFn: async () => {
+      const whole = await customersApi.revealPhone(id as number);
+      void queryClient.invalidateQueries({ queryKey: [...ALL, "activity", id] });
+      return whole;
+    },
+    enabled: masked && id !== null,
+    staleTime: 10 * 60_000,
+    retry: false,
   });
+  return masked ? (data ?? phone) : phone;
 }
 
 export function useCustomerNotesQuery(id: number) {
