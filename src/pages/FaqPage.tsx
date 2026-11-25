@@ -1,34 +1,18 @@
 import { PlusIcon } from "@/shared/icons";
-import { Button, Segmented } from "antd";
+import { Button } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ItemEditor,
-  ItemsSection,
-  TOPICS_PAGE_SIZE,
-  TopicEditor,
-  TopicsSection,
-  useFaqTopicsQuery,
-  type FaqItem,
-  type FaqTopic,
-} from "@/features/faq";
+import { ItemEditor, ItemsSection, type FaqItem } from "@/features/faq";
+import type { FaqCategory } from "@/features/faq/model/types";
 
-type Tab = "items" | "topics";
-
-/** "Savol-javoblar": the questions of the site and the app, grouped by topics. */
+/** "Savol-javoblar": the questions of the site and the app, grouped by fixed categories. */
 export function FaqPage() {
   const { t } = useTranslation();
 
-  const [tab, setTab] = useState<Tab>("items");
-  /** the topic chosen in the questions' filter — a new question starts in it */
-  const [topicId, setTopicId] = useState<number>();
+  /** the category chosen in the questions' filter — a new question starts in it */
+  const [category, setCategory] = useState<FaqCategory>();
   /** an object — that record is edited; "new" — the create form; null — closed */
   const [item, setItem] = useState<FaqItem | "new" | null>(null);
-  const [topic, setTopic] = useState<FaqTopic | "new" | null>(null);
-
-  // the same query as the topics tab: one request feeds both lists and the question form
-  const topics = useFaqTopicsQuery({ page: 1, pageSize: TOPICS_PAGE_SIZE });
-  const topicList = topics.data?.items ?? [];
 
   return (
     <>
@@ -37,64 +21,19 @@ export function FaqPage() {
           <div className="text-xs text-slate-500">{t("nav.contents")}</div>
           <h1 className="m-0 text-2xl font-bold tracking-tight">{t("nav.faq")}</h1>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            icon={<PlusIcon />}
-            onClick={() => {
-              setTab("topics");
-              setTopic("new");
-            }}
-          >
-            {t("faq.addTopic")}
-          </Button>
-          <Button
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => {
-              setTab("items");
-              setItem("new");
-            }}
-          >
-            {t("faq.addItem")}
-          </Button>
-        </div>
+        <Button type="primary" icon={<PlusIcon />} onClick={() => setItem("new")}>
+          {t("faq.addItem")}
+        </Button>
       </div>
 
-      <Segmented<Tab>
-        className="mb-4"
-        value={tab}
-        onChange={setTab}
-        options={[
-          { value: "items", label: t("faq.tabItems") },
-          { value: "topics", label: t("faq.tabTopics") },
-        ]}
-      />
-
-      {tab === "items" ? (
-        <ItemsSection
-          topics={topicList}
-          topicId={topicId}
-          onTopicChange={setTopicId}
-          onOpen={setItem}
-        />
-      ) : (
-        <TopicsSection onOpen={setTopic} />
-      )}
+      <ItemsSection category={category} onCategoryChange={setCategory} onOpen={setItem} />
 
       {item !== null && (
         <ItemEditor
           key={item === "new" ? "new" : item.id}
           item={item === "new" ? null : item}
-          topics={topicList}
-          defaultTopicId={topicId}
+          defaultCategory={category}
           onClose={() => setItem(null)}
-        />
-      )}
-      {topic !== null && (
-        <TopicEditor
-          key={topic === "new" ? "new" : topic.id}
-          topic={topic === "new" ? null : topic}
-          onClose={() => setTopic(null)}
         />
       )}
     </>

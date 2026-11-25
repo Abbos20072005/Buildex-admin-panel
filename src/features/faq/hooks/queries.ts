@@ -1,22 +1,9 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { faqApi } from "../api/faq.api";
-import type {
-  FaqItemInput,
-  FaqItemListParams,
-  FaqTopicInput,
-  FaqTopicListParams,
-} from "../model/types";
+import type { FaqItemInput, FaqItemListParams } from "../model/types";
 
-/** Query-key root of the feature — topics and questions are refetched together (counters). */
+/** Query-key root of the feature. */
 const ALL = ["faq"] as const;
-
-export function useFaqTopicsQuery(params: FaqTopicListParams) {
-  return useQuery({
-    queryKey: [...ALL, "topics", params],
-    queryFn: () => faqApi.listTopics(params),
-    placeholderData: keepPreviousData,
-  });
-}
 
 export function useFaqItemsQuery(params: FaqItemListParams) {
   return useQuery({
@@ -29,48 +16,6 @@ export function useFaqItemsQuery(params: FaqItemListParams) {
 function useInvalidate() {
   const queryClient = useQueryClient();
   return () => void queryClient.invalidateQueries({ queryKey: ALL });
-}
-
-export function useCreateFaqTopic() {
-  const invalidate = useInvalidate();
-  return useMutation({
-    mutationFn: (input: FaqTopicInput) => faqApi.createTopic(input),
-    onSuccess: invalidate,
-  });
-}
-
-export function useUpdateFaqTopic() {
-  const invalidate = useInvalidate();
-  return useMutation({
-    mutationFn: ({ id, input }: { id: number; input: FaqTopicInput }) =>
-      faqApi.updateTopic(id, input),
-    onSuccess: invalidate,
-  });
-}
-
-export function useSetFaqTopicActive() {
-  const invalidate = useInvalidate();
-  return useMutation({
-    mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) =>
-      faqApi.setTopicActive(id, isActive),
-    onSuccess: invalidate,
-  });
-}
-
-export function useDeleteFaqTopic() {
-  const invalidate = useInvalidate();
-  return useMutation({
-    mutationFn: (id: number) => faqApi.removeTopic(id),
-    onSuccess: invalidate,
-  });
-}
-
-export function useReorderFaqTopics() {
-  const invalidate = useInvalidate();
-  return useMutation({
-    mutationFn: (ids: number[]) => faqApi.reorderTopics(ids),
-    onSettled: invalidate,
-  });
 }
 
 export function useCreateFaqItem() {

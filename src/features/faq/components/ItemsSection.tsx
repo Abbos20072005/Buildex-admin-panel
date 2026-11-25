@@ -12,21 +12,26 @@ import {
   useSetFaqItemActive,
 } from "../hooks/queries";
 import { byLang, movedIds, plainText } from "../lib/display";
-import { FAQ_PAGE_KEYS, type FaqItem, type FaqPageKey, type FaqTopic } from "../model/types";
+import {
+  FAQ_CATEGORIES,
+  FAQ_PAGE_KEYS,
+  type FaqCategory,
+  type FaqItem,
+  type FaqPageKey,
+} from "../model/types";
 import { MoveButtons } from "./MoveButtons";
 
 interface Props {
-  topics: FaqTopic[];
-  /** the topic chosen in the filter (the page opens a new question in it) */
-  topicId: number | undefined;
-  onTopicChange: (id: number | undefined) => void;
+  /** the category chosen in the filter (the page opens a new question in it) */
+  category: FaqCategory | undefined;
+  onCategoryChange: (category: FaqCategory | undefined) => void;
   onOpen: (item: FaqItem) => void;
 }
 
 type Visibility = "visible" | "hidden";
 
-/** The list of questions: filters, the order inside a topic, the visibility switch. */
-export function ItemsSection({ topics, topicId, onTopicChange, onOpen }: Props) {
+/** The list of questions: filters, the order inside a category, the visibility switch. */
+export function ItemsSection({ category, onCategoryChange, onOpen }: Props) {
   const { t, i18n } = useTranslation();
   const { message, modal } = App.useApp();
 
@@ -39,7 +44,7 @@ export function ItemsSection({ topics, topicId, onTopicChange, onOpen }: Props) 
   const list = useFaqItemsQuery({
     filters: {
       search: useDebouncedValue(search, 300),
-      topicId,
+      category,
       pageKey,
       isActive: visibility && visibility === "visible",
     },
@@ -52,9 +57,9 @@ export function ItemsSection({ topics, topicId, onTopicChange, onOpen }: Props) 
 
   const items = list.data?.items ?? [];
   const total = list.data?.total ?? 0;
-  // the order is the order inside ONE topic, and only the whole topic can be reordered
+  // the order is the order inside ONE category, and only the whole category can be reordered
   const canReorder =
-    topicId !== undefined && !search && !pageKey && !visibility && items.length === total;
+    category !== undefined && !search && !pageKey && !visibility && items.length === total;
 
   const move = (index: number, step: -1 | 1) => {
     const ids = movedIds(
@@ -111,10 +116,10 @@ export function ItemsSection({ topics, topicId, onTopicChange, onOpen }: Props) 
       ),
     },
     {
-      key: "topic",
-      title: t("faq.columns.topic"),
+      key: "category",
+      title: t("faq.columns.category"),
       width: 170,
-      render: (_, item) => item.topic.name,
+      render: (_, item) => t(`faq.categories.${item.category}`),
     },
     {
       key: "pages",
@@ -169,19 +174,16 @@ export function ItemsSection({ topics, topicId, onTopicChange, onOpen }: Props) 
             resetPage();
           }}
         />
-        <Select<number>
+        <Select<FaqCategory>
           allowClear
           className="w-56"
-          placeholder={t("faq.columns.topic")}
-          value={topicId}
+          placeholder={t("faq.columns.category")}
+          value={category}
           onChange={(value) => {
-            onTopicChange(value);
+            onCategoryChange(value);
             resetPage();
           }}
-          options={topics.map((topic) => ({
-            value: topic.id,
-            label: byLang(topic.nameUz, topic.nameRu, i18n.language),
-          }))}
+          options={FAQ_CATEGORIES.map((key) => ({ value: key, label: t(`faq.categories.${key}`) }))}
         />
         <Select<FaqPageKey>
           allowClear
@@ -209,7 +211,7 @@ export function ItemsSection({ topics, topicId, onTopicChange, onOpen }: Props) 
           ]}
         />
       </div>
-      {topicId === undefined && (
+      {category === undefined && (
         <p className="mt-0 mb-3 text-xs text-slate-500">{t("faq.reorderHint")}</p>
       )}
 

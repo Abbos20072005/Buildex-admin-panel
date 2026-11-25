@@ -9,18 +9,18 @@ import { byLang } from "../lib/display";
 import { useCreateFaqItem, useDeleteFaqItem, useUpdateFaqItem } from "../hooks/queries";
 import {
   DEFAULT_PAGE_KEYS,
+  FAQ_CATEGORIES,
   FAQ_PAGE_KEYS,
+  type FaqCategory,
   type FaqItem,
   type FaqItemInput,
-  type FaqTopic,
 } from "../model/types";
 
 interface Props {
   /** null — a new question */
   item: FaqItem | null;
-  topics: FaqTopic[];
-  /** the topic a new question starts in (the one chosen in the list's filter) */
-  defaultTopicId?: number;
+  /** the category a new question starts in (the one chosen in the list's filter) */
+  defaultCategory?: FaqCategory;
   onClose: () => void;
 }
 
@@ -37,12 +37,12 @@ function LangBlock({ dot, title, children }: { dot: string; title: string; child
   );
 }
 
-/** Question: topic, text and answer in both languages, the pages it is shown on, visibility. */
-export function ItemEditor({ item, topics, defaultTopicId, onClose }: Props) {
+/** Question: category, text and answer in both languages, the pages it is shown on, visibility. */
+export function ItemEditor({ item, defaultCategory, onClose }: Props) {
   const { t, i18n } = useTranslation();
   const { message } = App.useApp();
   const [form] = Form.useForm<FaqItemInput>();
-  const guard = useEditorForm(form, { topic: "topicId" });
+  const guard = useEditorForm(form, {});
 
   const create = useCreateFaqItem();
   const update = useUpdateFaqItem();
@@ -102,7 +102,7 @@ export function ItemEditor({ item, topics, defaultTopicId, onClose }: Props) {
         disabled={saving}
         layout="vertical"
         initialValues={{
-          topicId: item?.topic.id ?? defaultTopicId,
+          category: item?.category ?? defaultCategory,
           questionUz: item?.questionUz ?? "",
           questionRu: item?.questionRu ?? "",
           answerUz: item?.answerUz ?? "",
@@ -112,25 +112,19 @@ export function ItemEditor({ item, topics, defaultTopicId, onClose }: Props) {
         }}
       >
         <Form.Item
-          name="topicId"
+          name="category"
           label={
             <>
-              {t("faq.fields.topic")} {required}
+              {t("faq.fields.category")} {required}
             </>
           }
           rules={[{ required: true, message: t("faq.required") }]}
         >
           <Select
-            showSearch={{
-              filterOption: (input, option) =>
-                String(option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase()),
-            }}
-            placeholder={t("faq.fields.topicPlaceholder")}
-            options={topics.map((topic) => ({
-              value: topic.id,
-              label: byLang(topic.nameUz, topic.nameRu, i18n.language),
+            placeholder={t("faq.fields.categoryPlaceholder")}
+            options={FAQ_CATEGORIES.map((key) => ({
+              value: key,
+              label: t(`faq.categories.${key}`),
             }))}
           />
         </Form.Item>

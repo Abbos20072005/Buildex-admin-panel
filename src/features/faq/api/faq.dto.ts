@@ -1,20 +1,9 @@
-import type { FaqPageKey } from "../model/types";
-
-export interface FaqTopicDto {
-  id: number;
-  name: string;
-  name_uz: string;
-  name_ru: string;
-  slug: string;
-  position: number;
-  is_active: boolean;
-  items_count: number;
-  created_at: string;
-}
+import type { FaqCategory, FaqPageKey } from "../model/types";
 
 export interface FaqItemDto {
   id: number;
-  topic: { id: number; name: string; slug: string; is_active: boolean };
+  category: FaqCategory;
+  category_name: string;
   question: string;
   question_uz: string;
   question_ru: string;
