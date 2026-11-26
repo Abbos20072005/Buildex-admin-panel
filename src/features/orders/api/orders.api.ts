@@ -76,14 +76,19 @@ export const ordersApi = {
 
   /**
    * PATCH /admin/orders/{id}/ikpu/ — the IKPU code of a line (17 digits), only while the order is
-   * new; the server also writes it to the product card. The answer is the whole order.
+   * new; the server also writes it to the product card. The answer is `{ items: [{ id, ikpu_code }] }`
+   * (the live schema `OrderIkpu`), not the order: the lines with their codes are returned.
    */
-  async setItemIkpu(orderId: number, itemId: number, ikpuCode: string): Promise<OrderDetail> {
-    return mapOrderDetail(
-      await api.patch<OrderDto>(`/orders/${orderId}/ikpu/`, {
-        items: [{ id: itemId, ikpu_code: ikpuCode }],
-      }),
+  async setItemIkpu(
+    orderId: number,
+    itemId: number,
+    ikpuCode: string,
+  ): Promise<{ id: number; ikpuCode: string }[]> {
+    const data = await api.patch<{ items?: { id: number; ikpu_code?: string | null }[] }>(
+      `/orders/${orderId}/ikpu/`,
+      { items: [{ id: itemId, ikpu_code: ikpuCode }] },
     );
+    return (data.items ?? []).map((item) => ({ id: item.id, ikpuCode: item.ikpu_code ?? "" }));
   },
 
   /** Every order matching the filters, page by page (CSV export). */

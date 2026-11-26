@@ -102,8 +102,21 @@ export function useSetOrderItemIkpu(orderId: number) {
   return useMutation({
     mutationFn: ({ itemId, ikpuCode }: { itemId: number; ikpuCode: string }) =>
       ordersApi.setItemIkpu(orderId, itemId, ikpuCode),
-    onSuccess: (order: OrderDetail) => {
-      queryClient.setQueryData(orderKeys.detail(orderId), order);
+    onSuccess: (lines) => {
+      // the answer holds the codes of the lines only: they go into the order on the screen, which is
+      // then loaded again (the order itself may have changed on the server)
+      const codes = new Map(lines.map((line) => [line.id, line.ikpuCode]));
+      queryClient.setQueryData<OrderDetail>(orderKeys.detail(orderId), (order) =>
+        order
+          ? {
+              ...order,
+              items: order.items.map((item) =>
+                codes.has(item.id) ? { ...item, ikpuCode: codes.get(item.id) } : item,
+              ),
+            }
+          : order,
+      );
+      void queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderId) });
       // the product card has the code too (and the journal of the product and the order)
       void queryClient.invalidateQueries({ queryKey: ["products"] });
     },
